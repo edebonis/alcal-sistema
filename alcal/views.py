@@ -18,7 +18,7 @@ def index(request):
 @login_required(login_url='/admin/login')
 def portada(request):
     carreras = Carrera.objects.order_by('anios')
-    print(carreras[0],carreras[1])
+    print(carreras[0], carreras[1])
     usuario = str(request.user)
     cant_estudiantes = Estudiante.objects.count()
     cant_femenino = len(Estudiante.objects.filter(genero=2))

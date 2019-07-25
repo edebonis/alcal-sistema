@@ -6,8 +6,8 @@ from .models import Estudiante, Curso
 class PostForm(forms.ModelForm):
 
     class Meta:
-        # model = Post
-        curso = forms.ComboField(fields=Curso.objects.all())
+        #model = Post
+        #curso = forms.ComboField(fields=Curso.objects.all())
         fields = ('curso', Curso)
 
 
