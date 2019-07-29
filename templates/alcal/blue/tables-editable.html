@@ -43,8 +43,8 @@
 
                <form action="editable_list" method="post">
                 {% csrf_token %}
-                {{ form }}
-                 <input type="submit" value="Submit">
+                {{ form.anio}}
+                 <input type="submit" value="Buscar">
                 </form>
             </div> <!-- col -->
             <div class="panel-body">
@@ -60,19 +60,20 @@
                         <th>Legajo</th>
                         <th>Apellido</th>
                         <th>Nombre</th>
-                        <th>Curso</th>
+                        <th>Curso </th>
+                        <th>Sexo</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for estudiante in estudiantes %}
-                            {% if 5 == estudiante.curso.anio and "B" == estudiante.curso.division %}
+                            {% if anio_elegido == estudiante.curso.anio and division_elegida == estudiante.curso.division %}
                                 <tr class="gradeX">
                                 <td>{{ estudiante.legajo }}</td>
                                 <td>{{ estudiante.nombre }}</td>
                                 <td>{{ estudiante.apellido }}</td>
                                 <td>{{ estudiante.curso}} </td>
-
+                                <td>{{ estudiante.genero }}</td>
                     <td class="actions">
                         <a href="#" class="hidden on-editing save-row"><i class="fa fa-save"></i></a>
                         <a href="#" class="hidden on-editing cancel-row"><i class="fa fa-times"></i></a>

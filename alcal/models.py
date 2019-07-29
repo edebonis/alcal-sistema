@@ -23,9 +23,11 @@ class Carrera(models.Model):
 class Curso(models.Model):
     anio = models.IntegerField(verbose_name='Año')
     division = models.CharField(max_length=5, verbose_name='Divisón')
+    cursonombre = models.CharField(max_length=5, null=True, blank=True)
+    cursosiguiente = models.ForeignKey("self", on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def __str__(self):
-        return '{}{}'.format(self.anio, self.division)
+        return '{}'.format(self.anio)
 
 
 class TipoDni(models.Model):
@@ -160,7 +162,7 @@ class Docente(models.Model):
     # M / F
     genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, verbose_name='Género', null=True, blank=True)
     # TÉCNICA / ECONOMíA
-    carrera_doncente = models.ManyToManyField(Carrera,  blank=True)
+    carrera_docente = models.ManyToManyField(Carrera,  blank=True)
     # Nº    # Ord.
     # EMAIL
     email = models.EmailField(null=True, blank=True)

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from alcal.models import Carrera, Estudiante, Docente, Curso
-from .forms import PostForm, NameForm
+from .forms import NameForm, CursoForm
 
 
 @login_required(login_url='/admin/login')
@@ -18,7 +18,8 @@ def index(request):
 @login_required(login_url='/admin/login')
 def portada(request):
     carreras = Carrera.objects.order_by('anios')
-    print(carreras[0], carreras[1])
+    #print(carreras[0], carreras[1])
+
     usuario = str(request.user)
     cant_estudiantes = Estudiante.objects.count()
     cant_femenino = len(Estudiante.objects.filter(genero=2))
@@ -58,7 +59,7 @@ def buscar_curso(request):
     if request.method == "POST":
         pass
     else:
-        form = PostForm(request.POST)
+        form = NameForm(request.POST)
 
     print("*******")
     return render(request, 'alcal/blue/buscar_curso.html',
@@ -71,27 +72,32 @@ def buscar_curso(request):
 
 @login_required(login_url='/admin/login')
 def editable_list(request):
+    form = ""
     estudiantes = Estudiante.objects.order_by('legajo')
     cursos = Curso.objects.order_by('id')
-    curso_elegido = request.content_params
     if request.method == "POST":
-        form = ""
-    else:
-        form = PostForm(request.POST)
+        form = CursoForm(request.POST)
+        print(form.Meta.cursos.select_for_update())
+        anio_elegido = 1
+        division_elegida = "A"
 
-    print(curso_elegido)
+    else:
+        anio_elegido = 1
+        division_elegida = "A"
+
     return render(request, 'alcal/blue/tables-editable.html',
                   {
                       'estudiantes': estudiantes,
                       'cursos': cursos,
                       'form': form,
-                      'curso_elegido': curso_elegido
+                      'anio_elegido': int(anio_elegido),
+                      'division_elegida': division_elegida
                   })
 
 
 @login_required(login_url='/admin/login')
 def inasistencias_por_estudiante(request):
-    return render(request,'alcal/blue/inasistencias_por_estudiante.html')
+    return render(request, 'alcal/blue/inasistencias_por_estudiante.html')
 
 
 @login_required(login_url='/admin/login')
