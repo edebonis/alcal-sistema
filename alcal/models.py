@@ -3,7 +3,9 @@ from django_countries.fields import CountryField
 import django
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import datetime, timedelta
 
+doce_anios = timedelta(days=4380)
 
 class Carrera(models.Model):
     TECNICO = 'TE'
@@ -23,11 +25,11 @@ class Carrera(models.Model):
 class Curso(models.Model):
     anio = models.IntegerField(verbose_name='Año')
     division = models.CharField(max_length=5, verbose_name='Divisón')
-    cursonombre = models.CharField(max_length=5, null=True, blank=True)
+    cursonombre = models.CharField(max_length=5, null=True, blank=True, default='-')
     cursosiguiente = models.ForeignKey("self", on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def __str__(self):
-        return '{}'.format(self.anio)
+        return '{}'.format(self.cursonombre)
 
 
 class TipoDni(models.Model):
@@ -78,12 +80,12 @@ class Estudiante(models.Model):
     # NOMBRES
     nombre = models.CharField(max_length=100, null=True)
     # F.NAC.NACIONALIDAD
-    fnac = models.DateField(null=True, blank=True)
+    fnac = models.DateField(null=True, blank=True, default=datetime.today() - doce_anios)
     # LIBRO / FOLIO
     libro = models.CharField(max_length=5, null=True, blank=True)
     folio = models.IntegerField(null=True, blank=True)
     # TIPO
-    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True)
+    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True, default=1)
     # NUMERO
     num_dni = models.IntegerField(null=True, blank=True)
     # DOMICILIO
@@ -94,7 +96,7 @@ class Estudiante(models.Model):
     telefono_2 = models.CharField(max_length=100, null=True, blank=True)
     telefono_3 = models.CharField(max_length=100, null=True, blank=True)
     # Añodeingreso
-    anio_ingreso = models.IntegerField(null=True, blank=True)
+    anio_ingreso = models.IntegerField(default=datetime.today().year, null=True, blank=True)
     # M / F
     genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, null=True, blank=True)
     # Grupo    #técnica

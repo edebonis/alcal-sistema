@@ -18,13 +18,11 @@ def index(request):
 @login_required(login_url='/admin/login')
 def portada(request):
     carreras = Carrera.objects.order_by('anios')
-    #print(carreras[0], carreras[1])
-
     usuario = str(request.user)
     cant_estudiantes = Estudiante.objects.count()
     cant_femenino = len(Estudiante.objects.filter(genero=2))
     cant_masculino = len(Estudiante.objects.filter(genero=1))
-
+    print('{} - {}'.format(cant_femenino, cant_masculino))
     return render(request, 'alcal/blue/index.html',
                   {
                       'carreras': carreras,
@@ -72,18 +70,19 @@ def buscar_curso(request):
 
 @login_required(login_url='/admin/login')
 def editable_list(request):
-    form = ""
+    form = CursoForm(request.POST)
     estudiantes = Estudiante.objects.order_by('legajo')
-    cursos = Curso.objects.order_by('id')
-    if request.method == "POST":
-        form = CursoForm(request.POST)
-        print(form.Meta.cursos.select_for_update())
-        anio_elegido = 1
-        division_elegida = "A"
-
-    else:
-        anio_elegido = 1
-        division_elegida = "A"
+    try:
+        request.POST['cursonombre']
+        if request.method == "POST" and request.POST['cursonombre']:
+            anio_elegido = request.POST['cursonombre'][0]
+            division_elegida = request.POST['cursonombre'][1]
+            print(anio_elegido)
+            print(division_elegida)
+    except:
+            print(form)
+            anio_elegido = 1
+            division_elegida = "A"
 
     return render(request, 'alcal/blue/tables-editable.html',
                   {

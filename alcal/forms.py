@@ -7,26 +7,33 @@ class PostForm(forms.ModelForm):
     class Meta:
         #model = Post
         curso = forms.ComboField(fields=Curso.objects.all())
-        fields = ('curso', Curso)
+        fields = ('curso', curso)
 
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Your name', max_length=100)
 
 
-'''class CursoForm(forms.ModelForm):
+class CursoForm(forms.ModelForm):
     class Meta:
         anios = Curso.anio
+        nombrecurso = Curso.cursonombre
+        siguientecurso = Curso.cursosiguiente
+        division = Curso.division
         model = Curso
         fields = [
             'anio',
-            'division'
+            'division',
+            'cursonombre',
+            'cursosiguiente'
         ]
         labels = {
             'anio': 'Año',
-            'division': 'División'
+            'division': 'División',
+            'cursonombre': 'Nombre Curso',
+            'cursosiguiente': 'Siguiente Curso',
         }
         widgets = {
-            'anio': forms.Select(choices=[]),
-            'division': forms.Select(choices=[])
-        }'''
+            'cursonombre': forms.TextInput(),
+
+        }
