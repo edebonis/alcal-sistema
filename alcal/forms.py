@@ -5,7 +5,7 @@ from .models import Estudiante, Curso
 class PostForm(forms.ModelForm):
 
     class Meta:
-        #model = Post
+        # model = Post
         curso = forms.ComboField(fields=Curso.objects.all())
         fields = ('curso', curso)
 
@@ -16,11 +16,16 @@ class NameForm(forms.Form):
 
 class CursoForm(forms.ModelForm):
     class Meta:
-        anios = Curso.anio
-        nombrecurso = Curso.cursonombre
-        siguientecurso = Curso.cursosiguiente
+        valores = []
+        anio = Curso.anio
+        cursonombre = Curso.cursonombre
+        cursosiguiente = Curso.cursosiguiente
         division = Curso.division
         model = Curso
+        val = Curso.objects.values('cursonombre')
+        for i in val:
+            valores.append(i['cursonombre'])
+        # print(valores)
         fields = [
             'anio',
             'division',
@@ -34,6 +39,5 @@ class CursoForm(forms.ModelForm):
             'cursosiguiente': 'Siguiente Curso',
         }
         widgets = {
-            'cursonombre': forms.TextInput(),
-
+            'cursonombre': forms.Select(choices=valores, attrs={'class': 'btn waves-effect waves-light btn-primary dropdown-toggle'}),
         }

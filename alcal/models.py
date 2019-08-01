@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 
 doce_anios = timedelta(days=4380)
 
+
 class Carrera(models.Model):
     TECNICO = 'TE'
     BACHILLER = 'BA'

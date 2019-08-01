@@ -41,10 +41,15 @@
                     </div>
                 </div>
 
-               <form action="editable_list" method="post">
-                {% csrf_token %}
-                {{ form.cursonombre }}
-                 <input type="submit" value="Buscar">
+               <form class="drop form-horizontal" action="editable_list" method="POST">
+                   <div>
+                       <span>
+                        {% csrf_token %} {{ form.cursonombre }}
+                           </span>
+                       <span>
+                        <input class="btn-success"  type="submit" value="Buscar">
+                       </span>
+                   </div>
                 </form>
             </div> <!-- col -->
             <div class="panel-body">

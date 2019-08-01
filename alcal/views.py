@@ -22,7 +22,7 @@ def portada(request):
     cant_estudiantes = Estudiante.objects.count()
     cant_femenino = len(Estudiante.objects.filter(genero=2))
     cant_masculino = len(Estudiante.objects.filter(genero=1))
-    print('{} - {}'.format(cant_femenino, cant_masculino))
+    #print('{} - {}'.format(cant_femenino, cant_masculino))
     return render(request, 'alcal/blue/index.html',
                   {
                       'carreras': carreras,
@@ -70,19 +70,20 @@ def buscar_curso(request):
 
 @login_required(login_url='/admin/login')
 def editable_list(request):
+    anio_elegido = 1
+    division_elegida = "A"
     form = CursoForm(request.POST)
     estudiantes = Estudiante.objects.order_by('legajo')
     try:
-        request.POST['cursonombre']
-        if request.method == "POST" and request.POST['cursonombre']:
+        print('Request: {}'.format(request.POST['cursonombre']))
+        print(request.method)
+        if request.method == "POST":
             anio_elegido = request.POST['cursonombre'][0]
-            division_elegida = request.POST['cursonombre'][1]
+            division_elegida = request.POST['cursonombre'][0]
             print(anio_elegido)
             print(division_elegida)
     except:
-            print(form)
-            anio_elegido = 1
-            division_elegida = "A"
+        pass
 
     return render(request, 'alcal/blue/tables-editable.html',
                   {
