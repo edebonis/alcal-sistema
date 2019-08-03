@@ -43,12 +43,9 @@
 
                <form class="drop form-horizontal" action="editable_list" method="POST">
                    <div>
-                       <span>
+
                         {% csrf_token %} {{ form.cursonombre }}
-                           </span>
-                       <span>
-                        <input class="btn-success"  type="submit" value="Buscar">
-                       </span>
+
                    </div>
                 </form>
             </div> <!-- col -->
@@ -63,11 +60,12 @@
                     <thead>
                     <tr>
                         <th>Legajo</th>
+                        <th>Orden</th>
                         <th>Apellido</th>
                         <th>Nombre</th>
                         <th>Curso </th>
                         <th>Sexo</th>
-                        <th>Actions</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -75,6 +73,7 @@
                             {% if anio_elegido == estudiante.curso.anio and division_elegida == estudiante.curso.division %}
                                 <tr class="gradeX">
                                 <td>{{ estudiante.legajo }}</td>
+                                <td>{{ estudiante.orden }}</td>
                                 <td>{{ estudiante.nombre }}</td>
                                 <td>{{ estudiante.apellido }}</td>
                                 <td>{{ estudiante.curso}} </td>

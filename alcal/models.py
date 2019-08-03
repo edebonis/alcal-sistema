@@ -27,7 +27,7 @@ class Curso(models.Model):
     anio = models.IntegerField(verbose_name='Año')
     division = models.CharField(max_length=5, verbose_name='Divisón')
     cursonombre = models.CharField(max_length=5, null=True, blank=True, default='-')
-    cursosiguiente = models.ForeignKey("self", on_delete=models.DO_NOTHING, null=True, blank=True)
+    cursosiguiente = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return '{}'.format(self.cursonombre)
@@ -65,6 +65,37 @@ class Documentacion(models.Model):
 
     def __str__(self):
         return self.nombre
+
+
+class Padre(models.Model):
+    # APELLIDOS
+    apellido = models.CharField(max_length=100, null=True)
+    # NOMBRES
+    nombre = models.CharField(max_length=100, null=True)
+    # F.NAC.NACIONALIDAD
+    fnac = models.DateField(null=True, blank=True)
+    # TIPO
+    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True)
+    # NUMERO
+    num_dni = models.IntegerField(null=True, blank=True)
+    # DOMICILIO
+    domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
+    domicilio_numero = models.IntegerField(null=True, blank=True)
+    # TELÉFONOS
+    telefono_1 = models.CharField(max_length=100, null=True, blank=True)
+    telefono_2 = models.CharField(max_length=100, null=True, blank=True)
+    telefono_3 = models.CharField(max_length=100, null=True, blank=True)
+    # M / F
+    genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, null=True, blank=True)
+    # EMAIL
+    email = models.EmailField(null=True, blank=True)
+    # NACIONALIDAD
+    pais_de_nacimiento = CountryField(null=True, blank=True)
+    # PROFESIÓN
+    profesion = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return '{}, {}'.format(self.apellido, self.nombre)
 
 
 class Estudiante(models.Model):
@@ -125,7 +156,7 @@ class Estudiante(models.Model):
     adeuda = models.ForeignKey(Documentacion, on_delete=models.DO_NOTHING, null=True, blank=True)
     # Archivo    de    seguimiento
     archivo_de_seguimiento = models.URLField(null=True, blank=True)
-
+    responsable = models.ForeignKey(Padre, on_delete=models.DO_NOTHING,null=True, blank=True)
     def __str__(self):
         return '{} - {}, {}'.format(self.legajo, self.apellido, self.nombre)
 
@@ -287,41 +318,3 @@ class FechaAltaBaja(models.Model):
         return '{} - {} - {}'.format(self.estudiante, self.fecha, self.tipo)
 
 
-class Padre(models.Model):
-    # APELLIDOS
-    apellido = models.CharField(max_length=100, null=True)
-    # NOMBRES
-    nombre = models.CharField(max_length=100, null=True)
-    # F.NAC.NACIONALIDAD
-    fnac = models.DateField(null=True, blank=True)
-    # TIPO
-    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # NUMERO
-    num_dni = models.IntegerField(null=True, blank=True)
-    # DOMICILIO
-    domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
-    domicilio_numero = models.IntegerField(null=True, blank=True)
-    # TELÉFONOS
-    telefono_1 = models.CharField(max_length=100, null=True, blank=True)
-    telefono_2 = models.CharField(max_length=100, null=True, blank=True)
-    telefono_3 = models.CharField(max_length=100, null=True, blank=True)
-    # M / F
-    genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # EMAIL
-    email = models.EmailField(null=True, blank=True)
-    # NACIONALIDAD
-    pais_de_nacimiento = CountryField(null=True, blank=True)
-    # PROFESIÓN
-    profesion = models.CharField(max_length=100, null=True, blank=True)
-
-    def __str__(self):
-        return '{}, {}'.format(self.apellido, self.nombre)
-
-
-class Parentezco(models.Model):
-    padre = models.ForeignKey(Padre, on_delete=models.DO_NOTHING, null=True, blank=True)
-    estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True, blank=True)
-    vinculo = models.ForeignKey(Vinculo, on_delete=models.DO_NOTHING, null=True, blank=True)
-
-    def __str__(self):
-        return '{} - {} ( {}.upper )'.format(self.padre, self.estudiante, self.vinculo)

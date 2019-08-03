@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from alcal.models import Carrera, Estudiante, Docente, Curso
-from .forms import NameForm, CursoForm
+from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente
 
 
 @login_required(login_url='/admin/login')
@@ -22,7 +22,6 @@ def portada(request):
     cant_estudiantes = Estudiante.objects.count()
     cant_femenino = len(Estudiante.objects.filter(genero=2))
     cant_masculino = len(Estudiante.objects.filter(genero=1))
-    #print('{} - {}'.format(cant_femenino, cant_masculino))
     return render(request, 'alcal/blue/index.html',
                   {
                       'carreras': carreras,
@@ -74,16 +73,11 @@ def editable_list(request):
     division_elegida = "A"
     form = CursoForm(request.POST)
     estudiantes = Estudiante.objects.order_by('legajo')
-    try:
-        print('Request: {}'.format(request.POST['cursonombre']))
-        print(request.method)
-        if request.method == "POST":
-            anio_elegido = request.POST['cursonombre'][0]
-            division_elegida = request.POST['cursonombre'][0]
-            print(anio_elegido)
-            print(division_elegida)
-    except:
-        pass
+
+    if request.method == "POST":
+        anio_elegido = request.POST['cursonombre'][0]
+        division_elegida = request.POST['cursonombre'][1]
+
 
     return render(request, 'alcal/blue/tables-editable.html',
                   {
@@ -127,12 +121,19 @@ def comunicaciones_por_estudiante(request):
 
 @login_required(login_url='/admin/login')
 def nuevo_docente(request):
-    return render(request,'alcal/blue/nuevo_docente.html')
+    form = NuevoDocente(request.POST)
+    return render(request,'alcal/blue/nuevo_docente.html',{'form': form})
 
 
 @login_required(login_url='/admin/login')
 def nuevo_estudiante(request):
-    return render(request,'alcal/blue/nuevo_estudiante.html')
+    form = NuevoEstudiante(request.POST)
+    return render(request,'alcal/blue/nuevo_estudiante.html',{'form': form})
+
+@login_required(login_url='/admin/login')
+def nuevo_padre(request):
+    form = NuevoPadre(request.POST)
+    return render(request, 'alcal/blue/nuevo_padre.html', {'form': form})
 
 
 @login_required(login_url='/admin/login')
