@@ -2,7 +2,7 @@ import datetime
 from django.template.context_processors import request
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth.models import User
 from alcal.models import Carrera, Estudiante, Docente, Curso
 from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente
@@ -132,7 +132,19 @@ def nuevo_estudiante(request):
 
 @login_required(login_url='/admin/login')
 def nuevo_padre(request):
-    form = NuevoPadre(request.POST)
+
+    if request.method == "POST":
+        form = NuevoPadre(request.POST)
+        if form.is_valid():
+            print("Guardado")
+            try:
+                form.save()
+                return redirect('/nuevo_padre')
+            except:
+                pass
+    else:
+        form = NuevoPadre()
+
     return render(request, 'alcal/blue/nuevo_padre.html', {'form': form})
 
 

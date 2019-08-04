@@ -32,8 +32,10 @@
         <!-- Start content -->
         <div class="content">
             <div class="container">
-                <!-- Page-Title -->
-                {% csrf_token %} {{ form }}
+                <form action="#" method="post">
+                    {% csrf_token %} {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
         </div>
     </div>

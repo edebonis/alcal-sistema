@@ -124,6 +124,7 @@ class NuevoEstudiante(forms.ModelForm):
 class NuevoPadre(forms.ModelForm):
     class Meta:
         model = Padre
+        classmethod = "POST"
         fields = [
             'apellido',
             'nombre',
