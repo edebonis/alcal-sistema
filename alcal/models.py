@@ -3,6 +3,7 @@ from django_countries.fields import CountryField
 import django
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.html import format_html
 from datetime import datetime, timedelta
 
 doce_anios = timedelta(days=4380)
@@ -27,7 +28,7 @@ class Curso(models.Model):
     anio = models.IntegerField(verbose_name='Año')
     division = models.CharField(max_length=5, verbose_name='Divisón')
     cursonombre = models.CharField(max_length=5, null=True, blank=True, default='-')
-    cursosiguiente = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True)
+    cursosiguiente = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return '{}'.format(self.cursonombre)
@@ -40,7 +41,7 @@ class TipoDni(models.Model):
         return self.nombre
 
     class Meta:
-        verbose_name_plural = "Tipos de DNI"
+        verbose_name_plural = 'Tipos de DNI'
 
 
 class Genero(models.Model):
@@ -61,7 +62,7 @@ class Documentacion(models.Model):
     nombre = models.CharField(max_length=15)
 
     class Meta:
-        verbose_name_plural = "Documentaciones"
+        verbose_name_plural = 'Documentaciones'
 
     def __str__(self):
         return self.nombre
@@ -99,64 +100,49 @@ class Padre(models.Model):
 
 
 class Estudiante(models.Model):
-    # LEG
     legajo = models.IntegerField(primary_key=True)
-    # ACTIVX
     activx = models.BooleanField(default=True, null=True, blank=True)
-    # CURSO
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # ORDEN
     orden = models.IntegerField(null=True, blank=True)
-    # APELLIDOS
     apellido = models.CharField(max_length=100, null=True)
-    # NOMBRES
     nombre = models.CharField(max_length=100, null=True)
-    # F.NAC.NACIONALIDAD
     fnac = models.DateField(null=True, blank=True, default=datetime.today() - doce_anios)
-    # LIBRO / FOLIO
     libro = models.CharField(max_length=5, null=True, blank=True)
     folio = models.IntegerField(null=True, blank=True)
-    # TIPO
     tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True, default=1)
-    # NUMERO
     num_dni = models.IntegerField(null=True, blank=True)
-    # DOMICILIO
     domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
     domicilio_numero = models.IntegerField(null=True, blank=True)
-    # TELÉFONOS
     telefono_1 = models.CharField(max_length=100, null=True, blank=True)
     telefono_2 = models.CharField(max_length=100, null=True, blank=True)
     telefono_3 = models.CharField(max_length=100, null=True, blank=True)
-    # Añodeingreso
     anio_ingreso = models.IntegerField(default=datetime.today().year, null=True, blank=True)
-    # M / F
     genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # Grupo    #técnica
     grupo_tec = models.IntegerField(null=True, blank=True)
-    # OBS.ADM.
     observacion = models.TextField(null=True, blank=True)
-    # EMAIL
     email = models.EmailField(null=True, blank=True)
-    # FICHA    DE    INSCRIPCCIÓN
     ficha_de_inscripcion = models.BooleanField(null=True, blank=True)
-    # FOTO    #DNI    #ESTUDIANTE
     foto_dni_estudiante = models.BooleanField(null=True, blank=True)
     foto_dni_estudiante_archivo = models.FileField(null=True, blank=True)
-    # FOTO    DNI    RESPONSABLE
     foto_dni_responsable = models.BooleanField(null=True, blank=True)
-    # PARTIDA    DE    NACIMIENTO
     partida_de_nacimiento = models.BooleanField(null=True, blank=True)
-    # VACUNAS
     vacunas = models.BooleanField(null=True, blank=True)
-    # CERT.    6    º / CERT.    7    º / A.PARCIAL
     certificado = models.BooleanField(null=True, blank=True)
-    # Foto
     url_foto = models.URLField(null=True, blank=True)
-    # ADEUDA
     adeuda = models.ForeignKey(Documentacion, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # Archivo    de    seguimiento
     archivo_de_seguimiento = models.URLField(null=True, blank=True)
-    responsable = models.ForeignKey(Padre, on_delete=models.DO_NOTHING,null=True, blank=True)
+    responsable = models.ForeignKey(Padre, on_delete=models.DO_NOTHING, null=True, blank=True)
+    vinculo = models.ForeignKey(Vinculo, on_delete=models.DO_NOTHING, null=True, blank=True)
+    porcentaje_beca = models.IntegerField()
+
+    def colored_name(self):
+        return format_html(
+            '<span style="color: #{};">{} {}</span>',
+            'FFAA00',
+            self.nombre,
+            self.apellido,
+        )
+
     def __str__(self):
         return '{} - {}, {}'.format(self.legajo, self.apellido, self.nombre)
 
@@ -232,7 +218,7 @@ class NotaParcial(models.Model):
     estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
-        verbose_name_plural = "Notas Parciales"
+        verbose_name_plural = 'Notas Parciales'
 
     def __str__(self):
         return '{} - {} - {}'.format(self.estudiante, self.materia, self.numero)
@@ -298,7 +284,7 @@ class Notificacion(models.Model):
     informante = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     class Meta:
-        verbose_name_plural = "Notificaciones"
+        verbose_name_plural = 'Notificaciones'
 
     def __str__(self):
         return '{} - {} - {}'.format(self.fecha, self.estudiante, self.tipo)
@@ -318,3 +304,39 @@ class FechaAltaBaja(models.Model):
         return '{} - {} - {}'.format(self.estudiante, self.fecha, self.tipo)
 
 
+class NombreCuota(models.Model):
+    nombre = models.CharField(max_length=20)
+    def __str__(self):
+        return self.nombre
+
+
+class Cuota(models.Model):
+    fecha_pago = models.DateField()
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True)
+    nombre_cuota = models.ForeignKey(NombreCuota, on_delete=models.DO_NOTHING, max_length=20)
+    pagada = models.BooleanField(default=False)
+    importe = models.IntegerField()
+    list_display = ('fecha_pago', 'estudiante')
+    def __str__(self):
+        return '{} - {} - {}'.format(self.fecha_pago, self.nombre_cuota, self.estudiante)
+
+
+class Seguimiento(models.Model):
+
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING)
+    TIPOS = (
+        ('CM', 'Cambio de modalidad'),
+        ('POI', 'Pase a otra institución'),
+        ('IN', 'Inasistencias'),
+        ('SS', 'Situación de Salud'),
+        ('B', 'Becas'),
+        ('CC', 'Cuestiones de Convivencia'),
+        ('CO', 'Convocatoria'),
+        ('SA', 'Situación académica'),
+        ('SPF', 'Situación personal/familiar'),
+        ('R', 'Reconocimiento')
+    )
+    notificacion = models.TextField()
+    fecha = models.DateField(default=django.utils.timezone.now)
+    tipo = models.CharField(choices=TIPOS, max_length=20)
+    informante = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
