@@ -72,7 +72,7 @@ def editable_list(request):
     anio_elegido = 1
     division_elegida = "A"
     form = CursoForm(request.POST)
-    estudiantes = Estudiante.objects.order_by('legajo')
+    estudiantes = Estudiante.objects.order_by('apellido')
 
     if request.method == "POST":
         anio_elegido = request.POST['cursonombre'][0]
@@ -127,8 +127,19 @@ def nuevo_docente(request):
 
 @login_required(login_url='/admin/login')
 def nuevo_estudiante(request):
-    form = NuevoEstudiante(request.POST)
-    return render(request,'alcal/blue/nuevo_estudiante.html',{'form': form})
+    if request.method == "POST":
+        form = NuevoEstudiante(request.POST)
+        if form.is_valid():
+            # print("Guardado")
+            try:
+                form.save()
+                return redirect('/nuevo_estudiante')
+            except:
+                pass
+    else:
+        form = NuevoEstudiante()
+
+    return render(request, 'alcal/blue/nuevo_estudiante.html', {'form': form})
 
 @login_required(login_url='/admin/login')
 def nuevo_padre(request):
@@ -136,7 +147,7 @@ def nuevo_padre(request):
     if request.method == "POST":
         form = NuevoPadre(request.POST)
         if form.is_valid():
-            print("Guardado")
+            # print("Guardado")
             try:
                 form.save()
                 return redirect('/nuevo_padre')

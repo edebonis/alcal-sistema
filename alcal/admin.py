@@ -3,6 +3,7 @@ from .models import Estudiante, Docente, Carrera, Nota, NotaParcial, FechaAltaBa
     Inasistencia, Notificacion, Documentacion, Padre, Vinculo, TipoDni, Cuota, NombreCuota, Seguimiento
 
 
+
 #admin.site.register(Estudiante)
 admin.site.register(Docente)
 admin.site.register(Carrera)
@@ -25,7 +26,7 @@ admin.site.register(Seguimiento)
 
 @admin.register(Estudiante)
 class EstudianteAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'apellido', 'responsable', 'colored_name', 'num_dni')
+    list_display = ('nombre', 'apellido', 'responsable', 'colored_name', 'num_dni', 'curso')
     list_display_links = ('nombre', 'apellido', 'responsable')
     search_fields = ('nombre','=num_dni',)
 
@@ -39,6 +40,7 @@ class EstudianteAdmin(admin.ModelAdmin):
             queryset |= self.model.objects.filter(num_dni=search_term_as_int)
         return queryset, use_distinct
 
+
 @admin.register(Padre)
 class PadreAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -50,3 +52,5 @@ class PadreAdmin(admin.ModelAdmin):
             'fields': ('registration_required', 'template_name'),
         }),
     )
+
+

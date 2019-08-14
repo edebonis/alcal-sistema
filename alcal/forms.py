@@ -2,12 +2,12 @@ from django import forms
 from .models import Estudiante, Curso, Padre, Docente
 
 
-class PostForm(forms.ModelForm):
-
-    class Meta:
-        # model = Post
-        curso = forms.ComboField(fields=Curso.objects.all())
-        fields = ('curso', curso)
+# class PostForm(forms.ModelForm):
+#
+#     class Meta:
+#         # model = Post
+#         curso = forms.ComboField(fields=Curso.objects.all())
+#         fields = ('curso', curso)
 
 
 class NameForm(forms.Form):
@@ -124,8 +124,9 @@ class NuevoEstudiante(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NuevoEstudiante, self).__init__(*args, **kwargs)
-        self.fields['apellido'].widget.attrs.update({'class': 'form-control',
-                                                     'placeholder': '.col-sm-5'})
+        print(self.visible_fields()[2])
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'select2-choice'
 
 
 class NuevoPadre(forms.ModelForm):
@@ -180,7 +181,6 @@ class NuevoDocente(forms.ModelForm):
             'num_dni',
             'domicilio_calle',
             'domicilio_numero',
-            'telefono',
             'anio_ingreso',
             'fnac',
             'pais_de_nacimiento',
@@ -219,20 +219,20 @@ class NuevoDocente(forms.ModelForm):
         }
 
 
-class Alumnos(forms.ModelForm):
-    class Meta:
-        model = Estudiante
-        fields = ('legajo', 'nombre', 'apellido', 'curso')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['city'].queryset = City.objects.none()
-
-        if 'country' in self.data:
-            try:
-                country_id = int(self.data.get('country'))
-                self.fields['city'].queryset = City.objects.filter(country_id=country_id).order_by('name')
-            except (ValueError, TypeError):
-                pass  # invalid input from the client; ignore and fallback to empty City queryset
-        elif self.instance.pk:
-            self.fields['city'].queryset = self.instance.country.city_set.order_by('name')
+# class Alumnos(forms.ModelForm):
+#     class Meta:
+#         model = Estudiante
+#         fields = ('legajo', 'nombre', 'apellido', 'curso')
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields['city'].queryset = City.objects.none()
+#
+#         if 'country' in self.data:
+#             try:
+#                 country_id = int(self.data.get('country'))
+#                 self.fields['city'].queryset = City.objects.filter(country_id=country_id).order_by('name')
+#             except (ValueError, TypeError):
+#                 pass  # invalid input from the client; ignore and fallback to empty City queryset
+#         elif self.instance.pk:
+#             self.fields['city'].queryset = self.instance.country.city_set.order_by('name')

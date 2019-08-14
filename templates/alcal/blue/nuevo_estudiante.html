@@ -31,10 +31,14 @@
     <div class="content-page">
         <!-- Start content -->
         <div class="content">
-            <div class="container">
-                <!-- Page-Title -->
-                {% csrf_token %} {{ form }}
-            </div>
+            <form action="#" method="post" class="card-body">
+                    {% csrf_token %}
+                <div>
+                    {{form.legajo}}
+                    {{ form.genero }}
+                </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
     </div>
 <!-- END wrapper -->

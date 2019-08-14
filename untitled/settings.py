@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -40,6 +39,8 @@ INSTALLED_APPS = [
     'alcal.apps.AlcalConfig',
     'django_countries',
     'django_template_maths',
+    'smart_selects',
+    'untitled',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +123,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/home/esteban/Descargas'
 
 MEDIA_ROOT = os.path.join('templates', 'media/')
 MEDIA_URL = 'templates/media/'
+USE_DJANGO_JQUERY = True
+
+
+INTERNAL_IPS = ('127.0.0.1',)
+
+
+TIME_FORMAT = 'h:i A'
+DATETIME_FORMAT = 'm/d/Y H:i:s'
+DATE_FORMAT = "m/d/Y"
+TIME_INPUT_FORMATS = ['%I:%M %p']

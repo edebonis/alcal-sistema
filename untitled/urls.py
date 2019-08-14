@@ -15,9 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import include
 from alcal import views
-
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -43,7 +42,9 @@ urlpatterns = [
     path('comunicaciones_por_curso', views.comunicaciones_por_curso, name='comucur'),
     path('notas_por_estudiante', views.notas_por_estudiante, name='notest'),
     path('notas_por_curso', views.notas_por_curso, name='notcur'),
+    path('chaining/', include('smart_selects.urls')),
     ]
+
 
 admin.site.site_header = 'Alcal'
 admin.site.site_title = 'Alcal'

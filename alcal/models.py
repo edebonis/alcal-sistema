@@ -5,8 +5,44 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.html import format_html
 from datetime import datetime, timedelta
+from smart_selects.db_fields import ChainedForeignKey
+
 
 doce_anios = timedelta(days=4380)
+
+
+class Genero(models.Model):
+    nombre = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.nombre
+
+
+class TipoDni(models.Model):
+    nombre = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name_plural = 'Tipos de DNI'
+
+
+class Persona(models.Model):
+    apellido = models.CharField(max_length=100, null=True)
+    nombre = models.CharField(max_length=100, null=True)
+    fnac = models.DateField(null=True, blank=True, default=datetime.today() - doce_anios)
+    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True, default=1)
+    num_dni = models.IntegerField(null=True, blank=True)
+    domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
+    domicilio_numero = models.IntegerField(null=True, blank=True)
+    telefono_1 = models.CharField(max_length=100, null=True, blank=True)
+    telefono_2 = models.CharField(max_length=100, null=True, blank=True)
+    telefono_3 = models.CharField(max_length=100, null=True, blank=True)
+    genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, null=True, blank=True)
+    observacion = models.TextField(null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    pais_de_nacimiento = CountryField(null=True, blank=True)
 
 
 class Carrera(models.Model):
@@ -34,23 +70,6 @@ class Curso(models.Model):
         return '{}'.format(self.cursonombre)
 
 
-class TipoDni(models.Model):
-    nombre = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.nombre
-
-    class Meta:
-        verbose_name_plural = 'Tipos de DNI'
-
-
-class Genero(models.Model):
-    nombre = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.nombre
-
-
 class Vinculo(models.Model):
     nombre = models.CharField(max_length=100)
 
@@ -68,59 +87,22 @@ class Documentacion(models.Model):
         return self.nombre
 
 
-class Padre(models.Model):
-    # APELLIDOS
-    apellido = models.CharField(max_length=100, null=True)
-    # NOMBRES
-    nombre = models.CharField(max_length=100, null=True)
-    # F.NAC.NACIONALIDAD
-    fnac = models.DateField(null=True, blank=True)
-    # TIPO
-    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # NUMERO
-    num_dni = models.IntegerField(null=True, blank=True)
-    # DOMICILIO
-    domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
-    domicilio_numero = models.IntegerField(null=True, blank=True)
-    # TELÉFONOS
-    telefono_1 = models.CharField(max_length=100, null=True, blank=True)
-    telefono_2 = models.CharField(max_length=100, null=True, blank=True)
-    telefono_3 = models.CharField(max_length=100, null=True, blank=True)
-    # M / F
-    genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # EMAIL
-    email = models.EmailField(null=True, blank=True)
-    # NACIONALIDAD
-    pais_de_nacimiento = CountryField(null=True, blank=True)
-    # PROFESIÓN
+class Padre(Persona):
     profesion = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return '{}, {}'.format(self.apellido, self.nombre)
 
 
-class Estudiante(models.Model):
+class Estudiante(Persona):
     legajo = models.IntegerField(primary_key=True)
     activx = models.BooleanField(default=True, null=True, blank=True)
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True, blank=True)
     orden = models.IntegerField(null=True, blank=True)
-    apellido = models.CharField(max_length=100, null=True)
-    nombre = models.CharField(max_length=100, null=True)
-    fnac = models.DateField(null=True, blank=True, default=datetime.today() - doce_anios)
     libro = models.CharField(max_length=5, null=True, blank=True)
     folio = models.IntegerField(null=True, blank=True)
-    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True, default=1)
-    num_dni = models.IntegerField(null=True, blank=True)
-    domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
-    domicilio_numero = models.IntegerField(null=True, blank=True)
-    telefono_1 = models.CharField(max_length=100, null=True, blank=True)
-    telefono_2 = models.CharField(max_length=100, null=True, blank=True)
-    telefono_3 = models.CharField(max_length=100, null=True, blank=True)
     anio_ingreso = models.IntegerField(default=datetime.today().year, null=True, blank=True)
-    genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, null=True, blank=True)
     grupo_tec = models.IntegerField(null=True, blank=True)
-    observacion = models.TextField(null=True, blank=True)
-    email = models.EmailField(null=True, blank=True)
     ficha_de_inscripcion = models.BooleanField(null=True, blank=True)
     foto_dni_estudiante = models.BooleanField(null=True, blank=True)
     foto_dni_estudiante_archivo = models.FileField(null=True, blank=True)
@@ -133,7 +115,7 @@ class Estudiante(models.Model):
     archivo_de_seguimiento = models.URLField(null=True, blank=True)
     responsable = models.ForeignKey(Padre, on_delete=models.DO_NOTHING, null=True, blank=True)
     vinculo = models.ForeignKey(Vinculo, on_delete=models.DO_NOTHING, null=True, blank=True)
-    porcentaje_beca = models.IntegerField()
+    porcentaje_beca = models.IntegerField(null=True, blank=True)
 
     def colored_name(self):
         return format_html(
@@ -147,48 +129,14 @@ class Estudiante(models.Model):
         return '{} - {}, {}'.format(self.legajo, self.apellido, self.nombre)
 
 
-class Docente(models.Model):
-    # Nº    # de    # Registro
+class Docente(Persona):
     numero_de_registro = models.IntegerField()
-    # ACTIVX
     activo = models.BooleanField(default=True)
-    # Años
-    # MESES
     antiguedad_anios = models.IntegerField(verbose_name='Antigüedad (Años)', null=True, blank=True)
     antiguedad_meses = models.IntegerField(verbose_name='Antigüedad (Meses)', null=True, blank=True)
-    # APELLIDOS
-    apellido = models.CharField(max_length=100, null=True, blank=True)
-    # NOMBRES
-    nombre = models.CharField(max_length=100, null=True, blank=True)
-    # TIPO
-    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # NUMERO
-    num_dni = models.IntegerField(verbose_name='Número de Documento', null=True, blank=True)
-    # DOMICILIO
-    domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
-    domicilio_numero = models.IntegerField(verbose_name='Domicilio Número', null=True, blank=True)
-    # TELÉFONOS
-    telefono = models.CharField(max_length=100, null=True, blank=True)
-    # Añodeingreso
     anio_ingreso = models.IntegerField(verbose_name='Año de Ingreso', null=True, blank=True)
-    # F.NAC.
-    fnac = models.DateField(verbose_name='Fecha de Nacimiento', null=True, blank=True)
-    # NACIONALIDAD
-    pais_de_nacimiento = CountryField(null=True, blank=True)
-    # CELULAR
-    telefono_1 = models.CharField(max_length=100, null=True, blank=True)
-    telefono_2 = models.CharField(max_length=100, null=True, blank=True)
-    telefono_3 = models.CharField(max_length=100, null=True, blank=True)
-    # M / F
-    genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, verbose_name='Género', null=True, blank=True)
-    # TÉCNICA / ECONOMíA
     carrera_docente = models.ManyToManyField(Carrera,  blank=True)
-    # Nº    # Ord.
-    # EMAIL
-    email = models.EmailField(null=True, blank=True)
-    # PROFESIÓN
     profesion = models.CharField(max_length=20, null=True, blank=True)
-    # Nombre    # para    # mostrar
     nombre_corto = models.CharField(max_length=20, null=True, blank=True)
 
     def __str__(self):
@@ -215,7 +163,14 @@ class Materia(models.Model):
 class NotaParcial(models.Model):
     numero = models.CharField(max_length=10, null=True)
     materia = models.ForeignKey(Materia, on_delete=models.DO_NOTHING, null=True)
-    estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True)
+    # estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True)
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
+    estudiante = ChainedForeignKey(
+        Estudiante,
+        chained_field='curso',
+        chained_model_field='curso',
+        show_all=False,
+        sort=True,)
 
     class Meta:
         verbose_name_plural = 'Notas Parciales'
@@ -325,18 +280,21 @@ class Seguimiento(models.Model):
 
     estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING)
     TIPOS = (
-        ('CM', 'Cambio de modalidad'),
-        ('POI', 'Pase a otra institución'),
-        ('IN', 'Inasistencias'),
-        ('SS', 'Situación de Salud'),
-        ('B', 'Becas'),
-        ('CC', 'Cuestiones de Convivencia'),
-        ('CO', 'Convocatoria'),
-        ('SA', 'Situación académica'),
-        ('SPF', 'Situación personal/familiar'),
-        ('R', 'Reconocimiento')
+        ('Cambio de Modalidad', 'Cambio de modalidad'),
+        ('Pase a otra institución', 'Pase a otra institución'),
+        ('Inasistencias', 'Inasistencias'),
+        ('Situación de Salud', 'Situación de Salud'),
+        ('Becas', 'Becas'),
+        ('Cuestiones de Convivencia', 'Cuestiones de Convivencia'),
+        ('Convocatoria', 'Convocatoria'),
+        ('Situación académica', 'Situación académica'),
+        ('Situación personal/familiar', 'Situación personal/familiar'),
+        ('Reconocimiento', 'Reconocimiento'),
+        ('Acuerdo con la Familia', 'Acuerdo con la Familia')
     )
     notificacion = models.TextField()
     fecha = models.DateField(default=django.utils.timezone.now)
-    tipo = models.CharField(choices=TIPOS, max_length=20)
-    informante = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    tipo = models.CharField(choices=TIPOS, max_length=30 )
+    def __str__(self):
+
+        return '{} - {} - {}'.format(self.estudiante.apellido, self.estudiante.curso.cursonombre, self.tipo)
