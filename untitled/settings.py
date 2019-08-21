@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 import os
+from django.conf.locale.es_AR import formats as es_formats
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -114,7 +115,7 @@ TIME_ZONE = 'America/Argentina/Buenos_Aires'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -132,8 +133,26 @@ USE_DJANGO_JQUERY = True
 
 INTERNAL_IPS = ('127.0.0.1',)
 
+DATE_FORMAT = 'd-m-Y'
+TIME_FORMAT = 'H:i'
+DATETIME_FORMAT = 'd-m-Y H:i'
+YEAR_MONTH_FORMAT = 'F Y'
+MONTH_DAY_FORMAT = 'F j'
+SHORT_DATE_FORMAT = 'm/d/Y'
+SHORT_DATETIME_FORMAT = 'm/d/Y P'
+FIRST_DAY_OF_WEEK = 1
+DATE_INPUT_FORMATS = (
+    '%d-%m-%Y',     # '21-03-2014'
+)
+TIME_INPUT_FORMATS = (
+    '%H:%M:%S',     # '17:59:59'
+    '%H:%M',        # '17:59'
+)
+DATETIME_INPUT_FORMATS = (
+    '%d-%m-%Y %H:%M',     # '21-03-2014 17:59'
+)
 
-TIME_FORMAT = 'h:i A'
-DATETIME_FORMAT = 'm/d/Y H:i:s'
-DATE_FORMAT = "m/d/Y"
-TIME_INPUT_FORMATS = ['%I:%M %p']
+DECIMAL_SEPARATOR = u'.'
+THOUSAND_SEPARATOR = u','
+NUMBER_GROUPING = 3
+

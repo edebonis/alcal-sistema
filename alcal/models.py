@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.html import format_html
 from datetime import datetime, timedelta
-from smart_selects.db_fields import ChainedForeignKey
+from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 
 
 doce_anios = timedelta(days=4380)
@@ -68,6 +68,8 @@ class Curso(models.Model):
 
     def __str__(self):
         return '{}'.format(self.cursonombre)
+
+
 
 
 class Vinculo(models.Model):
@@ -162,8 +164,12 @@ class Materia(models.Model):
 
 class NotaParcial(models.Model):
     numero = models.CharField(max_length=10, null=True)
-    materia = models.ForeignKey(Materia, on_delete=models.DO_NOTHING, null=True)
-    # estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True)
+    materia = ChainedForeignKey(
+        Materia,
+        chained_field='curso',
+        chained_model_field='curso',
+        show_all=False,
+        sort=True)
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
     estudiante = ChainedForeignKey(
         Estudiante,
@@ -298,3 +304,42 @@ class Seguimiento(models.Model):
     def __str__(self):
 
         return '{} - {} - {}'.format(self.estudiante.apellido, self.estudiante.curso.cursonombre, self.tipo)
+
+
+class Pendiente(models.Model):
+    materia = models.ForeignKey(Materia, on_delete=models.DO_NOTHING)
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return '{} - {}'.format(self.estudiante, self.materia)
+
+
+class Periodo(models.Model):
+    nombre = models.CharField(max_length=20, null=True)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+
+    def __str__(self):
+        return '{} - {} - {}'.format(self.nombre, self.fecha_inicio, self.fecha_fin)
+
+
+class MesaPendiente(models.Model):
+    periodo = models.ForeignKey(Periodo, on_delete=models.DO_NOTHING, null=True)
+    materia = models.ForeignKey(Materia, on_delete=models.DO_NOTHING)
+    fecha = models.DateTimeField()
+    docente = models.ForeignKey(Docente, on_delete=models.DO_NOTHING, null=True)
+
+    def __str__(self):
+        return '{} - {}'.format(self.fecha.strftime("%d/%m/%y %H:%M"), self.materia)
+
+    class Meta:
+        verbose_name_plural = 'Mesas de Pendientes'
+        verbose_name = 'Mesa de Pendientes'
+
+
+class InscripcionPendiente(models.Model):
+    mesa = models.ForeignKey(MesaPendiente, on_delete=models.DO_NOTHING)
+    pendiente = ChainedManyToManyField('Pendiente', chained_field='mesa', chained_model_field='pendiente')
+
+    def __str__(self):
+        return '{} - {}'.format(self.mesa, self.pendiente)

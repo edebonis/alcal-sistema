@@ -124,9 +124,10 @@ class NuevoEstudiante(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NuevoEstudiante, self).__init__(*args, **kwargs)
-        print(self.visible_fields()[2])
-        for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'select2-choice'
+        # for visible in self.visible_fields():
+        #     visible.field.widget.attrs['class'] = 'col-md-6'
+        self.visible_fields()[3].field.widget.attrs['class'] = 'form-control'
+        print(self.visible_fields()[3].field.widget.attrs)
 
 
 class NuevoPadre(forms.ModelForm):
