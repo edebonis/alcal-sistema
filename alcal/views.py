@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth.models import User
 from alcal.models import Carrera, Estudiante, Docente, Curso
-from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente
+from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota
 
 
 @login_required(login_url='/admin/login')
@@ -29,7 +29,6 @@ def portada(request):
                       'cant_estudiantes': cant_estudiantes,
                       'cant_femenino': cant_femenino,
                       'cant_masculino': cant_masculino,
-
                   }
                   )
 
@@ -101,7 +100,17 @@ def inasistencias_por_curso(request):
 
 @login_required(login_url='/admin/login')
 def notas_por_estudiante(request):
-    return render(request,'alcal/blue/notas_por_estudiante.html')
+    if request.method == "POST":
+        form = NuevaNota(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('/notas_por_estudiante')
+            except:
+                pass
+    else:
+        form = NuevaNota()
+    return render(request, 'alcal/blue/notas_por_estudiante.html', {'form': form})
 
 
 @login_required(login_url='/admin/login')
@@ -130,7 +139,6 @@ def nuevo_estudiante(request):
     if request.method == "POST":
         form = NuevoEstudiante(request.POST)
         if form.is_valid():
-            # print("Guardado")
             try:
                 form.save()
                 return redirect('/nuevo_estudiante')
@@ -140,6 +148,7 @@ def nuevo_estudiante(request):
         form = NuevoEstudiante()
 
     return render(request, 'alcal/blue/nuevo_estudiante.html', {'form': form})
+
 
 @login_required(login_url='/admin/login')
 def nuevo_padre(request):

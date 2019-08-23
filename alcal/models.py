@@ -70,8 +70,6 @@ class Curso(models.Model):
         return '{}'.format(self.cursonombre)
 
 
-
-
 class Vinculo(models.Model):
     nombre = models.CharField(max_length=100)
 
@@ -164,13 +162,14 @@ class Materia(models.Model):
 
 class NotaParcial(models.Model):
     numero = models.CharField(max_length=10, null=True)
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
     materia = ChainedForeignKey(
         Materia,
         chained_field='curso',
         chained_model_field='curso',
         show_all=False,
         sort=True)
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
+
     estudiante = ChainedForeignKey(
         Estudiante,
         chained_field='curso',
@@ -214,7 +213,13 @@ class Nota(models.Model):
 
 
 class Inasistencia(models.Model):
-    estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True)
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
+    estudiante = ChainedForeignKey(
+        Estudiante,
+        chained_field='curso',
+        chained_model_field='curso',
+        show_all=False,
+        sort=True, )
     TIPOS = (
         ('t', 'Llegada tarde'),
         ('T', 'Llegada tarde fuera de hora'),
@@ -223,11 +228,14 @@ class Inasistencia(models.Model):
         ('R', 'Retirado'),
         ('E', 'Ausente a Educación Física')
     )
-    cantidad = models.DecimalField(decimal_places=2, max_digits=2)
+    cantidad = models.DecimalField(decimal_places=2, max_digits=4)
     fecha = models.DateField()
     hora = models.TimeField(null=True)
     tipo = models.CharField(choices=TIPOS, max_length=20)
     turno = models.CharField(choices=(('M', 'Mañana'), ('T', 'Tarde')), max_length=20)
+
+    def __str__(self):
+        return '{} - {}'.format(self.fecha, self.estudiante)
 
 
 class Notificacion(models.Model):

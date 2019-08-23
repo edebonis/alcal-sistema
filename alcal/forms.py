@@ -1,5 +1,5 @@
 from django import forms
-from .models import Estudiante, Curso, Padre, Docente
+from .models import Estudiante, Curso, Padre, Docente, NotaParcial
 
 
 # class PostForm(forms.ModelForm):
@@ -192,7 +192,7 @@ class NuevoDocente(forms.ModelForm):
             'carrera_docente',
             'email',
             'profesion',
-            'nombre_corto'
+            'nombre_corto',
         ]
         labels = {
             'numero_de_registro': 'Número de Registro',
@@ -219,6 +219,22 @@ class NuevoDocente(forms.ModelForm):
             'nombre_corto': 'Nombre Corto'
         }
 
+
+class NuevaNota(forms.ModelForm):
+    class Meta:
+        model = NotaParcial
+        classmethod = "POST"
+        fields = ['numero',
+                  'materia',
+                  'curso',
+                  'estudiante'
+        ]
+        labels = {
+            'numero': 'Número',
+            'materia': 'Materia',
+            'curso': 'Curso',
+            'estudiante': 'Estudiante',
+        }
 
 # class Alumnos(forms.ModelForm):
 #     class Meta:

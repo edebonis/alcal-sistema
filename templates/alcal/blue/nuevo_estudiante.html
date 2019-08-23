@@ -34,8 +34,7 @@
                     <form action="#" method="post" class="card-body">
                             {% csrf_token %}
                         <div>
-                            Legajo {{form}}
-                            Género {{ form.genero }}
+                            {{form}}
                         </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
