@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+.idea
 
 # Distribution / packaging
 .Python
@@ -34,7 +35,7 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-alcal/migrations/*
+alcal/migrations/
 # Unit test / coverage reports
 htmlcov/
 .tox/
