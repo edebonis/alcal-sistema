@@ -96,20 +96,20 @@ class Padre(Persona):
 
 class Estudiante(Persona):
     legajo = models.IntegerField(primary_key=True)
-    activx = models.BooleanField(default=True, null=True, blank=True)
+    activx = models.NullBooleanField(default=True, null=True, blank=True)
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True, blank=True)
     orden = models.IntegerField(null=True, blank=True)
     libro = models.CharField(max_length=5, null=True, blank=True)
     folio = models.IntegerField(null=True, blank=True)
     anio_ingreso = models.IntegerField(default=datetime.today().year, null=True, blank=True)
     grupo_tec = models.IntegerField(null=True, blank=True)
-    ficha_de_inscripcion = models.BooleanField(null=True, blank=True)
-    foto_dni_estudiante = models.BooleanField(null=True, blank=True)
+    ficha_de_inscripcion = models.NullBooleanField(null=True, blank=True)
+    foto_dni_estudiante = models.NullBooleanField(null=True, blank=True)
     foto_dni_estudiante_archivo = models.FileField(null=True, blank=True)
-    foto_dni_responsable = models.BooleanField(null=True, blank=True)
-    partida_de_nacimiento = models.BooleanField(null=True, blank=True)
-    vacunas = models.BooleanField(null=True, blank=True)
-    certificado = models.BooleanField(null=True, blank=True)
+    foto_dni_responsable = models.NullBooleanField(null=True, blank=True)
+    partida_de_nacimiento = models.NullBooleanField(null=True, blank=True)
+    vacunas = models.NullBooleanField(null=True, blank=True)
+    certificado = models.NullBooleanField(null=True, blank=True)
     url_foto = models.URLField(null=True, blank=True)
     adeuda = models.ForeignKey(Documentacion, on_delete=models.DO_NOTHING, null=True, blank=True)
     archivo_de_seguimiento = models.URLField(null=True, blank=True)
@@ -131,7 +131,7 @@ class Estudiante(Persona):
 
 class Docente(Persona):
     numero_de_registro = models.IntegerField()
-    activo = models.BooleanField(default=True)
+    activo = models.NullBooleanField(default=True)
     antiguedad_anios = models.IntegerField(verbose_name='Antigüedad (Años)', null=True, blank=True)
     antiguedad_meses = models.IntegerField(verbose_name='Antigüedad (Meses)', null=True, blank=True)
     anio_ingreso = models.IntegerField(verbose_name='Año de Ingreso', null=True, blank=True)
@@ -146,7 +146,7 @@ class Docente(Persona):
 class Materia(models.Model):
     nombre = models.CharField(max_length=20)
     carrera = models.ForeignKey(Carrera, on_delete=models.DO_NOTHING)
-    taller = models.BooleanField(default=False)
+    taller = models.NullBooleanField(default=False)
     docente_titular = models.ForeignKey(Docente, on_delete=models.DO_NOTHING, related_name='Titular', null=True,
                                         blank=True)
     docente_provisional = models.ForeignKey(Docente, on_delete=models.DO_NOTHING, related_name='Provisional',
@@ -283,7 +283,7 @@ class Cuota(models.Model):
     fecha_pago = models.DateField()
     estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True)
     nombre_cuota = models.ForeignKey(NombreCuota, on_delete=models.DO_NOTHING, max_length=20)
-    pagada = models.BooleanField(default=False)
+    pagada = models.NullBooleanField(default=False)
     importe = models.IntegerField()
     list_display = ('fecha_pago', 'estudiante')
     def __str__(self):

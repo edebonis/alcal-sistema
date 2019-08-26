@@ -107,10 +107,12 @@ def notas_por_estudiante(request):
                 form.save()
                 return redirect('/notas_por_estudiante')
             except:
+                print("Error")
                 pass
     else:
         form = NuevaNota()
     return render(request, 'alcal/blue/notas_por_estudiante.html', {'form': form})
+    # return render(request, 'alcal/blue/form-editor.html', {'form': form})
 
 
 @login_required(login_url='/admin/login')
@@ -131,7 +133,7 @@ def comunicaciones_por_estudiante(request):
 @login_required(login_url='/admin/login')
 def nuevo_docente(request):
     form = NuevoDocente(request.POST)
-    return render(request,'alcal/blue/nuevo_docente.html',{'form': form})
+    return render(request, 'alcal/blue/nuevo_docente.html', {'form': form})
 
 
 @login_required(login_url='/admin/login')
@@ -146,7 +148,6 @@ def nuevo_estudiante(request):
                 pass
     else:
         form = NuevoEstudiante()
-
     return render(request, 'alcal/blue/nuevo_estudiante.html', {'form': form})
 
 
@@ -177,7 +178,6 @@ def comunicaciones_por_estudiante(request):
 def comunicaciones_por_curso(request):
     return render(request,'alcal/blue/comunicaciones_por_curso.html')
     return render(request,'alcal/blue/horarios.html')
-
 
 
 @login_required(login_url='/admin/login')

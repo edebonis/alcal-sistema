@@ -1,5 +1,6 @@
 from django import forms
 from .models import Estudiante, Curso, Padre, Docente, NotaParcial
+from django.forms import widgets
 
 
 # class PostForm(forms.ModelForm):
@@ -235,6 +236,13 @@ class NuevaNota(forms.ModelForm):
             'curso': 'Curso',
             'estudiante': 'Estudiante',
         }
+    def __init__(self, *args, **kwargs):
+        super(NuevaNota, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+        # self.visible_fields()[3].field.widget.attrs['class'] = 'form-control'
+        # print(self.visible_fields()[3].field.widget.attrs)
+
 
 # class Alumnos(forms.ModelForm):
 #     class Meta:
