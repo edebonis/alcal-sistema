@@ -217,7 +217,7 @@ def cursos(request):
 
 @login_required(login_url='/admin/login')
 def horarios(request):
-    pass
+    return render(request, 'alcal/blue/timeline.html')
 
 
 def get_name(request):

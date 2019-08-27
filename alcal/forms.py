@@ -125,10 +125,8 @@ class NuevoEstudiante(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NuevoEstudiante, self).__init__(*args, **kwargs)
-        # for visible in self.visible_fields():
-        #     visible.field.widget.attrs['class'] = 'col-md-6'
-        self.visible_fields()[3].field.widget.attrs['class'] = 'form-control'
-        print(self.visible_fields()[3].field.widget.attrs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
 
 
 class NuevoPadre(forms.ModelForm):
@@ -168,6 +166,10 @@ class NuevoPadre(forms.ModelForm):
             'profesion': 'Profesión',
         }
 
+    def __init__(self, *args, **kwargs):
+        super(NuevoPadre, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
 
 class NuevoDocente(forms.ModelForm):
     class Meta:
