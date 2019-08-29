@@ -11,35 +11,30 @@ from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 doce_anios = timedelta(days=4380)
 
 
-class Genero(models.Model):
-    nombre = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.nombre
-
-
-class TipoDni(models.Model):
-    nombre = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.nombre
-
-    class Meta:
-        verbose_name_plural = 'Tipos de DNI'
-
-
 class Persona(models.Model):
-    apellido = models.CharField(max_length=100, null=True)
-    nombre = models.CharField(max_length=100, null=True)
+    usuario = models.ForeignKey(User,blank= True, on_delete=models.DO_NOTHING, null=True)
+    GENEROS = (
+        ('Masculino', 'Masculino'),
+        ('Femenino', 'Femenino'),
+        ('Otro', 'Otro'),
+    )
+
+    TIPOS_DNI = (
+        ('DNI', 'DNI'),
+        ('CI', 'CI'),
+        ('Otro', 'Otro'),
+    )
+    apellido = models.CharField(max_length=100, null=True, blank=True)
+    nombre = models.CharField(max_length=100, null=True, blank=True)
     fnac = models.DateField(null=True, blank=True, default=datetime.today() - doce_anios)
-    tipo = models.ForeignKey(TipoDni, on_delete=models.DO_NOTHING, null=True, blank=True, default=1)
+    tipo = models.CharField(max_length=20, null=True, blank=True, choices=TIPOS_DNI)
     num_dni = models.IntegerField(null=True, blank=True)
     domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
     domicilio_numero = models.IntegerField(null=True, blank=True)
     telefono_1 = models.CharField(max_length=100, null=True, blank=True)
     telefono_2 = models.CharField(max_length=100, null=True, blank=True)
     telefono_3 = models.CharField(max_length=100, null=True, blank=True)
-    genero = models.ForeignKey(Genero, on_delete=models.DO_NOTHING, null=True, blank=True)
+    genero = models.CharField(max_length=20, null=True, blank=True, choices=GENEROS)
     observacion = models.TextField(null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     pais_de_nacimiento = CountryField(null=True, blank=True)
@@ -70,13 +65,6 @@ class Curso(models.Model):
         return '{}'.format(self.cursonombre)
 
 
-class Vinculo(models.Model):
-    nombre = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.nombre
-
-
 class Documentacion(models.Model):
     nombre = models.CharField(max_length=15)
 
@@ -95,7 +83,18 @@ class Padre(Persona):
 
 
 class Estudiante(Persona):
-    legajo = models.IntegerField(primary_key=True)
+    VINCULOS = (
+        ('Abuelo', 'Abuelo'),
+        ('Abuela', 'Abuela'),
+        ('Tutor', 'Tutor'),
+        ('Hermana', 'Hermana'),
+        ('Hermano', 'Hermano'),
+        ('Padre', 'Padre'),
+        ('Madre', 'Madre'),
+        ('Otro', 'Otro'),
+    )
+
+    legajo = models.IntegerField(primary_key=True, auto_created=True, blank=True )
     activx = models.NullBooleanField(default=True, null=True, blank=True)
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True, blank=True)
     orden = models.IntegerField(null=True, blank=True)
@@ -114,7 +113,7 @@ class Estudiante(Persona):
     adeuda = models.ForeignKey(Documentacion, on_delete=models.DO_NOTHING, null=True, blank=True)
     archivo_de_seguimiento = models.URLField(null=True, blank=True)
     responsable = models.ForeignKey(Padre, on_delete=models.DO_NOTHING, null=True, blank=True)
-    vinculo = models.ForeignKey(Vinculo, on_delete=models.DO_NOTHING, null=True, blank=True)
+    vinculo = models.CharField(max_length=50, choices=VINCULOS, null=True, blank=True)
     porcentaje_beca = models.IntegerField(null=True, blank=True)
 
     def colored_name(self):
@@ -130,7 +129,7 @@ class Estudiante(Persona):
 
 
 class Docente(Persona):
-    numero_de_registro = models.IntegerField()
+    numero_de_registro = models.IntegerField(null=True, blank=True)
     activo = models.NullBooleanField(default=True)
     antiguedad_anios = models.IntegerField(verbose_name='Antigüedad (Años)', null=True, blank=True)
     antiguedad_meses = models.IntegerField(verbose_name='Antigüedad (Meses)', null=True, blank=True)
@@ -161,7 +160,7 @@ class Materia(models.Model):
 
 
 class NotaParcial(models.Model):
-    numero = models.CharField(max_length=10, null=True)
+    nota = models.CharField(max_length=10, null=True, editable=True)
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
     materia = ChainedForeignKey(
         Materia,
@@ -181,7 +180,7 @@ class NotaParcial(models.Model):
         verbose_name_plural = 'Notas Parciales'
 
     def __str__(self):
-        return '{} - {} - {}'.format(self.estudiante, self.materia, self.numero)
+        return '{} - {} - {}'.format(self.estudiante, self.materia, self.nota)
 
 
 class Nota(models.Model):
@@ -351,3 +350,5 @@ class InscripcionPendiente(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.mesa, self.pendiente)
+
+

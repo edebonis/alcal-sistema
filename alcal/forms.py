@@ -171,6 +171,7 @@ class NuevoPadre(forms.ModelForm):
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
 
+
 class NuevoDocente(forms.ModelForm):
     class Meta:
         model = Docente
@@ -227,13 +228,13 @@ class NuevaNota(forms.ModelForm):
     class Meta:
         model = NotaParcial
         classmethod = "POST"
-        fields = ['numero',
+        fields = ['nota',
                   'materia',
                   'curso',
                   'estudiante'
-        ]
+                  ]
         labels = {
-            'numero': 'Número',
+            'nota': 'Número',
             'materia': 'Materia',
             'curso': 'Curso',
             'estudiante': 'Estudiante',
@@ -263,3 +264,4 @@ class NuevaNota(forms.ModelForm):
 #                 pass  # invalid input from the client; ignore and fallback to empty City queryset
 #         elif self.instance.pk:
 #             self.fields['city'].queryset = self.instance.country.city_set.order_by('name')
+
