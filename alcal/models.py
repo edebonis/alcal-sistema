@@ -12,7 +12,7 @@ doce_anios = timedelta(days=4380)
 
 
 class Persona(models.Model):
-    usuario = models.ForeignKey(User,blank= True, on_delete=models.DO_NOTHING, null=True)
+    # usuario = models.ForeignKey(User,blank= True, on_delete=models.DO_NOTHING, null=True)
     GENEROS = (
         ('Masculino', 'Masculino'),
         ('Femenino', 'Femenino'),
@@ -212,6 +212,16 @@ class Nota(models.Model):
 
 
 class Inasistencia(models.Model):
+    TIPOS = (
+        ('t', 'Llegada tarde'),
+        ('T', 'Llegada tarde fuera de hora'),
+        ('A', 'Ausente'),
+        ('r', 'Retirado dentro de la última hora'),
+        ('R', 'Retirado'),
+        ('E', 'Ausente a Educación Física'),
+        ('AP', 'Ausente con presencia en clase')
+    )
+
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
     estudiante = ChainedForeignKey(
         Estudiante,
@@ -219,22 +229,22 @@ class Inasistencia(models.Model):
         chained_model_field='curso',
         show_all=False,
         sort=True, )
-    TIPOS = (
-        ('t', 'Llegada tarde'),
-        ('T', 'Llegada tarde fuera de hora'),
-        ('A', 'Ausente'),
-        ('r', 'Retirado dentro de la última hora'),
-        ('R', 'Retirado'),
-        ('E', 'Ausente a Educación Física')
-    )
-    cantidad = models.DecimalField(decimal_places=2, max_digits=4)
     fecha = models.DateField()
-    hora = models.TimeField(null=True)
+    mañana = models.BooleanField(default=True)
+    tarde = models.BooleanField(default=False)
+    ed_fisica = models.BooleanField(default=False)
     tipo = models.CharField(choices=TIPOS, max_length=20)
-    turno = models.CharField(choices=(('M', 'Mañana'), ('T', 'Tarde')), max_length=20)
+    turno = models.CharField(choices=(('M', 'Mañana'), ('T', 'Tarde'), ('EF', 'Educación Física')), max_length=20)
+    sin_clase = models.BooleanField(default=False)
 
     def __str__(self):
         return '{} - {}'.format(self.fecha, self.estudiante)
+
+
+class Faltas(models.Model):
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING)
+    cantidad = models.DecimalField(decimal_places=2, max_digits=4)
+    fecha = models.DateField()
 
 
 class Notificacion(models.Model):
@@ -352,3 +362,10 @@ class InscripcionPendiente(models.Model):
         return '{} - {}'.format(self.mesa, self.pendiente)
 
 
+class NotaPendiente(models.Model):
+    nota = models.CharField(max_length=10, null=True, editable=True)
+    mesa = models.ForeignKey(MesaPendiente, on_delete=models.DO_NOTHING)
+    pendiente = models.ForeignKey(Pendiente, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return '{} - {}'.format(self.pendiente.estudiante, self.nota)

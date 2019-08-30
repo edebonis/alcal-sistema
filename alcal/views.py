@@ -10,7 +10,7 @@ from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocent
 
 @login_required(login_url='/admin/login')
 def index(request):
-    now = datetime.datetime.now()
+    now = "......."
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
 
@@ -20,8 +20,8 @@ def portada(request):
     carreras = Carrera.objects.order_by('anios')
     usuario = str(request.user)
     cant_estudiantes = Estudiante.objects.count()
-    cant_femenino = len(Estudiante.objects.filter(genero=2))
-    cant_masculino = len(Estudiante.objects.filter(genero=1))
+    cant_femenino = len(Estudiante.objects.filter(genero='Femenino'))
+    cant_masculino = len(Estudiante.objects.filter(genero='Masculino'))
     return render(request, 'alcal/blue/index.html',
                   {
                       'carreras': carreras,
