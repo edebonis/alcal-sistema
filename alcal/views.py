@@ -5,7 +5,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth.models import User
 from alcal.models import Carrera, Estudiante, Docente, Curso
-from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota
+from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, NotaParcial
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 
 @login_required(login_url='/admin/login')
@@ -177,7 +179,7 @@ def comunicaciones_por_estudiante(request):
 @login_required(login_url='/admin/login')
 def comunicaciones_por_curso(request):
     return render(request,'alcal/blue/comunicaciones_por_curso.html')
-    return render(request,'alcal/blue/horarios.html')
+
 
 
 @login_required(login_url='/admin/login')
@@ -197,7 +199,25 @@ def reportes_inasistencias(request):
 
 @login_required(login_url='/admin/login')
 def ficha_estudiante(request):
-    return render(request,'alcal/blue/ficha_estudiante.html')
+    valor = None
+    if request.method == "POST":
+        form = SelectorDeAlumno(request.POST)
+
+        if form.is_valid():
+            valor = form.cleaned_data['estudiante'].id
+            nota = NotaParcial.objects.get(estudiante=Estudiante.objects.get(id=valor))
+            print(form.cleaned_data['estudiante'].id)
+            return render(request, 'alcal/blue/ficha_estudiante.html',
+                          {'var': Estudiante.objects.get(id=valor),
+                           'nota': nota,
+                           'form': form})
+            try:
+                return redirect('/ficha_estudiante')
+            except:
+                pass
+    else:
+        form = SelectorDeAlumno()
+    return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form})
 
 
 @login_required(login_url='/admin/login')
@@ -217,7 +237,7 @@ def cursos(request):
 
 @login_required(login_url='/admin/login')
 def horarios(request):
-    return render(request, 'alcal/blue/timeline.html')
+    return render(request,'alcal/blue/horarios.html')
 
 
 def get_name(request):

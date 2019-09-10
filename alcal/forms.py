@@ -247,6 +247,19 @@ class NuevaNota(forms.ModelForm):
         # print(self.visible_fields()[3].field.widget.attrs)
 
 
+class SelectorDeAlumno(forms.ModelForm):
+    class Meta:
+        model = NotaParcial
+        classmethod = "POST"
+        fields = ['curso',
+                  'estudiante'
+                  ]
+        labels = {
+            'curso': 'Curso',
+            'estudiante': 'Estudiante',
+        }
+
+
 # class Alumnos(forms.ModelForm):
 #     class Meta:
 #         model = Estudiante

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import pre_save, post_save
 from django_countries.fields import CountryField
 import django
 from django.contrib.auth.models import User
@@ -9,6 +10,9 @@ from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 
 
 doce_anios = timedelta(days=4380)
+
+
+
 
 
 class Persona(models.Model):
@@ -230,7 +234,7 @@ class Inasistencia(models.Model):
         show_all=False,
         sort=True, )
     fecha = models.DateField()
-    mañana = models.BooleanField(default=True)
+    maniana = models.BooleanField(default=True, verbose_name='Mañana')
     tarde = models.BooleanField(default=False)
     ed_fisica = models.BooleanField(default=False)
     tipo = models.CharField(choices=TIPOS, max_length=20)
@@ -245,6 +249,17 @@ class Faltas(models.Model):
     estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING)
     cantidad = models.DecimalField(decimal_places=2, max_digits=4)
     fecha = models.DateField()
+
+
+def faltas(sender, instance, **kwargs):
+    print(kwargs)
+    if kwargs['created']:
+        f = Faltas.objects.create(estudiante=Estudiante.objects.last(), cantidad=10, fecha=datetime.today())
+        print("Falta guardada")
+
+
+post_save.connect(faltas, sender=Inasistencia)
+
 
 
 class Notificacion(models.Model):
