@@ -2,9 +2,9 @@ import datetime
 from django.template.context_processors import request
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.models import User
-from alcal.models import Carrera, Estudiante, Docente, Curso
+from alcal.models import Carrera, Estudiante, Docente, Curso, Nota
 from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, NotaParcial
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -205,16 +205,15 @@ def ficha_estudiante(request):
 
         if form.is_valid():
             valor = form.cleaned_data['estudiante'].id
-            nota = NotaParcial.objects.get(estudiante=Estudiante.objects.get(id=valor))
+            valor_curso = form.cleaned_data['curso'].id
+            nota = Nota.objects.filter(estudiante=Estudiante.objects.get(id=valor))
+            curso = NotaParcial.objects.filter(curso=Curso.objects.get(id=valor_curso))
             print(form.cleaned_data['estudiante'].id)
             return render(request, 'alcal/blue/ficha_estudiante.html',
                           {'var': Estudiante.objects.get(id=valor),
                            'nota': nota,
-                           'form': form})
-            try:
-                return redirect('/ficha_estudiante')
-            except:
-                pass
+                           'form': form,
+                           'curso': curso})
     else:
         form = SelectorDeAlumno()
     return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form})

@@ -207,8 +207,20 @@ class Nota(models.Model):
         (MESA_ADICIONAL, 'Mesa Adicional')
     )
     numero = models.DecimalField(max_digits=4, decimal_places=2, null=True)
-    materia = models.ForeignKey(Materia, on_delete=models.DO_NOTHING, null=True)
-    estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING, null=True)
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
+    materia = ChainedForeignKey(
+        Materia,
+        chained_field='curso',
+        chained_model_field='curso',
+        show_all=False,
+        sort=True)
+
+    estudiante = ChainedForeignKey(
+        Estudiante,
+        chained_field='curso',
+        chained_model_field='curso',
+        show_all=False,
+        sort=True, )
     instancia = models.CharField(max_length=20, choices=INSTANCIAS, null=True)
 
     def __str__(self):
