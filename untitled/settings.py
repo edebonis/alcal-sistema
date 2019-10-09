@@ -127,10 +127,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/esteban/Descargas'
+STATIC_ROOT = 'alcal'
 
-MEDIA_ROOT = os.path.join('templates', 'media/')
-MEDIA_URL = 'templates/media/'
+MEDIA_ROOT = os.path.join('alcal', 'static/images/')
+MEDIA_URL = 'alcal/static/images/'
 USE_DJANGO_JQUERY = True
 
 

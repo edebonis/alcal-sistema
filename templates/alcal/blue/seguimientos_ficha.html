@@ -1,0 +1,20 @@
+{%  block seguimientos_ficha %}
+{% load static %}
+     <div class="tab-pane" id="profile-2">
+        <div class="panel panel-default panel-fill">
+            <div class="panel-body">
+                <div class="timeline-2">
+                    {% for i in seguimiento %}
+                    <div class="time-item">
+                        <div class="item-info">
+                            <div class="text-muted">{{i.fecha}}</div>
+                            <p><strong><a href="#" class="text-info">{{ i.tipo }}</a></strong> {{i.notificacion}} <strong>"DSC000586.jpg"</strong></p>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+     </div>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Estudiante, Curso, Padre, Docente, NotaParcial
+from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento
 from django.forms import widgets
 
 
@@ -129,6 +129,28 @@ class NuevoEstudiante(forms.ModelForm):
             visible.field.widget.attrs['class'] = 'form-control'
 
 
+class NuevoSeguimiento(forms.ModelForm):
+    class Meta:
+        model = Seguimiento
+        fields = [
+            'estudiante',
+            'notificacion',
+            'fecha',
+            'tipo'
+        ]
+        labels = {
+            'estudiante': 'Estudiante',
+            'notificacion': 'Notificación',
+            'fecha': 'Fecha',
+            'tipo': 'Tipo'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(NuevoSeguimiento, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+
 class NuevoPadre(forms.ModelForm):
     class Meta:
         model = Padre
@@ -239,6 +261,7 @@ class NuevaNota(forms.ModelForm):
             'curso': 'Curso',
             'estudiante': 'Estudiante',
         }
+
     def __init__(self, *args, **kwargs):
         super(NuevaNota, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
@@ -258,6 +281,12 @@ class SelectorDeAlumno(forms.ModelForm):
             'curso': 'Curso',
             'estudiante': 'Estudiante',
         }
+
+    def __init__(self, *args, **kwargs):
+        super(SelectorDeAlumno, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control '
+
 
 
 # class Alumnos(forms.ModelForm):

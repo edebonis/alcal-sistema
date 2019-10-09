@@ -9,11 +9,6 @@ from datetime import datetime, timedelta
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 
 
-doce_anios = timedelta(days=4380)
-
-
-
-
 
 class Persona(models.Model):
     # usuario = models.ForeignKey(User,blank= True, on_delete=models.DO_NOTHING, null=True)
@@ -30,7 +25,7 @@ class Persona(models.Model):
     )
     apellido = models.CharField(max_length=100, null=True, blank=True)
     nombre = models.CharField(max_length=100, null=True, blank=True)
-    fnac = models.DateField(null=True, blank=True, default=datetime.today() - doce_anios)
+    fnac = models.DateField(null=True, blank=True)
     tipo = models.CharField(max_length=20, null=True, blank=True, choices=TIPOS_DNI)
     num_dni = models.IntegerField(null=True, blank=True)
     domicilio_calle = models.CharField(max_length=100, null=True, blank=True)
@@ -97,7 +92,6 @@ class Estudiante(Persona):
         ('Madre', 'Madre'),
         ('Otro', 'Otro'),
     )
-
     legajo = models.IntegerField(primary_key=True, auto_created=True, blank=True )
     activx = models.NullBooleanField(default=True, null=True, blank=True)
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True, blank=True)
@@ -147,7 +141,7 @@ class Docente(Persona):
 
 
 class Materia(models.Model):
-    nombre = models.CharField(max_length=20)
+    nombre = models.CharField(max_length=50)
     carrera = models.ForeignKey(Carrera, on_delete=models.DO_NOTHING)
     taller = models.NullBooleanField(default=False)
     docente_titular = models.ForeignKey(Docente, on_delete=models.DO_NOTHING, related_name='Titular', null=True,
@@ -271,7 +265,6 @@ def faltas(sender, instance, **kwargs):
 
 
 post_save.connect(faltas, sender=Inasistencia)
-
 
 
 class Notificacion(models.Model):

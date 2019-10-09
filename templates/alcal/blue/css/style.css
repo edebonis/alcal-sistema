@@ -2540,6 +2540,7 @@ tbody {
 th {
   font-size: 15px;
   color: #666;
+  @include transform(rotate(270deg));
 }
 /* Responsive Table */
 table.focus-on tbody tr.focused th, table.focus-on tbody tr.focused td {
@@ -2693,15 +2694,25 @@ div.dataTables_info {
   -webkit-border-radius: 6px 6px 0px 0px;
 }
 /* 17.1 Profile */
+/*.bg-picture {*/
+/*  position: relative;*/
+/*  padding: 100px 0px;*/
+/*  margin: -20px -25px 0px -25px;*/
+/*  background-repeat: no-repeat;*/
+/*  background-position: center;*/
+/*  -webkit-background-size: cover;*/
+/*  background-size: auto;*/
+/*}*/
 .bg-picture {
-  position: relative;
-  padding: 100px 0px;
-  margin: -20px -25px 0px -25px;
-  background-repeat: no-repeat;
-  background-position: center;
-  -webkit-background-size: cover;
-  background-size: cover;
+    -webkit-background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: -20px -25px 0px -25px;
+    padding: 0px 1000px;
+    position: relative;
 }
+
 .bg-picture>.bg-picture-overlay {
   position: absolute;
   top: 0;

@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.models import User
-from alcal.models import Carrera, Estudiante, Docente, Curso, Nota
-from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, NotaParcial
+from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona
+from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno,\
+    NotaParcial, NuevoSeguimiento
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
@@ -139,9 +140,30 @@ def nuevo_docente(request):
 
 
 @login_required(login_url='/admin/login')
+def nuevo_seguimiento(request):
+    if request.method == "POST":
+        form = NuevoSeguimiento(request.POST)
+        form2 = SelectorDeAlumno(request.POST)
+        if form.is_valid() and form2.is_valid():
+            form2.estudiante = form.estudiante
+            print("Es válido")
+            try:
+                form.save()
+                return redirect('/nuevo_seguimiento')
+            except:
+                pass
+            return render(request, 'alcal/blue/nuevo_seguimiento.html.html', {'form': form, 'form2': form2})
+    else:
+        form = NuevoSeguimiento(request.POST)
+        form2 = SelectorDeAlumno(request.POST)
+
+    return render(request, 'alcal/blue/nuevo_seguimiento.html', {'form': form, 'form2':form2})
+
+
+@login_required(login_url='/admin/login')
 def nuevo_estudiante(request):
     if request.method == "POST":
-        form = NuevoEstudiante(request.POST)
+        form = NuevoEstudiante(request.POST, request.FILES)
         if form.is_valid():
             try:
                 form.save()
@@ -200,20 +222,47 @@ def reportes_inasistencias(request):
 @login_required(login_url='/admin/login')
 def ficha_estudiante(request):
     valor = None
+    lista = ['PT',
+             'ST',
+             'TT',
+             'CF',
+             'ND',
+             'NF',
+             'CD']
     if request.method == "POST":
         form = SelectorDeAlumno(request.POST)
-
         if form.is_valid():
+            boletin = []
             valor = form.cleaned_data['estudiante'].id
             valor_curso = form.cleaned_data['curso'].id
-            nota = Nota.objects.filter(estudiante=Estudiante.objects.get(id=valor))
             curso = NotaParcial.objects.filter(curso=Curso.objects.get(id=valor_curso))
-            print(form.cleaned_data['estudiante'].id)
-            return render(request, 'alcal/blue/ficha_estudiante.html',
-                          {'var': Estudiante.objects.get(id=valor),
-                           'nota': nota,
-                           'form': form,
-                           'curso': curso})
+            nota = Nota.objects.filter(estudiante=Estudiante.objects.get(id=valor))
+            materias = Materia.objects.filter(curso=valor_curso)
+            seg = None
+            try:
+                id_pers = Persona.objects.get(id=valor).estudiante.id
+                seg = Seguimiento.objects.filter(id=1234)
+                print(valor)
+            except:
+                seg = ""
+            for i in range(len(materias)):
+                id_materia = materias[i].id
+                boletin.append([])
+                boletin[i].append('{}'.format(materias[i].nombre))
+                for j in range(7):
+                    try:
+                        boletin[i].append(nota.filter(materia=id_materia).filter(instancia=lista[j]).last().numero)
+                    except:
+                        boletin[i].append("-")
+            context = {'var': Estudiante.objects.get(id=valor),
+                       'seguimiento': seg,
+                       'nota': nota,
+                       'form': form,
+                       'curso': curso,
+                       'materias': materias,
+                       'boletin': boletin}
+            print(seg)
+            return render(request, 'alcal/blue/ficha_estudiante.html', context)
     else:
         form = SelectorDeAlumno()
     return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form})

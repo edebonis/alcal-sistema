@@ -30,6 +30,7 @@ urlpatterns = [
     path('nuevo_estudiante', views.nuevo_estudiante, name='nuevoest'),
     path('nuevo_padre', views.nuevo_padre, name='nuevopad'),
     path('nuevo_docente', views.nuevo_docente, name='nuevodoc'),
+    path('nuevo_seguimiento', views.nuevo_seguimiento, name='nuevoseg'),
     path('reportes_comunicaciones', views.reportes_comunicaciones, name='repcomu'),
     path('reportes_notas', views.reportes_notas, name='repnotas'),
     path('reportes_inasistencias', views.reportes_inasistencias, name='repina'),
