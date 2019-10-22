@@ -44,6 +44,13 @@ urlpatterns = [
     path('notas_por_estudiante', views.notas_por_estudiante, name='notest'),
     path('notas_por_curso', views.notas_por_curso, name='notcur'),
     path('chaining/', include('smart_selects.urls')),
+    path('nuevo_pago', views.nuevo_pago, name='nuevopago'),
+    path('ver_pago', views.ver_pago, name='verpago'),
+    path('ver_alumno', views.ver_alumno, name='veralumno'),
+    path('ver_familia', views.ver_familia, name='verfamilia'),
+    path('reportes_seguimientos', views.reportes_seguimientos, name='reporsegui'),
+    path('nuevo_seguimientos', views.nuevo_seguimientos, name='nuevosegui'),
+    path('ver_seguimientos', views.ver_seguimientos, name='versegui'),
     ]
 
 

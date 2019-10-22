@@ -305,3 +305,31 @@ def get_name(request):
         form = NameForm()
 
     return render(request, 'name.html', {'form': form})
+
+@login_required(login_url='/admin/login')
+def nuevo_pago(request):
+    return render(request,'alcal/blue/nuevo_pago.html')
+
+@login_required(login_url='/admin/login')
+def ver_pago(request):
+    return render(request,'alcal/blue/ver_pago.html')
+
+@login_required(login_url='/admin/login')
+def ver_alumno(request):
+    return render(request,'alcal/blue/ver_alumno.html')
+
+@login_required(login_url='/admin/login')
+def ver_familia(request):
+    return render(request,'alcal/blue/ver_familia.html')
+
+@login_required(login_url='/admin/login')
+def reportes_seguimientos(request):
+    return render(request,'alcal/blue/reportes_seguimiento.html')
+
+@login_required(login_url='/admin/login')
+def ver_seguimientos(request):
+    return render(request,'alcal/blue/ver_seguimiento.html')
+
+@login_required(login_url='/admin/login')
+def nuevo_seguimientos(request):
+    return render(request,'alcal/blue/nuevo_seguimiento.html')
