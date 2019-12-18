@@ -23,8 +23,8 @@ def portada(request):
     carreras = Carrera.objects.order_by('anios')
     usuario = str(request.user)
     cant_estudiantes = Estudiante.objects.count()
-    cant_femenino = len(Estudiante.objects.filter(genero='Femenino'))
-    cant_masculino = len(Estudiante.objects.filter(genero='Masculino'))
+    cant_femenino = 1#len(Estudiante.objects.filter(genero='Femenino'))
+    cant_masculino = 2 #len(Estudiante.objects.filter(genero='Masculino'))
     return render(request, 'alcal/blue/index.html',
                   {
                       'carreras': carreras,
