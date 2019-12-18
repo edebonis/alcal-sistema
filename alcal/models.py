@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 
 
-
 class Persona(models.Model):
     # usuario = models.ForeignKey(User,blank= True, on_delete=models.DO_NOTHING, null=True)
     GENEROS = (
@@ -257,14 +256,14 @@ class Faltas(models.Model):
     fecha = models.DateField()
 
 
-def faltas(sender, instance, **kwargs):
-    print(kwargs)
-    if kwargs['created']:
-        f = Faltas.objects.create(estudiante=Estudiante.objects.last(), cantidad=10, fecha=datetime.today())
-        print("Falta guardada")
+    def faltas(sender, instance, **kwargs):
+        print(kwargs)
+        if kwargs['created']:
+            f = Faltas.objects.create(estudiante=Estudiante.objects.last(), cantidad=10, fecha=datetime.today())
+            print("Falta guardada")
 
-
-post_save.connect(faltas, sender=Inasistencia)
+    
+    post_save.connect(faltas, sender=Inasistencia)
 
 
 class Notificacion(models.Model):
