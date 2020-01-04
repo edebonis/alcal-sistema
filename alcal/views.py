@@ -1,14 +1,10 @@
-import datetime
-from django.template.context_processors import request
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
-from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, HttpResponseRedirect
+
 from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona
-from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno,\
+from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
     NotaParcial, NuevoSeguimiento
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 
 @login_required(login_url='/admin/login')
@@ -306,29 +302,36 @@ def get_name(request):
 
     return render(request, 'name.html', {'form': form})
 
+
 @login_required(login_url='/admin/login')
 def nuevo_pago(request):
     return render(request,'alcal/blue/nuevo_pago.html')
+
 
 @login_required(login_url='/admin/login')
 def ver_pago(request):
     return render(request,'alcal/blue/ver_pago.html')
 
+
 @login_required(login_url='/admin/login')
 def ver_alumno(request):
     return render(request,'alcal/blue/ver_alumno.html')
+
 
 @login_required(login_url='/admin/login')
 def ver_familia(request):
     return render(request,'alcal/blue/ver_familia.html')
 
+
 @login_required(login_url='/admin/login')
 def reportes_seguimientos(request):
     return render(request,'alcal/blue/reportes_seguimiento.html')
 
+
 @login_required(login_url='/admin/login')
 def ver_seguimientos(request):
     return render(request,'alcal/blue/ver_seguimiento.html')
+
 
 @login_required(login_url='/admin/login')
 def nuevo_seguimientos(request):

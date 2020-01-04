@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import include
+from django.conf.urls import include, url
 from alcal import views
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path('index/', views.index, name='index'),
     path('portada', views.portada, name='portada'),
@@ -51,6 +52,7 @@ urlpatterns = [
     path('reportes_seguimientos', views.reportes_seguimientos, name='reporsegui'),
     path('nuevo_seguimientos', views.nuevo_seguimientos, name='nuevosegui'),
     path('ver_seguimientos', views.ver_seguimientos, name='versegui'),
+    url(r'^chaining/', include('smart_selects.urls')),
     ]
 
 

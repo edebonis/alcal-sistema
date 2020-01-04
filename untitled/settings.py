@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_template_maths',
     'smart_selects',
     'untitled',
+
 ]
 
 MIDDLEWARE = [
