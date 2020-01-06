@@ -131,7 +131,16 @@ def comunicaciones_por_estudiante(request):
 
 @login_required(login_url='/admin/login')
 def nuevo_docente(request):
-    form = NuevoDocente(request.POST)
+    if request.method == "POST":
+        form = NuevoDocente(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('/nuevo_docente')
+            except:
+                pass
+    else:
+        form = NuevoDocente()
     return render(request, 'alcal/blue/nuevo_docente.html', {'form': form})
 
 
@@ -141,8 +150,6 @@ def nuevo_seguimiento(request):
         form = NuevoSeguimiento(request.POST)
         form2 = SelectorDeAlumno(request.POST)
         if form.is_valid() and form2.is_valid():
-            form2.estudiante = form.estudiante
-            print("Es válido")
             try:
                 form.save()
                 return redirect('/nuevo_seguimiento')
@@ -236,11 +243,12 @@ def ficha_estudiante(request):
             materias = Materia.objects.filter(curso=valor_curso)
             seg = None
             try:
-                id_pers = Persona.objects.get(id=valor).estudiante.id
-                seg = Seguimiento.objects.filter(id=1234)
-                print(valor)
+                id_pers = Persona.objects.get(id=valor).estudiante.legajo
+                print(id_pers)
+                seg = Seguimiento.objects.order_by('fecha').filter(estudiante__legajo=id_pers)
+                print(seg)
             except:
-                seg = ""
+                seg = "???"
             for i in range(len(materias)):
                 id_materia = materias[i].id
                 boletin.append([])
@@ -256,7 +264,8 @@ def ficha_estudiante(request):
                        'form': form,
                        'curso': curso,
                        'materias': materias,
-                       'boletin': boletin}
+                       'boletin': boletin,
+                       }
             print(seg)
             return render(request, 'alcal/blue/ficha_estudiante.html', context)
     else:
@@ -333,6 +342,4 @@ def ver_seguimientos(request):
     return render(request,'alcal/blue/ver_seguimiento.html')
 
 
-@login_required(login_url='/admin/login')
-def nuevo_seguimientos(request):
-    return render(request,'alcal/blue/nuevo_seguimiento.html')
+

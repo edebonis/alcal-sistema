@@ -130,6 +130,7 @@ class NuevoEstudiante(forms.ModelForm):
 
 
 class NuevoSeguimiento(forms.ModelForm):
+
     class Meta:
         model = Seguimiento
         fields = [
@@ -148,7 +149,16 @@ class NuevoSeguimiento(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(NuevoSeguimiento, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control'
+            print(visible)
+            print('+++')
+            if type(visible.field) == forms.fields.DateField:
+                visible.field.widget.attrs['class'] = 'form-control'
+                visible.field.widget.attrs['placeholder'] = 'dd-mm-yyyy'
+                visible.field.widget.attrs['id'] = 'datepicker'
+                # visible.field.widget.attrs['type'] = 'date'
+                visible.field.widget.attrs[type] = 'date'
+            else:
+                visible.field.widget.attrs['class'] = 'form-control'
 
 
 class NuevoPadre(forms.ModelForm):
@@ -244,6 +254,11 @@ class NuevoDocente(forms.ModelForm):
             'profesion': 'Profesión',
             'nombre_corto': 'Nombre Corto'
         }
+
+    def __init__(self, *args, **kwargs):
+        super(NuevoDocente, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
 
 
 class NuevaNota(forms.ModelForm):

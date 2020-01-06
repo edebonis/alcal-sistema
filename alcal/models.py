@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from datetime import datetime, timedelta
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
+from .CONSTANTS import codigos
 
 
 class Persona(models.Model):
@@ -227,8 +228,8 @@ class Inasistencia(models.Model):
         ('A', 'Ausente'),
         ('r', 'Retirado dentro de la última hora'),
         ('R', 'Retirado'),
-        ('E', 'Ausente a Educación Física'),
-        ('AP', 'Ausente con presencia en clase')
+        ('-', 'Sin Clase'),
+        ('P', 'Presente')
     )
 
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
@@ -239,12 +240,10 @@ class Inasistencia(models.Model):
         show_all=False,
         sort=True, )
     fecha = models.DateField()
-    maniana = models.BooleanField(default=True, verbose_name='Mañana')
-    tarde = models.BooleanField(default=False)
-    ed_fisica = models.BooleanField(default=False)
-    tipo = models.CharField(choices=TIPOS, max_length=20)
-    turno = models.CharField(choices=(('M', 'Mañana'), ('T', 'Tarde'), ('EF', 'Educación Física')), max_length=20)
-    sin_clase = models.BooleanField(default=False)
+
+    maniana = models.CharField(choices=TIPOS, max_length=20)
+    tarde = models.CharField(choices=TIPOS, max_length=20)
+    ed_fisica = models.CharField(choices=TIPOS, max_length=20)
 
     def __str__(self):
         return '{} - {}'.format(self.fecha, self.estudiante)
@@ -255,11 +254,14 @@ class Faltas(models.Model):
     cantidad = models.DecimalField(decimal_places=2, max_digits=4)
     fecha = models.DateField()
 
-
     def faltas(sender, instance, **kwargs):
         print(kwargs)
         if kwargs['created']:
-            f = Faltas.objects.create(estudiante=Estudiante.objects.last(), cantidad=10, fecha=datetime.today())
+            e = Inasistencia.objects.last()
+            f = e.fecha
+            c = '{}{}{}'.format(e.maniana, e.tarde, e.ed_fisica)
+            cant = codigos[c.upper()]
+            Faltas.objects.create(estudiante=e.estudiante, cantidad=cant, fecha=f)
             print("Falta guardada")
 
     

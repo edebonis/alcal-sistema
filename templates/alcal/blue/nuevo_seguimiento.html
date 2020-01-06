@@ -41,9 +41,15 @@
                             <form action="#" method="post" class="form-horizontal" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="form-group">
-                                    {{ form2 }}
+                                    {{ form2.curso.label }}
+                                    {{ form2.curso }}
+                                    {{ form2.estudiante.label }}
+                                    {{ form2.estudiante }}
                                     {{ form.fecha.label }}
+                                    {{ form.fecha}}
+                                    {{ form.notificacion.label }}
                                     {{ form.notificacion }}
+                                    {{ form.tipo.label }}
                                     {{ form.tipo }}
                                 </div>
                                <button type="submit" class="btn btn-primary">Guardar</button>

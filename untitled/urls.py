@@ -50,7 +50,7 @@ urlpatterns = [
     path('ver_alumno', views.ver_alumno, name='veralumno'),
     path('ver_familia', views.ver_familia, name='verfamilia'),
     path('reportes_seguimientos', views.reportes_seguimientos, name='reporsegui'),
-    path('nuevo_seguimientos', views.nuevo_seguimientos, name='nuevosegui'),
+    path('nuevo_seguimiento', views.nuevo_seguimiento, name='nuevosegui'),
     path('ver_seguimientos', views.ver_seguimientos, name='versegui'),
     url(r'^chaining/', include('smart_selects.urls')),
     ]
