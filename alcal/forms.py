@@ -1,21 +1,13 @@
 from django import forms
-from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento
+from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia
 from django.forms import widgets
-
-
-# class PostForm(forms.ModelForm):
-#
-#     class Meta:
-#         # model = Post
-#         curso = forms.ComboField(fields=Curso.objects.all())
-#         fields = ('curso', curso)
 
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Your name', max_length=100)
 
 
-class CursoForm(forms.ModelForm):
+class Cursos(forms.ModelForm):
     class Meta:
         valores = []
         anio = Curso.anio
@@ -27,6 +19,7 @@ class CursoForm(forms.ModelForm):
         for i in val:
             tup = (i['cursonombre'], i['cursonombre'])
             valores.append(tup)
+        valores.sort()
         fields = [
             'anio',
             'division',
@@ -47,6 +40,20 @@ class CursoForm(forms.ModelForm):
                                         }
                                         ),
         }
+
+
+class FechaInasistencias(forms.Form):
+    fecha = forms.DateField()
+
+    def __init__(self, *args, **kwargs):
+        super(FechaInasistencias, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+            visible.field.widget.attrs['type'] = 'text'
+            visible.field.widget.attrs['placeholder'] = 'dd-mm-yyyy'
+            visible.field.widget.attrs['id'] = 'datepicker'
+            visible.field.widget.attrs['autocomplete'] = 'off'
+            visible.field.widget.attrs['onchange'] = 'form.submit()'
 
 
 class NuevoEstudiante(forms.ModelForm):

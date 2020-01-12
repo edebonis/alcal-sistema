@@ -2,9 +2,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, HttpResponseRedirect
 
-from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona
-from .forms import NameForm, CursoForm, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
-    NotaParcial, NuevoSeguimiento
+from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia
+from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
+    NotaParcial, NuevoSeguimiento, FechaInasistencias
+
+from datetime import date
+from datetime import datetime
 
 
 @login_required(login_url='/admin/login')
@@ -66,18 +69,17 @@ def buscar_curso(request):
 
 
 @login_required(login_url='/admin/login')
-def editable_list(request):
+def cursos(request):
     anio_elegido = 1
     division_elegida = "A"
-    form = CursoForm(request.POST)
+    form = Cursos(request.POST)
     estudiantes = Estudiante.objects.order_by('apellido')
 
     if request.method == "POST":
         anio_elegido = request.POST['cursonombre'][0]
         division_elegida = request.POST['cursonombre'][1]
 
-
-    return render(request, 'alcal/blue/tables-editable.html',
+    return render(request, 'alcal/blue/cursos.html',
                   {
                       'estudiantes': estudiantes,
                       'cursos': cursos,
@@ -89,12 +91,96 @@ def editable_list(request):
 
 @login_required(login_url='/admin/login')
 def inasistencias_por_estudiante(request):
-    return render(request, 'alcal/blue/inasistencias_por_estudiante.html')
+    valor = None
+    lista = ['PT',
+             'ST',
+             'TT',
+             'CF',
+             'ND',
+             'NF',
+             'CD']
+    if request.method == "POST":
+        print("Post")
+        form = SelectorDeAlumno(request.POST)
+        if form.is_valid():
+            boletin = []
+            valor = form.cleaned_data['estudiante'].id
+            valor_curso = form.cleaned_data['curso'].id
+            curso = NotaParcial.objects.filter(curso=Curso.objects.get(id=valor_curso))
+            nota = Nota.objects.filter(estudiante=Estudiante.objects.get(id=valor))
+            materias = Materia.objects.filter(curso=valor_curso)
+            seg = None
+            try:
+                id_pers = Persona.objects.get(id=valor).estudiante.legajo
+                print(id_pers)
+                seg = Seguimiento.objects.order_by('fecha').filter(estudiante__legajo=id_pers)
+                print(seg)
+            except:
+                seg = "???"
+            for i in range(len(materias)):
+                id_materia = materias[i].id
+                boletin.append([])
+                boletin[i].append('{}'.format(materias[i].nombre))
+                for j in range(7):
+                    try:
+                        boletin[i].append(nota.filter(materia=id_materia).filter(instancia=lista[j]).last().numero)
+                    except:
+                        boletin[i].append("-")
+            context = {'var': Estudiante.objects.get(id=valor),
+                       'seguimiento': seg,
+                       'nota': nota,
+                       'form': form,
+                       'curso': curso,
+                       'materias': materias,
+                       'boletin': boletin,
+                       }
+            print(seg)
+            return render(request, 'alcal/blue/inasistencias_por_estudiante.html', context)
+    else:
+        print("Else")
+        form = SelectorDeAlumno()
+    return render(request, 'alcal/blue/inasistencias_por_estudiante.html', {'form': form})
 
 
 @login_required(login_url='/admin/login')
 def inasistencias_por_curso(request):
-    return render(request,'alcal/blue/inasistencias_por_curso.html')
+    anio_elegido = 1
+    division_elegida = "A"
+    form = Cursos(request.POST)
+    form2 = FechaInasistencias(request.POST)
+    creado = True
+
+    estudiantes = Estudiante.objects.order_by('apellido')
+    inasistencias = Inasistencia.objects.all()
+    for h in inasistencias:
+        print(h)
+        print(h.estudiante)
+        print(h.maniana + h.tarde + h.ed_fisica)
+    print(inasistencias.values('fecha'))
+    if request.method == "POST":
+        anio_elegido = request.POST['cursonombre'][0]
+        division_elegida = request.POST['cursonombre'][1]
+        fecha = datetime.strptime(request.POST['fecha'], "%m/%d/%Y")
+
+        for i in inasistencias.values('fecha'):
+            var = datetime.combine(i['fecha'], datetime.min.time())
+            print(var > fecha)
+
+        if fecha > datetime.today():
+            creado = False
+        else:
+            creado = True
+
+    return render(request,'alcal/blue/inasistencias_por_curso.html',
+                  {
+                      'estudiantes': estudiantes,
+                      'cursos': cursos,
+                      'form': form,
+                      'form2': form2,
+                      'anio_elegido': int(anio_elegido),
+                      'division_elegida': division_elegida,
+                      'creado': creado
+                  })
 
 
 @login_required(login_url='/admin/login')
@@ -116,17 +202,100 @@ def notas_por_estudiante(request):
 
 @login_required(login_url='/admin/login')
 def notas_por_curso(request):
-    return render(request,'alcal/blue/notas_por_curso.html')
+    anio_elegido = 1
+    division_elegida = "A"
+    form = Cursos(request.POST)
+    estudiantes = Estudiante.objects.order_by('apellido')
+
+    if request.method == "POST":
+        anio_elegido = request.POST['cursonombre'][0]
+        division_elegida = request.POST['cursonombre'][1]
+
+    return render(request, 'alcal/blue/notas_por_curso.html',
+                  {
+                      'estudiantes': estudiantes,
+                      'cursos': cursos,
+                      'form': form,
+                      'anio_elegido': int(anio_elegido),
+                      'division_elegida': division_elegida
+                  })
 
 
 @login_required(login_url='/admin/login')
 def comunicaciones_por_curso(request):
-    return render(request,'alcal/blue/comunicaciones_por_curso.html')
+    anio_elegido = 1
+    division_elegida = "A"
+    form = Cursos(request.POST)
+    estudiantes = Estudiante.objects.order_by('apellido')
+
+    if request.method == "POST":
+        anio_elegido = request.POST['cursonombre'][0]
+        division_elegida = request.POST['cursonombre'][1]
+
+    return render(request, 'alcal/blue/notas_por_curso.html',
+                  {
+                      'estudiantes': estudiantes,
+                      'cursos': cursos,
+                      'form': form,
+                      'anio_elegido': int(anio_elegido),
+                      'division_elegida': division_elegida
+                  })
 
 
 @login_required(login_url='/admin/login')
-def comunicaciones_por_estudiante(request):
-    return render(request,'alcal/blue/comunicaciones_por_estudiante.html')
+def com_por_estudiante(request):
+    valor = None
+    print("INICIO")
+    lista = ['PT',
+             'ST',
+             'TT',
+             'CF',
+             'ND',
+             'NF',
+             'CD']
+    if request.method == "POST":
+        print("post")
+        form = SelectorDeAlumno(request.POST)
+        if form.is_valid():
+            boletin = []
+            print("is valid")
+            valor = form.cleaned_data['estudiante'].id
+            valor_curso = form.cleaned_data['curso'].id
+            curso = NotaParcial.objects.filter(curso=Curso.objects.get(id=valor_curso))
+            nota = Nota.objects.filter(estudiante=Estudiante.objects.get(id=valor))
+            materias = Materia.objects.filter(curso=valor_curso)
+            seg = None
+            try:
+                id_pers = Persona.objects.get(id=valor).estudiante.legajo
+                print(id_pers)
+                seg = Seguimiento.objects.order_by('fecha').filter(estudiante__legajo=id_pers)
+                print(seg)
+            except:
+                seg = "???"
+                print(seg)
+            for i in range(len(materias)):
+                id_materia = materias[i].id
+                boletin.append([])
+                boletin[i].append('{}'.format(materias[i].nombre))
+                for j in range(7):
+                    try:
+                        boletin[i].append(nota.filter(materia=id_materia).filter(instancia=lista[j]).last().numero)
+                    except:
+                        boletin[i].append("-")
+            context = {'var': Estudiante.objects.get(id=valor),
+                       'seguimiento': seg,
+                       'nota': nota,
+                       'form': form,
+                       'curso': curso,
+                       'materias': materias,
+                       'boletin': boletin,
+                       }
+            print(seg)
+            return render(request, 'alcal/blue/com_por_estudiante.html', context)
+    else:
+        form = SelectorDeAlumno()
+        print("else")
+    return render(request, 'alcal/blue/com_por_estudiante.html', {'form': form})
 
 
 @login_required(login_url='/admin/login')
@@ -198,13 +367,28 @@ def nuevo_padre(request):
 
 @login_required(login_url='/admin/login')
 def comunicaciones_por_estudiante(request):
-    return render(request,'alcal/blue/comunicaciones_por_estudiante.html')
+    return render(request, 'alcal/blue/com_por_estudiante.html')
 
 
 @login_required(login_url='/admin/login')
 def comunicaciones_por_curso(request):
-    return render(request,'alcal/blue/comunicaciones_por_curso.html')
+    anio_elegido = 1
+    division_elegida = "A"
+    form = Cursos(request.POST)
+    estudiantes = Estudiante.objects.order_by('apellido')
 
+    if request.method == "POST":
+        anio_elegido = request.POST['cursonombre'][0]
+        division_elegida = request.POST['cursonombre'][1]
+
+    return render(request, 'alcal/blue/comunicaciones_por_curso.html',
+                  {
+                      'estudiantes': estudiantes,
+                      'cursos': cursos,
+                      'form': form,
+                      'anio_elegido': int(anio_elegido),
+                      'division_elegida': division_elegida
+                  })
 
 
 @login_required(login_url='/admin/login')
@@ -281,11 +465,6 @@ def ficha_docente(request):
 @login_required(login_url='/admin/login')
 def carreras(request):
     return render(request,'alcal/blue/carreras.html')
-
-
-@login_required(login_url='/admin/login')
-def cursos(request):
-    return render(request,'alcal/blue/cursos.html')
 
 
 @login_required(login_url='/admin/login')
