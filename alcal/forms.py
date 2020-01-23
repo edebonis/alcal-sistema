@@ -1,7 +1,7 @@
 from django import forms
 from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia
 from django.forms import widgets
-
+from datetime import datetime, timedelta
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Your name', max_length=100)
@@ -21,16 +21,16 @@ class Cursos(forms.ModelForm):
             valores.append(tup)
         valores.sort()
         fields = [
-            'anio',
-            'division',
+            # 'anio',
+            # 'division',
             'cursonombre',
-            'cursosiguiente'
+            # 'cursosiguiente'
         ]
         labels = {
-            'anio': 'Año',
-            'division': 'División',
+            # 'anio': 'Año',
+            # 'division': 'División',
             'cursonombre': 'Nombre Curso',
-            'cursosiguiente': 'Siguiente Curso',
+            # 'cursosiguiente': 'Siguiente Curso',
         }
         widgets = {
             'cursonombre': forms.Select(choices=valores,
@@ -42,18 +42,28 @@ class Cursos(forms.ModelForm):
         }
 
 
+class InasistenciaForm(forms.ModelForm):
+    class Meta:
+        model = Inasistencia
+        fields = ['maniana', 'tarde', 'ed_fisica']
+        labels = {'maniana': 'Mañana',
+                  'tarde': 'Tarde',
+                  'ed_fisica': 'Ed Física'}
+
+
 class FechaInasistencias(forms.Form):
-    fecha = forms.DateField()
+    fecha = forms.DateField(input_formats=["%d/%m/%Y"], required=False)
 
     def __init__(self, *args, **kwargs):
         super(FechaInasistencias, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
             visible.field.widget.attrs['type'] = 'text'
-            visible.field.widget.attrs['placeholder'] = 'dd-mm-yyyy'
+            visible.field.widget.attrs['placeholder'] = 'dd/mm/yyyy'
             visible.field.widget.attrs['id'] = 'datepicker'
             visible.field.widget.attrs['autocomplete'] = 'off'
             visible.field.widget.attrs['onchange'] = 'form.submit()'
+
 
 
 class NuevoEstudiante(forms.ModelForm):

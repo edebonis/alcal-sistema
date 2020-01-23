@@ -28,6 +28,7 @@ urlpatterns = [
     path('', views.portada, name='portada'),
     path('inasistencias_por_estudiante', views.inasistencias_por_estudiante, name='inaxest'),
     path('inasistencias_por_curso', views.inasistencias_por_curso, name='inaxcur'),
+    path('inasistencias_por_curso_guardar', views.inasistencias_por_curso_guardar, name='inaxcurg'),
     path('nuevo_estudiante', views.nuevo_estudiante, name='nuevoest'),
     path('nuevo_padre', views.nuevo_padre, name='nuevopad'),
     path('nuevo_docente', views.nuevo_docente, name='nuevodoc'),

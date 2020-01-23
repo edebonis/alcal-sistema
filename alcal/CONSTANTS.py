@@ -61,7 +61,22 @@ codigos = {
     'A-P': 1,
     'R-A': 1,
     'R-P': 0.5,
-    '---': 0
+    '---': 0,
+    'RRR': 1,
+    'PPT': 0.25,
 }
 
 cod_letra = ['P', 'A', 'T', 'R', '-']
+
+faltas = {'fecha': None,
+          'legajo': None,
+          'orden': None,
+          'apellido': None,
+          'nombre': None,
+          'maniana': None,
+          'tarde': None,
+          'ed_fisica': None,
+          'curso': None,
+          }
+
+turnos_ina = ['maniana','tarde','ed_fisica']

@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from datetime import datetime, timedelta
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
-from .CONSTANTS import codigos
+from .CONSTANTS import codigos, cod_letra
 
 
 class Persona(models.Model):
@@ -223,13 +223,13 @@ class Nota(models.Model):
 
 class Inasistencia(models.Model):
     TIPOS = (
-        ('t', 'Llegada tarde'),
-        ('T', 'Llegada tarde fuera de hora'),
-        ('A', 'Ausente'),
-        ('r', 'Retirado dentro de la última hora'),
-        ('R', 'Retirado'),
-        ('-', 'Sin Clase'),
-        ('P', 'Presente')
+        ('2', 'Llegada tarde'),
+        ('2', 'Llegada tarde fuera de hora'),
+        ('1', 'Ausente'),
+        ('3', 'Retirado dentro de la última hora'),
+        ('3', 'Retirado'),
+        ('4', 'Sin Clase'),
+        ('0', 'Presente')
     )
 
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
@@ -241,9 +241,9 @@ class Inasistencia(models.Model):
         sort=True, )
     fecha = models.DateField()
 
-    maniana = models.CharField(choices=TIPOS, max_length=20)
-    tarde = models.CharField(choices=TIPOS, max_length=20)
-    ed_fisica = models.CharField(choices=TIPOS, max_length=20)
+    maniana = models.CharField(choices=TIPOS, max_length=20, null=True)
+    tarde = models.CharField(choices=TIPOS, max_length=20, null=True)
+    ed_fisica = models.CharField(choices=TIPOS, max_length=20, null=True)
 
     def __str__(self):
         return '{} - {}'.format(self.fecha, self.estudiante)
@@ -256,16 +256,22 @@ class Faltas(models.Model):
 
     def faltas(sender, instance, **kwargs):
         print(kwargs)
-        if kwargs['created']:
-            e = Inasistencia.objects.last()
+        if kwargs['created'] or kwargs['updated']:
+            e = Inasistencia.objects.all()
+            print(e)
             f = e.fecha
-            c = '{}{}{}'.format(e.maniana, e.tarde, e.ed_fisica)
+            c = '{}{}{}'.format(cod_letra[int(e.maniana)], cod_letra[int(e.tarde)], cod_letra[int(e.ed_fisica)])
             cant = codigos[c.upper()]
-            Faltas.objects.create(estudiante=e.estudiante, cantidad=cant, fecha=f)
+            if Inasistencia.objects.filter(fecha=f, estudiante=e.estudiante):
+                Faltas.objects.filter(fecha=f, estudiante=e.estudiante).update(cantidad=cant)
+                print('actualizada')
+            else:
+                Faltas.objects.create(estudiante=e.estudiante, cantidad=cant, fecha=f)
+                print('creada')
             print("Falta guardada")
 
-    
     post_save.connect(faltas, sender=Inasistencia)
+
 
 
 class Notificacion(models.Model):

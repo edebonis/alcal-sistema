@@ -54,9 +54,9 @@
                                     <h3 class="panel-title"> Seleccione Curso y fecha </h3>
                                 </div>
                                <div class="panel-body">
-                                       <form class="drop form-horizontal" action="inasistencias_por_curso" method="POST">
+                                       <form class="drop form-horizontal" action="/inasistencias_por_curso_guardar" method="POST">{% csrf_token %}
                                            <div class="col-sm-2">
-                                               {% csrf_token %} {{ form.cursonombre }}
+                                               {{ form.cursonombre }}
                                            </div>
                                            <div class="col-sm-4 right">
                                                <div class="input-group">
@@ -64,11 +64,6 @@
                                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                                </div>
                                            </div>
-                                       </form>
-                                   <form>
-
-                                   </form>
-
                                    </div>
                                </div>
                            </div>
@@ -94,40 +89,42 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for estudiante in estudiantes %}
-                                    {% if anio_elegido == estudiante.curso.anio and division_elegida == estudiante.curso.division %}
-                                        <tr class="gradeX">
-                                        <td class="col-sm-1">{{ estudiante.legajo }}</td>
-                                        <td class="col-sm-1">{{ estudiante.orden }}</td>
-                                        <td>{{ estudiante.apellido }}</td>
-                                        <td>{{ estudiante.nombre }}</td>
-                                        {% if creado %}
-                                            <td class="col-lg-1">
-                                                <a href="#" id="inline-inasistencia" data-type="select" data-pk="1" data-value=0 data-title="Seleccione"></a>
-                                            </td>
-                                            <td class=col-lg-1>
-                                                <a href="#" id="inline-inasistencia2" data-type="select" data-pk="2" data-value=3 data-title="Seleccione"></a>
-                                            </td>
-                                            <td class="col-lg-1">
-                                                <a href="#" id="inline-inasistencia3" data-type="select" data-pk="3" data-value=4 data-title="Seleccione"></a>
-                                            </td>
-                                        {% else %}
-                                            <td class="col-sm-1">
-                                                <input size="1%" class="input-sm">
-                                            </td>
-                                            <td class="col-sm-1">
-                                                <input size="1%" class="input-sm">
-                                            </td>
-                                            <td class="col-sm-1">
-                                                <input size="1%" class="input-sm">
-                                            </td>
-                                        {% endif %}
-                            </tr>
-                                        {% endif %}
+
+
+                            {% for falta in faltas %}
+                                <tr class="gradeX">
+                                <td class="col-sm-1">{{ falta.legajo }}</td>
+                                <td class="col-sm-1">{{ falta.orden }}</td>
+                                <td>{{ falta.apellido }}</td>
+                                <td>{{ falta.nombre }}</td>
+                                {% if creado %}
+                                    <td class="col-lg-1">
+                                        <a href="#" id="inline-inasistencia" data-type="select" data-pk="{{ falta.legajo }},{{ falta.fecha }}" data-value={% if not falta.maniana %} 0 {% else %} {{ falta.maniana }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso_guardar" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="maniana"></a>
+                                    </td>
+                                    <td class=col-lg-1>
+                                        <a href="#" id="inline-inasistencia2" data-type="select" data-pk="{{ falta.legajo }},{{ falta.fecha }}"  data-value={% if not falta.tarde %} 0 {% else %} {{ falta.tarde }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso_guardar" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="tarde"></a>
+                                    </td>
+                                    <td class="col-lg-1">
+                                        <a href="#" id="inline-inasistencia3" data-type="select" data-pk="{{ falta.legajo}},{{ falta.fecha }}"  data-value={% if not falta.ed_fisica %} 0 {% else %} {{ falta.ed_fisica }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso_guardar" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="ed_fisica"></a>
+                                    </td>
+                                {% else %}
+                                        <td class="col-sm-1">
+                                            {{ form3.maniana }}
+                                        </td>
+                                        <td class="col-sm-1">
+                                            {{ form3.tarde }}
+                                        </td>
+                                        <td class="col-sm-1">
+                                            {{ form3.ed_fisica }}
+                                        </td>
+                                {% endif %}
                             {% endfor %}
+                                </tr>
 
                             </tbody>
                         </table>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            </form>
                         </div>
                     </div>
 
