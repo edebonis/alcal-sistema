@@ -61,6 +61,7 @@ oauthlib==2.1.0
 odfpy==1.4.0
 olefile==0.46
 openpyxl==2.6.2
+Pillow==6.2.0
 padme==1.1.1
 paramiko==2.6.0
 pbr==5.4.3
