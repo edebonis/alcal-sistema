@@ -10,7 +10,7 @@
 $(function(){
 
     //modify buttons style
-    $.fn.editableform.buttons = 
+    $.fn.editableform.buttons =
     '<button type="submit" class="btn btn-success editable-submit btn-sm"><i class="md md-done"></i></button>' +
     '<button type="button" class="btn editable-cancel btn-sm"><i class="md md-clear"></i></button>';         
     
@@ -93,6 +93,26 @@ $(function(){
          $(this).text(elem[0].text).css("color", colors[value]);
        } else {
          $(this).empty();
+       }
+     }
+   });
+    $('#inline-inasistencia, #inline-inasistencia2, #inline-inasistencia3').editable({
+      prepend: "P",
+      mode: 'inline',
+      source: [
+      {value: 1, text: 'A'},
+      {value: 2, text: 'T'},
+      {value: 3, text: 'R'},
+      {value: 4, text: '-'}
+      ],
+      display: function(value, sourceData) {
+       var colors = {"P": "green", 1: "red", 2: "blue", 3: "orange", 4: "gray"},
+       elem = $.grep(sourceData, function(o){return o.value == value;});
+       $(this).text(elem[0].text).css("color", "green");
+       if(elem.length) {
+         $(this).text(elem[0].text).css("color", colors[value]);
+       } else {
+         $(this).empty().css("color","green");
        }
      }
    });

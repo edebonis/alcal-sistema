@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_template_maths',
     'smart_selects',
     'untitled',
+
 ]
 
 MIDDLEWARE = [
@@ -141,8 +142,8 @@ TIME_FORMAT = 'H:i'
 DATETIME_FORMAT = 'd-m-Y H:i'
 YEAR_MONTH_FORMAT = 'F Y'
 MONTH_DAY_FORMAT = 'F j'
-SHORT_DATE_FORMAT = 'm/d/Y'
-SHORT_DATETIME_FORMAT = 'm/d/Y P'
+SHORT_DATE_FORMAT = 'd/m/Y'
+SHORT_DATETIME_FORMAT = 'd/m/Y P'
 FIRST_DAY_OF_WEEK = 1
 DATE_INPUT_FORMATS = (
     '%d-%m-%Y',     # '21-03-2014'
