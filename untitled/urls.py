@@ -15,18 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import include
+from django.conf.urls import include, url
 from alcal import views
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path('index/', views.index, name='index'),
     path('portada', views.portada, name='portada'),
     path('perfil', views.perfil, name='perfil'),
-    path('editable_list', views.editable_list, name='editable_list'),
+    # path('editable_list', views.editable_list, name='editable_list'),
     path('', views.portada, name='portada'),
     path('inasistencias_por_estudiante', views.inasistencias_por_estudiante, name='inaxest'),
     path('inasistencias_por_curso', views.inasistencias_por_curso, name='inaxcur'),
+    path('inasistencias_por_curso_guardar', views.inasistencias_por_curso_guardar, name='inaxcurg'),
     path('nuevo_estudiante', views.nuevo_estudiante, name='nuevoest'),
     path('nuevo_padre', views.nuevo_padre, name='nuevopad'),
     path('nuevo_docente', views.nuevo_docente, name='nuevodoc'),
@@ -39,7 +41,7 @@ urlpatterns = [
     path('carreras', views.carreras, name='carreras'),
     path('cursos', views.cursos, name='cursos'),
     path('horarios', views.horarios, name='horarios'),
-    path('comunicaciones_por_estudiante', views.comunicaciones_por_estudiante, name='comuest'),
+    path('com_por_estudiante', views.com_por_estudiante, name='comuest'),
     path('comunicaciones_por_curso', views.comunicaciones_por_curso, name='comucur'),
     path('notas_por_estudiante', views.notas_por_estudiante, name='notest'),
     path('notas_por_curso', views.notas_por_curso, name='notcur'),
@@ -49,8 +51,9 @@ urlpatterns = [
     path('ver_alumno', views.ver_alumno, name='veralumno'),
     path('ver_familia', views.ver_familia, name='verfamilia'),
     path('reportes_seguimientos', views.reportes_seguimientos, name='reporsegui'),
-    path('nuevo_seguimientos', views.nuevo_seguimientos, name='nuevosegui'),
+    path('nuevo_seguimiento', views.nuevo_seguimiento, name='nuevosegui'),
     path('ver_seguimientos', views.ver_seguimientos, name='versegui'),
+    url(r'^chaining/', include('smart_selects.urls')),
     ]
 
 
