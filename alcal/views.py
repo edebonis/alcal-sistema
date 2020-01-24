@@ -2,12 +2,33 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.db.models import F
-from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia
+from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia, Faltas
 from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
     NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm
 from alcal.CONSTANTS import *
 from datetime import date
 from datetime import datetime, timedelta
+
+
+def actualizar_falta(f, e, m, t, ed):
+    print('Fecha: {} - Estudainte: {}'.format(f, e))
+    if not m:
+        m = 0
+    if not t:
+        t = 0
+    if not ed:
+        ed = 0
+    c = '{}{}{}'.format(cod_letra[int(m)], cod_letra[int(t)], cod_letra[int(ed)])
+    estud = Estudiante.objects.get(legajo=e)
+    cant = codigos[c.upper()]
+
+    if Faltas.objects.filter(fecha=f, estudiante=e):
+        Faltas.objects.filter(fecha=f, estudiante=estud).update(cantidad=cant)
+        print('actualizada')
+    else:
+        Faltas.objects.create(estudiante=estud, cantidad=cant, fecha=f)
+        print('creada')
+    print("Falta guardada")
 
 
 @login_required(login_url='/admin/login')
@@ -154,63 +175,6 @@ def inasistencias_por_curso(request):
     form3 = InasistenciaForm(request.POST)
     creado = True
     estudiantes = ''
-    # c = Curso.objects.filter(cursonombre='1A')
-    # id_curso = c.values('id')[0]['id']
-    # inasistencias = Inasistencia.objects.filter(curso=id_curso, fecha=fecha)
-    # estudiantes = Estudiante.objects.filter(curso=id_curso).order_by('orden')
-    # if request.method == "POST" and request.GET:
-    #     form = Cursos(request.POST)
-    #     print("GET por curso")
-    #     print(request.GET)
-    #     try:
-    #         f = request.GET['fecha']
-    #     except:
-    #         f = None
-    #     if not f:
-    #         f = datetime.strftime(datetime.today(), "%d/%m/%Y")
-    #         print('f')
-    #     fecha = datetime.strptime(f, "%d/%m/%Y")
-    #
-    #     c = Curso.objects.filter(cursonombre=request.GET['cursonombre'])
-    #     id_curso = c.values('id')[0]['id']
-    #     inasistencias = Inasistencia.objects.filter(curso=id_curso, fecha=fecha)
-    #     estudiantes = Estudiante.objects.filter(curso=id_curso).order_by('orden')
-    #     inas = inasistencias.values('maniana', 'tarde', 'ed_fisica', 'estudiante_id', 'curso_id', 'fecha')
-    #     for ina in inas:
-    #         for li in lista:
-    #             if ina['fecha'] == li['fecha'] and ina['estudiante_id'] == li['legajo']:
-    #                 li['maniana'] = ina['maniana']
-    #                 li['tarde'] = ina['tarde']
-    #                 li['ed_fisica'] = ina['ed_fisica']
-    #     for e in estudiantes:
-    #         faltas['legajo'] = e.legajo
-    #         faltas['fecha'] = fecha.date()
-    #         faltas['orden'] = e.orden
-    #         faltas['apellido'] = e.apellido
-    #         faltas['nombre'] = e.nombre
-    #         faltas['curso'] = c
-    #         lista.append(faltas.copy())
-    #     inas = inasistencias.values('maniana', 'tarde', 'ed_fisica', 'estudiante_id', 'curso_id', 'fecha')
-    #     for ina in inas:
-    #         for li in lista:
-    #             if ina['fecha'] == li['fecha'] and ina['estudiante_id'] == li['legajo']:
-    #                 li['maniana'] = ina['maniana']
-    #                 li['tarde'] = ina['tarde']
-    #                 li['ed_fisica'] = ina['ed_fisica']
-    #     anio_elegido = request.GET['cursonombre'][0]
-    #     division_elegida = request.GET['cursonombre'][1]
-    #     if fecha > datetime.today() - timedelta(days=2):
-    #         creado = False
-    #     else:
-    #         creado = True
-    #
-    # if request.method == "POST":
-    #     print("POST guardar")
-    #     print(request.POST)
-    #     maniana = request.POST.getlist('maniana')
-    #     tarde = request.POST.getlist('tarde')
-    #     ed_fisica = request.POST.getlist('ed_fisica')
-    #     print(maniana)
 
     return render(request, 'alcal/blue/inasistencias_por_curso.html',
                   {
@@ -251,7 +215,7 @@ def inasistencias_por_curso_guardar(request):
             indice_turno = turnos_ina.index(turno)
             valor[indice_turno] = request.POST['value']
             curso = Estudiante.objects.get(legajo=id_alu).curso
-            if Inasistencia.objects.filter(estudiante_id=id_alu,fecha=fecha):
+            if Inasistencia.objects.filter(estudiante_id=id_alu, fecha=fecha):
                 if turno=='maniana':
                     Inasistencia.objects.filter(estudiante_id=id_alu, fecha=fecha).update(maniana=valor[indice_turno])
                 if turno == 'tarde':
@@ -259,7 +223,17 @@ def inasistencias_por_curso_guardar(request):
                 if turno == 'ed_fisica':
                     Inasistencia.objects.filter(estudiante_id=id_alu, fecha=fecha).update(ed_fisica=valor[indice_turno])
 
+                maniana = Inasistencia.objects.get(estudiante_id=id_alu, fecha=fecha).maniana
+                tarde = Inasistencia.objects.get(estudiante_id=id_alu, fecha=fecha).tarde
+                ed_fisica = Inasistencia.objects.get(estudiante_id=id_alu, fecha=fecha).ed_fisica
+                actualizar_falta(fecha, id_alu, maniana, tarde, ed_fisica)
             else:
+                if not valor[0]:
+                    valor[0] = 0
+                if not valor[1]:
+                    valor[1] = 0
+                if not valor[2]:
+                    valor[2] = 0
                 nueva_ina = Inasistencia(
                     fecha=fecha,
                     estudiante=Estudiante.objects.get(legajo=id_alu),
@@ -269,6 +243,7 @@ def inasistencias_por_curso_guardar(request):
                     curso=curso
                 )
                 nueva_ina.save()
+                actualizar_falta(fecha, id_alu, valor[0], valor[1], valor[2])
         else:
             if form.is_valid() and form2.is_valid():
                 anio_elegido = request.POST['cursonombre'][0]
