@@ -67,7 +67,7 @@ paramiko==2.6.0
 pbr==5.4.3
 pexpect==4.6.0
 phply==1.2.5
-Pillow==6.1.0
+Pillow==6.2.0
 ply==3.11
 protobuf==3.6.1
 ptyprocess==0.6.0
@@ -77,6 +77,7 @@ pycairo==1.16.2
 pycountry==19.7.15
 pycparser==2.19
 pycrypto==2.6.1
+pyenchant==2.0.0
 PyHamcrest==1.9.0
 PyJWT==1.7.0
 pymacaroons==0.13.0
