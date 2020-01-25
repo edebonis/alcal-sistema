@@ -160,3 +160,6 @@ DECIMAL_SEPARATOR = u'.'
 THOUSAND_SEPARATOR = u','
 NUMBER_GROUPING = 3
 
+# Configure Django App for Heroku.
+import django_heroku
+django_heroku.settings(locals())
