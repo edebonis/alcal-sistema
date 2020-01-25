@@ -122,4 +122,4 @@ XlsxWriter==1.1.2
 xlwt==1.3.0
 zeroconf==0.21.3
 zope.interface==4.3.2
-pyenchant==2.0.0
+pyenchant==1.6.6
