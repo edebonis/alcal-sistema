@@ -1,5 +1,5 @@
-from django import forms
 from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia
+from django import forms
 from django.forms import widgets
 from datetime import datetime, timedelta
 
@@ -16,10 +16,13 @@ class Cursos(forms.ModelForm):
         division = Curso.division
         model = Curso
         val = Curso.objects.values('cursonombre')
-        for i in val:
-            tup = (i['cursonombre'], i['cursonombre'])
-            valores.append(tup)
-        valores.sort()
+        try:
+            for i in val:
+                tup = (i['cursonombre'], i['cursonombre'])
+                valores.append(tup)
+            valores.sort()
+        except:
+            valores = ('', '')
         fields = [
             # 'anio',
             # 'division',
