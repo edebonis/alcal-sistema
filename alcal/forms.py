@@ -16,12 +16,12 @@ class Cursos(forms.ModelForm):
         division = Curso.division
         model = Curso
         val = Curso.objects.values('cursonombre')
-        try:
+        if val:
             for i in val:
                 tup = (i['cursonombre'], i['cursonombre'])
                 valores.append(tup)
             valores.sort()
-        except:
+        else:
             valores = ('', '')
         fields = [
             # 'anio',

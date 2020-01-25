@@ -26,7 +26,7 @@ SECRET_KEY = 't*ni%vrw&e0qha(=n(dm)ci9ph&mpt^am^-s7l&sxk4#%(-xvt'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'boiling-retreat-98809.herokuapp.com']
 
 
 # Application definition
