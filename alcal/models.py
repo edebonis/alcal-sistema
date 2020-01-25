@@ -254,25 +254,6 @@ class Faltas(models.Model):
     cantidad = models.DecimalField(decimal_places=2, max_digits=4)
     fecha = models.DateField()
 
-    # def faltas(sender, instance, **kwargs):
-    #     print(kwargs)
-    #     if kwargs['created']:
-    #         e = Inasistencia.objects.all()
-    #         print(e)
-    #         f = e.fecha
-    #         c = '{}{}{}'.format(cod_letra[int(e.maniana)], cod_letra[int(e.tarde)], cod_letra[int(e.ed_fisica)])
-    #         cant = codigos[c.upper()]
-    #         if Inasistencia.objects.filter(fecha=f, estudiante=e.estudiante):
-    #             Faltas.objects.filter(fecha=f, estudiante=e.estudiante).update(cantidad=cant)
-    #             print('actualizada')
-    #         else:
-    #             Faltas.objects.create(estudiante=e.estudiante, cantidad=cant, fecha=f)
-    #             print('creada')
-    #         print("Falta guardada")
-    #
-    # post_save.connect(faltas, sender=Inasistencia)
-
-
 class Notificacion(models.Model):
     estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING)
     TIPOS = (

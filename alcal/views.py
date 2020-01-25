@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, HttpResponseRedirect
-from django.db.models import F
+from django.db.models import Sum, Count
 from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia, Faltas
 from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
     NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm
@@ -389,9 +389,7 @@ def com_por_estudiante(request):
             seg = None
             try:
                 id_pers = Persona.objects.get(id=valor).estudiante.legajo
-                print(id_pers)
                 seg = Seguimiento.objects.order_by('fecha').filter(estudiante__legajo=id_pers)
-                print(seg)
             except:
                 seg = "???"
                 print(seg)
@@ -412,7 +410,6 @@ def com_por_estudiante(request):
                        'materias': materias,
                        'boletin': boletin,
                        }
-            print(seg)
             return render(request, 'alcal/blue/com_por_estudiante.html', context)
     else:
         form = SelectorDeAlumno()
@@ -547,6 +544,14 @@ def ficha_estudiante(request):
             curso = NotaParcial.objects.filter(curso=Curso.objects.get(id=valor_curso))
             nota = Nota.objects.filter(estudiante=Estudiante.objects.get(id=valor))
             materias = Materia.objects.filter(curso=valor_curso)
+            inasistencias = Faltas.objects.filter(estudiante_id=Estudiante.objects.get(id=valor)).aggregate(Sum('cantidad'))
+            maniana_tarde = Inasistencia.objects.filter(estudiante_id=Estudiante.objects.get(id=valor), maniana=2).aggregate(Count('maniana'))
+            tarde_tarde = Inasistencia.objects.filter(estudiante_id=Estudiante.objects.get(id=valor),
+                                                        tarde=2).aggregate(Count('tarde'))
+            print("...")
+            print(maniana_tarde)
+            print("...")
+
             seg = None
             try:
                 id_pers = Persona.objects.get(id=valor).estudiante.legajo
@@ -564,7 +569,10 @@ def ficha_estudiante(request):
                         boletin[i].append(nota.filter(materia=id_materia).filter(instancia=lista[j]).last().numero)
                     except:
                         boletin[i].append("-")
-            context = {'var': Estudiante.objects.get(id=valor),
+            context = {'inasistencias': inasistencias['cantidad__sum'],
+                       'maniana_tarde': maniana_tarde['maniana__count'],
+                       'tarde_tarde': tarde_tarde['tarde__count'],
+                        'var': Estudiante.objects.get(id=valor),
                        'seguimiento': seg,
                        'nota': nota,
                        'form': form,
@@ -572,7 +580,6 @@ def ficha_estudiante(request):
                        'materias': materias,
                        'boletin': boletin,
                        }
-            print(seg)
             return render(request, 'alcal/blue/ficha_estudiante.html', context)
     else:
         form = SelectorDeAlumno()
