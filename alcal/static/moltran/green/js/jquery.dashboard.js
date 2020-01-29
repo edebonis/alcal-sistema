@@ -133,7 +133,7 @@
 
             //Pie graph data
             var pielabels = ["Series 1","Series 2","Series 3"];
-            var datas = [20,30, 20];
+            var datas = [20,30, 50];
             var colors = ["rgba(51, 184, 108, 0.7)", "rgba(41, 182, 246, 0.7)", "rgba(59, 189, 202, 0.7)"];
             this.createPieGraph("#pie-chart #pie-chart-container", pielabels , datas, colors);
 

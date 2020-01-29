@@ -40,7 +40,7 @@
 
                                 <ol class="breadcrumb pull-right">
                                     <li><a href="#">Moltran</a></li>
-                                    <li class="active">{{ carreras.first }} - {{ carreras.last }}</li>
+                                    <li class="active">{{ carreras.first }} - {{ carreras.last }} </li>
                                 </ol>
                             </div>
                         </div>
@@ -146,7 +146,7 @@
                                 <div class="portlet"><!--- /portlet heading -->
                                     <div class="portlet-heading">
                                         <h3 class="portlet-title text-dark text-uppercase">
-                                            Website Stats
+                                            Asistencia Mensual
                                         </h3>
                                         <div class="portlet-widgets">
                                             <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
@@ -187,7 +187,7 @@
                                 <div class="portlet"><!--- /portlet heading -->
                                     <div class="portlet-heading">
                                         <h3 class="portlet-title text-dark text-uppercase">
-                                            Website Stats
+                                            Masculino/Femenino
                                         </h3>
                                         <div class="portlet-widgets">
                                             <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
@@ -315,6 +315,7 @@
                                             <ul class="conversation-list nicescroll">
                                                 <li class="clearfix">
                                                     <div class="chat-avatar">
+
                                                         <img src="{% static 'images/avatar-1.jpg'%}" alt="male">
                                                         <i>10:00</i>
                                                     </div>
@@ -547,6 +548,9 @@
 
     {% block scripts_template %}
         {% include 'alcal/blue/scripts_template.html' %}
+    {% endblock %}
+    {% block graficos_template %}
+        {% include 'alcal/blue/graficos_template.html' %}
     {% endblock %}
 
     </body>

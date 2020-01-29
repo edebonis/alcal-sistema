@@ -7,6 +7,7 @@ from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, 
     NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm
 from alcal.CONSTANTS import *
 from datetime import date
+from .utils import *
 from datetime import datetime, timedelta
 
 
@@ -43,10 +44,20 @@ def portada(request):
     carreras = Carrera.objects.order_by('anios')
     usuario = str(request.user)
     cant_estudiantes = Estudiante.objects.count()
-    cant_femenino = 1#len(Estudiante.objects.filter(genero='Femenino'))
-    cant_masculino = 2 #len(Estudiante.objects.filter(genero='Masculino'))
+    cant_femenino = len(Estudiante.objects.filter(genero='Femenino'))
+    cant_masculino = len(Estudiante.objects.filter(genero='Masculino'))
+    i_anio = ina_graf(None)
+    m_anio = ina_graf('maniana')
+    t_anio = ina_graf('tarde')
+    ef_anio = ina_graf('ed_fisica')
+    maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
     return render(request, 'alcal/blue/index.html',
                   {
+                      'maximo': maximo,
+                      'i_anio': i_anio,
+                      'm_anio': m_anio,
+                      't_anio': t_anio,
+                      'ef_anio': ef_anio,
                       'carreras': carreras,
                       'usuario': usuario,
                       'cant_estudiantes': cant_estudiantes,
@@ -165,33 +176,6 @@ def inasistencias_por_estudiante(request):
 
 @login_required(login_url='/admin/login')
 def inasistencias_por_curso(request):
-    anio_elegido = 1
-    division_elegida = "A"
-    lista = []
-    f = datetime.strftime(datetime.today(), "%d/%m/%Y")
-    fecha = datetime.strptime(f, "%d/%m/%Y")
-    form = Cursos(request.POST)
-    form2 = FechaInasistencias(request.POST, initial={'fecha': fecha})
-    form3 = InasistenciaForm(request.POST)
-    creado = True
-    estudiantes = ''
-
-    return render(request, 'alcal/blue/inasistencias_por_curso.html',
-                  {
-                      # 'estudiantes': estudiantes,
-                      # 'cursos': cursos,
-                      'form': form,
-                      'form2': form2,
-                      'form3': form3,
-                      # 'anio_elegido': int(anio_elegido),
-                      # 'division_elegida': division_elegida,
-                      'creado': creado,
-                      # 'faltas': lista,
-                  })
-
-
-@login_required(login_url='/admin/login')
-def inasistencias_por_curso_guardar(request):
     anio_elegido = '1'
     division_elegida = "A"
     lista = []
@@ -253,30 +237,14 @@ def inasistencias_por_curso_guardar(request):
                     f = datetime.strftime(datetime.today(), "%d/%m/%Y")
                 fecha = datetime.strptime(f, "%d/%m/%Y")
                 form2 = FechaInasistencias(request.POST, initial={'fecha': fecha})
-                c = Curso.objects.filter(cursonombre=request.POST['cursonombre'])
-                id_curso = c.values('id')[0]['id']
-                inasistencias = Inasistencia.objects.filter(curso=id_curso, fecha=fecha)
-                estudiantes = Estudiante.objects.filter(curso=id_curso).order_by('orden')
-                for e in estudiantes:
-                    faltas['legajo'] = e.legajo
-                    faltas['fecha'] = fecha.date()
-                    faltas['orden'] = e.orden
-                    faltas['apellido'] = e.apellido
-                    faltas['nombre'] = e.nombre
-                    faltas['curso'] = c
-                    lista.append(faltas.copy())
-                inas = inasistencias.values('maniana', 'tarde', 'ed_fisica', 'estudiante_id', 'curso_id', 'fecha')
-                for ina in inas:
-                    for li in lista:
-                        if ina['fecha'] == li['fecha'] and ina['estudiante_id'] == li['legajo']:
-                            li['maniana'] = ina['maniana']
-                            li['tarde'] = ina['tarde']
-                            li['ed_fisica'] = ina['ed_fisica']
+
                 if fecha > datetime.today() - timedelta(days=2):
                     creado = False
                 else:
                     creado = True
             if form3.is_valid():
+                c = Curso.objects.filter(cursonombre='{}{}'.format(anio_elegido, division_elegida))
+                id_curso = c.values('id')[0]['id']
                 maniana = request.POST.getlist('maniana')
                 tarde = request.POST.getlist('tarde')
                 ed_fisica = request.POST.getlist('ed_fisica')
@@ -291,6 +259,25 @@ def inasistencias_por_curso_guardar(request):
                         curso=Curso.objects.get(id=id_curso)
                     )
                     nueva_ina.save()
+    c = Curso.objects.filter(cursonombre='{}{}'.format(anio_elegido, division_elegida))
+    id_curso = c.values('id')[0]['id']
+    inasistencias = Inasistencia.objects.filter(curso=id_curso, fecha=fecha)
+    estudiantes = Estudiante.objects.filter(curso=id_curso).order_by('orden')
+    for e in estudiantes:
+        faltas['legajo'] = e.legajo
+        faltas['fecha'] = fecha.date()
+        faltas['orden'] = e.orden
+        faltas['apellido'] = e.apellido
+        faltas['nombre'] = e.nombre
+        faltas['curso'] = c
+        lista.append(faltas.copy())
+    inas = inasistencias.values('maniana', 'tarde', 'ed_fisica', 'estudiante_id', 'curso_id', 'fecha')
+    for ina in inas:
+        for li in lista:
+            if ina['fecha'] == li['fecha'] and ina['estudiante_id'] == li['legajo']:
+                li['maniana'] = ina['maniana']
+                li['tarde'] = ina['tarde']
+                li['ed_fisica'] = ina['ed_fisica']
     return render(request, 'alcal/blue/inasistencias_por_curso.html',
                   {
                       'estudiantes': estudiantes,
@@ -440,7 +427,8 @@ def nuevo_seguimiento(request):
         if form.is_valid() and form2.is_valid():
             try:
                 form.save()
-                return redirect('/nuevo_seguimiento')
+                print('guardado')
+                return render(request, 'alcal/blue/nuevo_seguimiento.html')
             except:
                 pass
             return render(request, 'alcal/blue/nuevo_seguimiento.html.html', {'form': form, 'form2': form2})
@@ -448,7 +436,7 @@ def nuevo_seguimiento(request):
         form = NuevoSeguimiento(request.POST)
         form2 = SelectorDeAlumno(request.POST)
 
-    return render(request, 'alcal/blue/nuevo_seguimiento.html', {'form': form, 'form2':form2})
+    return render(request, 'alcal/blue/nuevo_seguimiento.html', {'form': form, 'form2': form2})
 
 
 @login_required(login_url='/admin/login')
@@ -548,9 +536,9 @@ def ficha_estudiante(request):
             maniana_tarde = Inasistencia.objects.filter(estudiante_id=Estudiante.objects.get(id=valor), maniana=2).aggregate(Count('maniana'))
             tarde_tarde = Inasistencia.objects.filter(estudiante_id=Estudiante.objects.get(id=valor),
                                                         tarde=2).aggregate(Count('tarde'))
-            print("...")
-            print(maniana_tarde)
-            print("...")
+            aus_ed = Inasistencia.objects.filter(estudiante_id=Estudiante.objects.get(id=valor),
+                                                      ed_fisica=1).aggregate(Count('ed_fisica'))
+
 
             seg = None
             try:
@@ -569,10 +557,12 @@ def ficha_estudiante(request):
                         boletin[i].append(nota.filter(materia=id_materia).filter(instancia=lista[j]).last().numero)
                     except:
                         boletin[i].append("-")
+            estu = Estudiante.objects.get(id=valor)
             context = {'inasistencias': inasistencias['cantidad__sum'],
                        'maniana_tarde': maniana_tarde['maniana__count'],
                        'tarde_tarde': tarde_tarde['tarde__count'],
-                        'var': Estudiante.objects.get(id=valor),
+                       'aus_ed': aus_ed['ed_fisica__count'],
+                       'var': estu,
                        'seguimiento': seg,
                        'nota': nota,
                        'form': form,
@@ -580,6 +570,8 @@ def ficha_estudiante(request):
                        'materias': materias,
                        'boletin': boletin,
                        }
+
+            print('foto: {}'.format(estu.foto_dni_estudiante))
             return render(request, 'alcal/blue/ficha_estudiante.html', context)
     else:
         form = SelectorDeAlumno()

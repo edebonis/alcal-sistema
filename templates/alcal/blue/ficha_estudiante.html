@@ -206,10 +206,10 @@
                                                 </div>
 
                                                 <div class="m-b-0">
-                                                    <h5>HTML5 &amp; CSS3 <span class="pull-right">95%</span></h5>
+                                                    <h5>Ausencias a Educación Física <span class="pull-right">{{ aus_ed }} veces</span></h5>
                                                     <div class="progress">
-                                                        <div class="progress-bar progress-bar-info wow animated progress-animated" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width: 95%;">
-                                                            <span class="sr-only">95% Complete</span>
+                                                        <div class="progress-bar progress-bar-info wow animated progress-animated" role="progressbar" aria-valuenow="{{ aus_ed }}" aria-valuemin="0" aria-valuemax="28" style="width: {{aus_ed}}%;">
+                                                            <span class="sr-only"></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -289,6 +289,7 @@
 
 {% block scripts_template %}
     {% include 'alcal/blue/scripts_template.html' %}
+
 {% endblock %}
 
 </body>

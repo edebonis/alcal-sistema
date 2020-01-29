@@ -1,9 +1,9 @@
 {% load static %}
 {% block scripts_template %}
-      <script>
-            var resizefunc = [];
-        </script>
-        {{ form.media.js }}
+    <script>
+        var resizefunc = [];
+    </script>
+    {{ form.media.js }}
     <!--- jQuery  -->
     <script src="{% static 'js/jquery.min.js'%}"></script>
     <script src="{% static 'assets/select2/select2.min.js' %}" type="text/javascript"></script>
@@ -26,48 +26,45 @@
     <script src="{% static 'assets/sweet-alert/sweet-alert.init.js'%}"></script>
 
         <!-- flot Chart -->
-{#        <script src="{% static 'assets/flot-chart/jquery.flot.js'%}"></script>#}
-{#        <script src="{% static 'assets/flot-chart/jquery.flot.time.js'%}"></script>#}
-{#        <script src="{% static 'assets/flot-chart/jquery.flot.tooltip.min.js'%}"></script>#}
-{#        <script src="{% static 'assets/flot-chart/jquery.flot.resize.js'%}"></script>#}
-{#        <script src="{% static 'assets/flot-chart/jquery.flot.pie.js'%}"></script>#}
-{#        <script src="{% static 'assets/flot-chart/jquery.flot.selection.js'%}"></script>#}
-{#        <script src="{% static 'assets/flot-chart/jquery.flot.stack.js'%}"></script>#}
-{#        <script src="{% static 'assets/flot-chart/jquery.flot.crosshair.js'%}"></script>#}
+    <script src="{% static 'assets/flot-chart/jquery.flot.js'%}"></script>
+    <script src="{% static 'assets/flot-chart/jquery.flot.time.js'%}"></script>
+    <script src="{% static 'assets/flot-chart/jquery.flot.tooltip.min.js'%}"></script>
+    <script src="{% static 'assets/flot-chart/jquery.flot.resize.js'%}"></script>
+    <script src="{% static 'assets/flot-chart/jquery.flot.pie.js'%}"></script>
+    <script src="{% static 'assets/flot-chart/jquery.flot.selection.js'%}"></script>
+    <script src="{% static 'assets/flot-chart/jquery.flot.stack.js'%}"></script>
+    <script src="{% static 'assets/flot-chart/jquery.flot.crosshair.js'%}"></script>
 
-        <!-- Counter-up -->
-        <script src="{% static 'assets/counterup/waypoints.min.js'%}" type="text/javascript"></script>
-        <script src="{% static 'assets/counterup/jquery.counterup.min.js'%}" type="text/javascript"></script>
+    <!-- Counter-up -->
+    <script src="{% static 'assets/counterup/waypoints.min.js'%}" type="text/javascript"></script>
+    <script src="{% static 'assets/counterup/jquery.counterup.min.js'%}" type="text/javascript"></script>
 
-        <!--CUSTOM JS -->
-        <script src="{% static 'js/jquery.app.js'%}"></script>
+    <!--CUSTOM JS -->
+    <script src="{% static 'js/jquery.app.js'%}"></script>
 
-        <!-- Dashboard -->
-        <script src="{% static 'js/jquery.dashboard.js'%}"></script>
+    <!-- Dashboard -->
+    <script src="{% static 'js/jquery.dashboard.js'%}"></script>
 
-        <script src="{% static 'assets/bootstrap3-editable/moment.min.js' %}" type="text/javascript"></script>
-        <script src="{% static 'assets/bootstrap3-editable/bootstrap-editable.js' %}" type="text/javascript"></script>
-        <script src="{% static 'assets/bootstrap3-editable/demo-xeditable.js' %}" type="text/javascript"></script>
-        <script src="{% static 'assets/tagsinput/jquery.tagsinput.min.js' %}" type="text/javascript"></script>
-        <script src="{% static 'assets/toggles/toggles.min.js' %}" type="text/javascript"></script>
-        <script src="{% static 'assets/timepicker/bootstrap-datepicker.js' %}" type="text/javascript"></script>
-        <script src="{% static 'assets/timepicker/bootstrap-datepicker.es.js' %}" type="text/javascript"></script>
-        <script src="{% static 'assets/timepicker/bootstrap-timepicker.min.js' %}" type="text/javascript"></script>
-
-        <!-- Chat -->
-        <script src="{% static 'js/jquery.chat.js'%}"></script>
-
-        <!-- Todo -->
-        <script src="{% static 'js/jquery.todo.js'%}"></script>
-        <script src="{% static 'js/modernizr.min.js' %}"></script>
-        <script type="text/javascript">
-            jQuery(document).ready(function() {
-
-                jQuery(".select2").select2({
-                    width: '100%'
-                });
+    <script src="{% static 'assets/bootstrap3-editable/moment.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/bootstrap3-editable/bootstrap-editable.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/bootstrap3-editable/demo-xeditable.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/tagsinput/jquery.tagsinput.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/toggles/toggles.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/timepicker/bootstrap-datepicker.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/timepicker/bootstrap-datepicker.es.js' %}" type="text/javascript"></script>
+    <script src="{% static 'assets/timepicker/bootstrap-timepicker.min.js' %}" type="text/javascript"></script>
+    <!-- Chat -->
+    <script src="{% static 'js/jquery.chat.js'%}"></script>
+    <!-- Todo -->
+    <script src="{% static 'js/jquery.todo.js'%}"></script>
+    <script src="{% static 'js/modernizr.min.js' %}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            jQuery(".select2").select2({
+                width: '100%'
             });
-        </script>
+        });
+    </script>
     <script type="text/javascript">
             jQuery(document).ready(function() {
 

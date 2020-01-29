@@ -1,6 +1,6 @@
 from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia
 from django import forms
-from django.forms import widgets
+from django.forms import widgets, Widget
 from datetime import datetime, timedelta
 
 class NameForm(forms.Form):
@@ -56,17 +56,17 @@ class InasistenciaForm(forms.ModelForm):
 
 class FechaInasistencias(forms.Form):
     fecha = forms.DateField(input_formats=["%d/%m/%Y"], required=False)
-
+    print(datetime.strftime(datetime.today(), "%d/%m/%Y"))
     def __init__(self, *args, **kwargs):
         super(FechaInasistencias, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
             visible.field.widget.attrs['type'] = 'text'
             visible.field.widget.attrs['placeholder'] = 'dd/mm/yyyy'
+            visible.field.widget.attrs['value'] = datetime.strftime(datetime.today(), "%d/%m/%Y")
             visible.field.widget.attrs['id'] = 'datepicker'
             visible.field.widget.attrs['autocomplete'] = 'off'
             visible.field.widget.attrs['onchange'] = 'form.submit()'
-
 
 
 class NuevoEstudiante(forms.ModelForm):
@@ -169,13 +169,13 @@ class NuevoSeguimiento(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(NuevoSeguimiento, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
-            print(visible)
-            print('+++')
+
             if type(visible.field) == forms.fields.DateField:
                 visible.field.widget.attrs['class'] = 'form-control'
                 visible.field.widget.attrs['placeholder'] = 'dd-mm-yyyy'
                 visible.field.widget.attrs['id'] = 'datepicker'
-                # visible.field.widget.attrs['type'] = 'date'
+                visible.field.widget.attrs['autocomplete'] = 'off'
+                visible.field.widget.attrs['value'] = datetime.strftime(datetime.today(), "%d/%m/%Y")
                 visible.field.widget.attrs[type] = 'date'
             else:
                 visible.field.widget.attrs['class'] = 'form-control'
@@ -316,11 +316,11 @@ class SelectorDeAlumno(forms.ModelForm):
             'curso': 'Curso',
             'estudiante': 'Estudiante',
         }
-
-    def __init__(self, *args, **kwargs):
-        super(SelectorDeAlumno, self).__init__(*args, **kwargs)
-        for visible in self.visible_fields():
-            visible.field.widget.attrs['class'] = 'form-control '
+    #
+    # def __init__(self, *args, **kwargs):
+    #     super(SelectorDeAlumno, self).__init__(*args, **kwargs)
+    #     for visible in self.visible_fields():
+    #         visible.field.widget.attrs['class'] = 'form-control '
 
 
 

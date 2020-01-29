@@ -212,7 +212,6 @@
                 pie: {
                     show: true,
                     innerRadius: 0.5,
-                    show: true
                 }
             },
             legend: {
