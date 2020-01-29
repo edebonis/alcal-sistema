@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'untitled.urls'
@@ -159,6 +160,11 @@ DATETIME_INPUT_FORMATS = (
 DECIMAL_SEPARATOR = u'.'
 THOUSAND_SEPARATOR = u','
 NUMBER_GROUPING = 3
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'alcal/static'),
+)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Configure Django App for Heroku.
 import django_heroku
