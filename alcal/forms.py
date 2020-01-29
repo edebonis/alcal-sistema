@@ -1,7 +1,27 @@
 from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia
 from django import forms
-from django.forms import widgets, Widget
+from django.forms import boundfield
 from datetime import datetime, timedelta
+
+
+def nueva(self, widget=None, attrs=None, only_initial=False):
+    widget = widget or self.field.widget
+    if self.field.localize:
+        widget.is_localized = True
+    attrs = attrs or {}
+    attrs = self.build_widget_attrs(attrs, widget)
+    if self.auto_id and 'id' not in widget.attrs:
+        attrs.setdefault('id', self.html_initial_id if only_initial else self.auto_id)
+    return widget.render(
+        name=self.html_initial_name if only_initial else self.html_name,
+        value=self.value(),
+        attrs=attrs,
+        #renderer=self.form.renderer,
+    )
+
+
+boundfield.BoundField.as_widget = nueva
+
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Your name', max_length=100)
@@ -316,11 +336,14 @@ class SelectorDeAlumno(forms.ModelForm):
             'curso': 'Curso',
             'estudiante': 'Estudiante',
         }
-    #
-    # def __init__(self, *args, **kwargs):
-    #     super(SelectorDeAlumno, self).__init__(*args, **kwargs)
-    #     for visible in self.visible_fields():
-    #         visible.field.widget.attrs['class'] = 'form-control '
+
+    def render(self, name, value, attrs=None, renderer=None):
+        return
+
+    def __init__(self, *args, **kwargs):
+        super(SelectorDeAlumno, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control '
 
 
 
