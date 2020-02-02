@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from .models import Estudiante, Docente, Carrera, Nota, NotaParcial, FechaAltaBaja, Materia, Curso, \
     Inasistencia, Notificacion, Documentacion, Padre, Cuota, NombreCuota, Seguimiento, Pendiente, \
-    MesaPendiente, Periodo, InscripcionPendiente, NotaPendiente
+    MesaPendiente, Periodo, InscripcionPendiente, NotaPendiente, User
 
 
 # admin.site.register(Estudiante)
@@ -25,7 +25,7 @@ admin.site.register(Pendiente)
 admin.site.register(Periodo)
 admin.site.register(InscripcionPendiente)
 admin.site.register(NotaPendiente)
-
+# admin.site.register(User)
 
 @admin.register(Estudiante)
 class EstudianteAdmin(admin.ModelAdmin):

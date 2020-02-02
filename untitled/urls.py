@@ -18,6 +18,9 @@ from django.urls import path
 from django.conf.urls import include, url
 from alcal import views
 
+
+app_name = 'alcal'
+
 urlpatterns = [
 
     path('admin/', admin.site.urls),
@@ -32,10 +35,11 @@ urlpatterns = [
     path('nuevo_padre', views.nuevo_padre, name='nuevopad'),
     path('nuevo_docente', views.nuevo_docente, name='nuevodoc'),
     path('nuevo_seguimiento', views.nuevo_seguimiento, name='nuevoseg'),
+    path('nueva_materia', views.nueva_materia, name='nuevamat'),
     path('reportes_comunicaciones', views.reportes_comunicaciones, name='repcomu'),
     path('reportes_notas', views.reportes_notas, name='repnotas'),
     path('reportes_inasistencias', views.reportes_inasistencias, name='repina'),
-    path('ficha_estudiante', views.ficha_estudiante, name='fichaest'),
+    path('ficha_estudiante/<int:pk>', views.ficha_estudiante, name='fichaest'),
     path('ficha_docente', views.ficha_docente, name='fichadoc'),
     path('carreras', views.carreras, name='carreras'),
     path('cursos', views.cursos, name='cursos'),
@@ -52,6 +56,9 @@ urlpatterns = [
     path('reportes_seguimientos', views.reportes_seguimientos, name='reporsegui'),
     path('nuevo_seguimiento', views.nuevo_seguimiento, name='nuevosegui'),
     path('ver_seguimientos', views.ver_seguimientos, name='versegui'),
+    path('modificar_materia/<int:pk>', views.modificar_materia, name='mod_mat'),
+    path('modificar_estudiante/<int:pk>', views.modificar_estudiante, name='modificar_estudiante'),
+    path('estudiante_detalle/<int:pk>/', views.estudiante_detalle, name='estudiante_detalle'),
     url(r'^chaining/', include('smart_selects.urls')),
     ]
 

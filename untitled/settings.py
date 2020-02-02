@@ -147,14 +147,15 @@ SHORT_DATE_FORMAT = 'd/m/Y'
 SHORT_DATETIME_FORMAT = 'd/m/Y P'
 FIRST_DAY_OF_WEEK = 1
 DATE_INPUT_FORMATS = (
-    '%d-%m-%Y',     # '21-03-2014'
+    '%d/%m/%Y',     # '21/03/2014'
 )
 TIME_INPUT_FORMATS = (
     '%H:%M:%S',     # '17:59:59'
     '%H:%M',        # '17:59'
 )
 DATETIME_INPUT_FORMATS = (
-    '%d-%m-%Y %H:%M',     # '21-03-2014 17:59'
+    '%d/%m/%Y %H:%M',     # '21/03/2014 17:59'
+
 )
 
 DECIMAL_SEPARATOR = u'.'

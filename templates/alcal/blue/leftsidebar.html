@@ -6,7 +6,7 @@
                 <div class="sidebar-inner slimscrollleft">
                     <div class="user-details">
                         <div class="pull-left">
-                            <img src="{% static 'images/users/avatar-1.jpg'%}" alt="" class="thumb-md img-circle">
+                            <img src="/static/images/{% if not docente.foto_perfil %}perfil.png"{% else %}{{ docente.foto_perfil }}{% endif %}" alt="" class="thumb-md img-circle">
                         </div>
                         <div class="user-info">
                             <div class="dropdown">
@@ -19,106 +19,116 @@
                                 </ul>
                             </div>
 
-                            <p class="text-muted m-0">Administrador</p>
+                            <p class="text-muted m-0">{{ usuario }}</p>
                         </div>
                     </div>
                     <!---- Divider -->
                     <div id="sidebar-menu">
                         <ul>
                             <li>
-                                <a href="portada" class="waves-effect active"><i class="md md-dashboard"></i><span> Resumen </span></a>
+                                <a href="/portada" class="waves-effect active"><i class="md md-dashboard"></i><span> Resumen </span></a>
                             </li>
                             <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-account-child"></i><span> Padres </span><span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="nuevo_padre">Nuevo Padre</a></li>
+                                    <li><a href="/nuevo_padre">Nuevo Padre</a></li>
                                 </ul>
                             </li>
                             <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-person"></i><span> Estudiantes </span><span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="nuevo_estudiante">Nuevo Estudiante</a></li>
-                                    <li><a href="ficha_estudiante">Ficha de Estudiante</a></li>
+                                    <li><a href="/nuevo_estudiante">Nuevo Estudiante</a></li>
+                                    <li><a href="/ficha_estudiante/1">Ficha de Estudiante</a></li>
                                 </ul>
                             </li>
 
                             <li>
                                 <a href="#" class="waves-effect"><i class="md md-school"></i><span> Docentes </span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="nuevo_docente">Nuevo Docente</a></li>
-                                    <li><a href="ficha_docente">Ficha Docente</a></li>
+                                    <li><a href="/nuevo_docente">Nuevo Docente</a></li>
+                                    <li><a href="/ficha_docente">Ficha Docente</a></li>
                                 </ul>
                             </li>
 
                             <li>
                                 <a href="#" class="waves-effect"><i class="md md-my-library-books"></i><span> Planificaciones </span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="nueva_planinficacion">Nueva Planificación</a></li>
-                                    <li><a href="buscar_planificacion">Buscar</a></li>
+                                    <li><a href="/nueva_planinficacion">Nueva Planificación</a></li>
+                                    <li><a href="/buscar_planificacion">Buscar</a></li>
                                 </ul>
                             </li>
 
                             <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-alarm-off"></i> <span> Colegio </span> <span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="carreras">Carreras</a></li>
-                                    <li><a href="cursos">Cursos</a></li>
-                                    <li><a href="horarios">Horario</a></li>
+                                    <li><a href="/carreras">Carreras</a></li>
+                                    <li><a href="/cursos">Cursos</a></li>
+                                    <li><a href="/horarios">Horario</a></li>
                                 </ul>
                             </li>
 
                             <li>
-                                <a href="cursos" class="waves-effect"><i class="md md-domain"></i><span> Cursos </span><span class="pull-right"><i class="md md-add"></i></span></a>
+                                <a href="/cursos" class="waves-effect"><i class="md md-domain"></i><span> Cursos </span><span class="pull-right"><i class="md md-add"></i></span></a>
                             </li>
 
                             <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-timer"></i><span> Insasistencias </span><span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="inasistencias_por_estudiante">Por Estudiante</a></li>
-                                    <li><a href="inasistencias_por_curso">Por Curso</a></li>
+                                    <li><a href="/inasistencias_por_estudiante">Por Estudiante</a></li>
+                                    <li><a href="/inasistencias_por_curso">Por Curso</a></li>
                                 </ul>
                             </li>
 
                             <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-forum"></i><span> Comunicaciones </span><span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="com_por_estudiante">Por Estudiante</a></li>
-                                    <li><a href="comunicaciones_por_curso">Por Curso</a></li>
+                                    <li><a href="/com_por_estudiante">Por Estudiante</a></li>
+                                    <li><a href="/comunicaciones_por_curso">Por Curso</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="has_sub">
+                                <a href="#" class="waves-effect"><i class="md md-filter-7"></i><span> Materias </span><span class="pull-right"><i class="md md-add"></i></span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="/nueva_materia">Nueva Materia</a></li>
+                                    <li><a href="/modificar_materia">Modificar Materia</a></li>
                                 </ul>
                             </li>
 
                             <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-filter-7"></i><span> Calificaciones </span><span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="notas_por_estudiante">Por Estudiante</a></li>
-                                    <li><a href="notas_por_curso">Por Curso</a></li>
+                                    <li><a href="/notas_por_estudiante">Por Estudiante</a></li>
+                                    <li><a href="/notas_por_curso">Por Curso</a></li>
                                 </ul>
                             </li>
+
 
                             <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-poll"></i><span> Reportes </span><span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="reportes_inasistencias">Inasistencias</a></li>
-                                    <li><a href="reportes_notas">Notas</a></li>
-                                    <li><a href="reportes_comunicaciones">Comunicaciones</a></li>
+                                    <li><a href="/reportes_inasistencias">Inasistencias</a></li>
+                                    <li><a href="/reportes_notas">Notas</a></li>
+                                    <li><a href="/reportes_comunicaciones">Comunicaciones</a></li>
                                 </ul>
                             </li>
 
                             <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-people-outline"></i><span> Seguimiento </span><span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="reportes_seguimientos">Reportes de seguimiento</a></li>
-                                    <li><a href="nuevo_seguimiento">Nuevo Seguimiento</a></li>
-                                    <li><a href="ver_seguimientos">Ver Seguimiento</a></li>
+                                    <li><a href="/reportes_seguimientos">Reportes de seguimiento</a></li>
+                                    <li><a href="/nuevo_seguimiento">Nuevo Seguimiento</a></li>
+                                    <li><a href="/ver_seguimientos">Ver Seguimiento</a></li>
                                 </ul>
                             </li>
+
                              <li class="has_sub">
                                 <a href="#" class="waves-effect"><i class="md md-attach-money"></i><span> Cuotas </span><span class="pull-right"><i class="md md-add"></i></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="nuevo_pago">Nuevo Pago</a></li>
-                                    <li><a href="ver_pago">Ver pagos</a></li>
-                                    <li><a href="ver_alumno">Ver alumno</a></li>
-                                    <li><a href="ver_familia">Ver familia</a></li>
+                                    <li><a href="/nuevo_pago">Nuevo Pago</a></li>
+                                    <li><a href="/ver_pago">Ver pagos</a></li>
+                                    <li><a href="/ver_alumno">Ver alumno</a></li>
+                                    <li><a href="/ver_familia">Ver familia</a></li>
                                 </ul>
                             </li>
 

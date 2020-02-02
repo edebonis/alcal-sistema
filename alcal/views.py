@@ -1,10 +1,11 @@
+from django.views.generic.edit import UpdateView
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.db.models import Sum, Count
 from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia, Faltas
 from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
-    NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm
+    NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm, NuevaMateria
 from alcal.CONSTANTS import *
 from datetime import date
 from .utils import *
@@ -42,7 +43,7 @@ def index(request):
 @login_required(login_url='/admin/login')
 def portada(request):
     carreras = Carrera.objects.order_by('anios')
-    usuario = str(request.user)
+    usuario = request.user
     cant_estudiantes = Estudiante.objects.count()
     cant_femenino = len(Estudiante.objects.filter(genero='Femenino'))
     cant_masculino = len(Estudiante.objects.filter(genero='Masculino'))
@@ -51,18 +52,23 @@ def portada(request):
     t_anio = ina_graf('tarde')
     ef_anio = ina_graf('ed_fisica')
     maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
-    return render(request, 'alcal/blue/index.html',
-                  {
-                      'maximo': maximo,
-                      'i_anio': i_anio,
-                      'm_anio': m_anio,
-                      't_anio': t_anio,
-                      'ef_anio': ef_anio,
-                      'carreras': carreras,
-                      'usuario': usuario,
-                      'cant_estudiantes': cant_estudiantes,
-                      'cant_femenino': cant_femenino,
-                      'cant_masculino': cant_masculino,
+    # print('Usuario: {}'.format(usuario.groups.all()))
+    materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
+    docente = Docente.objects.get(usuario=usuario)
+    print(docente)
+    return render(request, 'alcal/blue/index.html', {
+                    'materias': materias,
+                    'maximo': maximo,
+                    'i_anio': i_anio,
+                    'm_anio': m_anio,
+                    't_anio': t_anio,
+                    'ef_anio': ef_anio,
+                    'carreras': carreras,
+                    'usuario': usuario,
+                    'cant_estudiantes': cant_estudiantes,
+                    'cant_femenino': cant_femenino,
+                    'cant_masculino': cant_masculino,
+                    'docente': docente,
                   }
                   )
 
@@ -404,12 +410,13 @@ def com_por_estudiante(request):
     return render(request, 'alcal/blue/com_por_estudiante.html', {'form': form})
 
 
-@login_required(login_url='/admin/login')
+@login_required(login_url='/admin/login', )
 def nuevo_docente(request):
     if request.method == "POST":
         form = NuevoDocente(request.POST, request.FILES)
         if form.is_valid():
             try:
+
                 form.save()
                 return redirect('/nuevo_docente')
             except:
@@ -421,21 +428,16 @@ def nuevo_docente(request):
 
 @login_required(login_url='/admin/login')
 def nuevo_seguimiento(request):
+    form = NuevoSeguimiento(request.POST)
+    form2 = SelectorDeAlumno(request.POST)
     if request.method == "POST":
-        form = NuevoSeguimiento(request.POST)
-        form2 = SelectorDeAlumno(request.POST)
         if form.is_valid() and form2.is_valid():
             try:
                 form.save()
-                print('guardado')
-                return render(request, 'alcal/blue/nuevo_seguimiento.html')
+                form = NuevoSeguimiento()
+                form2 = SelectorDeAlumno()
             except:
                 pass
-            return render(request, 'alcal/blue/nuevo_seguimiento.html.html', {'form': form, 'form2': form2})
-    else:
-        form = NuevoSeguimiento(request.POST)
-        form2 = SelectorDeAlumno(request.POST)
-
     return render(request, 'alcal/blue/nuevo_seguimiento.html', {'form': form, 'form2': form2})
 
 
@@ -452,6 +454,21 @@ def nuevo_estudiante(request):
     else:
         form = NuevoEstudiante()
     return render(request, 'alcal/blue/nuevo_estudiante.html', {'form': form})
+
+
+@login_required(login_url='/admin/login')
+def nueva_materia(request):
+    if request.method == "POST":
+        form = NuevaMateria(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('/nueva_materia')
+            except:
+                pass
+    else:
+        form = NuevaMateria()
+    return render(request, 'alcal/blue/nueva_materia.html', {'form': form})
 
 
 @login_required(login_url='/admin/login')
@@ -514,8 +531,12 @@ def reportes_inasistencias(request):
 
 
 @login_required(login_url='/admin/login')
-def ficha_estudiante(request):
+def ficha_estudiante(request, pk):
+    if not pk:
+        pk = 1
     valor = None
+    estu = Estudiante.objects.get(id=1)
+    form2 = NuevoEstudiante(request.POST)
     lista = ['PT',
              'ST',
              'TT',
@@ -524,6 +545,7 @@ def ficha_estudiante(request):
              'NF',
              'CD']
     if request.method == "POST":
+        print('post')
         form = SelectorDeAlumno(request.POST)
         if form.is_valid():
             boletin = []
@@ -539,13 +561,10 @@ def ficha_estudiante(request):
             aus_ed = Inasistencia.objects.filter(estudiante_id=Estudiante.objects.get(id=valor),
                                                       ed_fisica=1).aggregate(Count('ed_fisica'))
 
-
             seg = None
             try:
                 id_pers = Persona.objects.get(id=valor).estudiante.legajo
-                print(id_pers)
-                seg = Seguimiento.objects.order_by('fecha').filter(estudiante__legajo=id_pers)
-                print(seg)
+                seg = Seguimiento.objects.order_by('-fecha').filter(estudiante__legajo=id_pers)
             except:
                 seg = "???"
             for i in range(len(materias)):
@@ -558,6 +577,7 @@ def ficha_estudiante(request):
                     except:
                         boletin[i].append("-")
             estu = Estudiante.objects.get(id=valor)
+            form2 = NuevoEstudiante(instance=estu)
             context = {'inasistencias': inasistencias['cantidad__sum'],
                        'maniana_tarde': maniana_tarde['maniana__count'],
                        'tarde_tarde': tarde_tarde['tarde__count'],
@@ -569,23 +589,32 @@ def ficha_estudiante(request):
                        'curso': curso,
                        'materias': materias,
                        'boletin': boletin,
+                       'pk': pk,
+                       'form2': form2,
                        }
 
-            print('foto: {}'.format(estu.foto_dni_estudiante))
             return render(request, 'alcal/blue/ficha_estudiante.html', context)
+        if form2.is_valid():
+            print('is_valid')
+            e = Estudiante.objects.get(id=estu.legajo)
+            curso_id = request.POST['curso']
+            e.curso = Curso.objects.get(id=curso_id)
+            e.nombre = request.POST['nombre']
+            e.apellido = request.POST['apellido']
+            e.save()
     else:
         form = SelectorDeAlumno()
-    return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form})
+    return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form, 'pk': pk, 'form2': form2})
 
 
 @login_required(login_url='/admin/login')
 def ficha_docente(request):
-    return render(request,'alcal/blue/ficha_docente.html')
+    return render(request, 'alcal/blue/ficha_docente.html')
 
 
 @login_required(login_url='/admin/login')
 def carreras(request):
-    return render(request,'alcal/blue/carreras.html')
+    return render(request, 'alcal/blue/carreras.html')
 
 
 @login_required(login_url='/admin/login')
@@ -642,4 +671,42 @@ def ver_seguimientos(request):
     return render(request,'alcal/blue/ver_seguimiento.html')
 
 
+@login_required(login_url='/admin/login')
+def modificar_materia(request,pk):
+    mat = get_object_or_404(Materia, pk=pk)
+    if request.method == "POST":
+        form = NuevaMateria(request.POST, instance=mat)
+        if form.is_valid():
+            mat = form.save(commit=False)
+            mat.nombre = request.nombre
+            mat.save()
+            return render(request, 'alcal/blue/modificar_materia.html', pk=mat.pk)
+    else:
+        form = NuevaMateria(instance=mat)
+    return render(request, 'alcal/blue/modificar_materia.html', {'form': form})
 
+
+@login_required(login_url='/admin/login')
+def modificar_estudiante(request, pk):
+    est = get_object_or_404(Estudiante, pk=pk)
+    print('Request.Post:{}'.format(request.POST))
+    if request.method == "POST":
+        form = NuevoEstudiante(request.POST, instance=est)
+        print('Errores: {}'.format(form.errors))
+        if form.is_valid():
+            print('is_valid')
+            # est = form.save(commit=False)
+            # est.curso = request.POST['curso']
+            # est.save()
+            form.save()
+            return redirect('estudiante_detalle', pk=pk)
+        else:
+            print(form.errors)
+    else:
+        form = NuevoEstudiante(instance=est)
+    return render(request, 'alcal/blue/modificar_estudiante.html', {'form': form})
+
+
+def estudiante_detalle(request, pk):
+    est = get_object_or_404(Estudiante, pk=pk)
+    return render(request, 'alcal/blue/estudiante_detalle.html', {'est': est})

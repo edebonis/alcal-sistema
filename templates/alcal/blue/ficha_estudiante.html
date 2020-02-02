@@ -43,6 +43,12 @@
                                 <div class="profile-info-name">
                                     <img src="/static/images/{{ var.foto_dni_estudiante_archivo }}" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
                                     <h3 class="text-white">{{ var.nombre}} {{ var.apellido }} {{ var.curso }}</h3>
+                                    {% if var.legajo %}
+                                    <a class="btn" href="{% url 'modificar_estudiante' pk=var.legajo %}">
+                                            <span class="md-edit"></span>
+                                        </a>
+                                    {% endif %}
+
                                 </div>
                             </div>
                             <!--/ meta -->
@@ -72,7 +78,7 @@
                             <li class="tab" >
                                 <a href="#settings-2" data-toggle="tab" aria-expanded="false">
                                     <span class="visible-xs"><i class="fa fa-cog"></i></span>
-                                    <span class="hidden-xs">Editar</span>
+                                    <span class="hidden-xs">Editar {{ var.estudiante.pk }}</span>
                                 </a>
                             </li>
                         <div class="indicator"></div></ul>
@@ -80,7 +86,7 @@
 
                         <div class="col-lg-5 col-md-5 col-sm-5 hidden-xs">
                             <div class="pull-right">
-                                <form action="#" method="post" class="form-inline">
+                                <form action="{% if var.estudiante.pk %}{% url 'fichaest' pk=var.estudiante.pk %}{% else %}#{% endif %}" method="post" class="form-inline">
                                 {% csrf_token %}
                                     <div>
                                             {{ form.curso }}
@@ -233,45 +239,9 @@
                                 {% include 'alcal/blue/calificaciones_ficha.html' %}
                             {% endblock %}
 
-                            <div class="tab-pane" id="settings-2">
-                                <!-- Personal-Information -->
-                                <div class="panel panel-default panel-fill">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">Edit Profile</h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <form role="form">
-                                            <div class="form-group">
-                                                <label for="FullName">Full Name</label>
-                                                <input type="text" value="John Doe" id="FullName" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="Email">Email</label>
-                                                <input type="email" value="first.last@example.com" id="Email" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="Username">Username</label>
-                                                <input type="text" value="john" id="Username" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="Password">Password</label>
-                                                <input type="password" placeholder="6 - 15 Characters" id="Password" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="RePassword">Re-Password</label>
-                                                <input type="password" placeholder="6 - 15 Characters" id="RePassword" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="AboutMe">Datos personales</label>
-                                                <textarea style="height: 125px;" id="AboutMe" class="form-control">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</textarea>
-                                            </div>
-
-                                        </form>
-
-                                    </div>
-                                </div>
-                                <!-- Personal-Information -->
-                            </div>
+                            {% block modificar_estudiante %}
+                                {% include 'alcal/blue/modificar_estudiante.html' %}
+                            {% endblock %}
                         </div>
                     </div>
                     </div>

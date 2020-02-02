@@ -1,4 +1,4 @@
-from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia
+from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia, Materia
 from django import forms
 from django.forms import boundfield
 from datetime import datetime, timedelta
@@ -114,6 +114,7 @@ class NuevoEstudiante(forms.ModelForm):
             'grupo_tec',
             'observacion',
             'email',
+            'foto_perfil',
             'ficha_de_inscripcion',
             'foto_dni_estudiante',
             'foto_dni_estudiante_archivo',
@@ -149,6 +150,7 @@ class NuevoEstudiante(forms.ModelForm):
             'grupo_tec': 'Grupo',
             'observacion': 'Observación',
             'email': 'e-mail',
+            'foto_perfil': 'Foto de Perfil',
             'ficha_de_inscripcion': 'Ficha de inscripción',
             'foto_dni_estudiante': 'Foto DNI Estudiante',
             'foto_dni_estudiante_archivo': 'Foto DNI Archivo',
@@ -248,6 +250,7 @@ class NuevoDocente(forms.ModelForm):
     class Meta:
         model = Docente
         fields = [
+            'usuario',
             'numero_de_registro',
             'activo',
             'antiguedad_anios',
@@ -260,6 +263,7 @@ class NuevoDocente(forms.ModelForm):
             'domicilio_numero',
             'anio_ingreso',
             'fnac',
+            'foto_perfil',
             'pais_de_nacimiento',
             'telefono_1',
             'telefono_2',
@@ -271,6 +275,7 @@ class NuevoDocente(forms.ModelForm):
             'nombre_corto',
         ]
         labels = {
+            'usuario': 'Usuario del Sistema',
             'numero_de_registro': 'Número de Registro',
             'activo': 'Activo',
             'antiguedad_anios': 'Antigüedad (Años)',
@@ -284,6 +289,7 @@ class NuevoDocente(forms.ModelForm):
             'telefono': 'Teléfono',
             'anio_ingreso': 'Año de Ingreso',
             'fnac': 'Fecha de Nacimiento',
+            'foto_perfil': 'Foto de Perfil',
             'pais_de_nacimiento': 'País de Nacimiento',
             'telefono_1': 'Tel1',
             'telefono_2': 'Tel2',
@@ -326,6 +332,7 @@ class NuevaNota(forms.ModelForm):
 
 
 class SelectorDeAlumno(forms.ModelForm):
+
     class Meta:
         model = NotaParcial
         classmethod = "POST"
@@ -337,31 +344,39 @@ class SelectorDeAlumno(forms.ModelForm):
             'estudiante': 'Estudiante',
         }
 
-    def render(self, name, value, attrs=None, renderer=None):
-        return
-
     def __init__(self, *args, **kwargs):
         super(SelectorDeAlumno, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control '
+        self.fields['curso'].queryset = self.fields['curso'].queryset.order_by('cursonombre')
+        # self.fields['estudiante'].widget.attrs['data-value'] = Estudiante.objects.get().fi
 
+class NuevaMateria(forms.ModelForm):
+    class Meta:
+        model = Materia
+        fields = [
+            'curso',
+            'nombre',
+            'carrera',
+            'carga_horaria',
+            'docente_titular',
+            'docente_suplente',
+            'docente_provisional',
+            'taller'
+        ]
+        labels = {
+            'curso': 'Curso',
+            'nombre': 'Nombre',
+            'carrera': 'Carrera',
+            'carga_horaria': 'Horas Semanales',
+            'docente_titular': 'Docente Titular',
+            'docente_suplente': 'Docente Suplente',
+            'docente_provisional': 'Docente Provisional',
+            'taller': 'Materia de Formación específica'
+        }
 
-
-# class Alumnos(forms.ModelForm):
-#     class Meta:
-#         model = Estudiante
-#         fields = ('legajo', 'nombre', 'apellido', 'curso')
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['city'].queryset = City.objects.none()
-#
-#         if 'country' in self.data:
-#             try:
-#                 country_id = int(self.data.get('country'))
-#                 self.fields['city'].queryset = City.objects.filter(country_id=country_id).order_by('name')
-#             except (ValueError, TypeError):
-#                 pass  # invalid input from the client; ignore and fallback to empty City queryset
-#         elif self.instance.pk:
-#             self.fields['city'].queryset = self.instance.country.city_set.order_by('name')
-
+    def __init__(self, *args, **kwargs):
+        super(NuevaMateria, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+        self.fields['curso'].queryset = self.fields['curso'].queryset.order_by('cursonombre')

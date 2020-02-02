@@ -7,11 +7,12 @@ from django.utils import timezone
 from django.utils.html import format_html
 from datetime import datetime, timedelta
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
+
 from .CONSTANTS import codigos, cod_letra
 
 
 class Persona(models.Model):
-    # usuario = models.ForeignKey(User,blank= True, on_delete=models.DO_NOTHING, null=True)
+    usuario = models.OneToOneField(User, blank=True, on_delete=models.DO_NOTHING, null=True)
     GENEROS = (
         ('Masculino', 'Masculino'),
         ('Femenino', 'Femenino'),
@@ -103,6 +104,8 @@ class Estudiante(Persona):
     ficha_de_inscripcion = models.NullBooleanField(null=True, blank=True)
     foto_dni_estudiante = models.NullBooleanField(null=True, blank=True)
     foto_dni_estudiante_archivo = models.FileField(null=True, blank=True)
+    foto_dni_estudiante_archivo = models.FileField(null=True, blank=True)
+    foto_perfil = models.FileField(null=True, blank=True)
     foto_dni_responsable = models.NullBooleanField(null=True, blank=True)
     partida_de_nacimiento = models.NullBooleanField(null=True, blank=True)
     vacunas = models.NullBooleanField(null=True, blank=True)
@@ -135,6 +138,7 @@ class Docente(Persona):
     carrera_docente = models.ManyToManyField(Carrera,  blank=True)
     profesion = models.CharField(max_length=20, null=True, blank=True)
     nombre_corto = models.CharField(max_length=20, null=True, blank=True)
+    foto_perfil = models.FileField(null=True, blank=True)
 
     def __str__(self):
         return '{} - {}, {}'.format(self.numero_de_registro, self.apellido, self.nombre)
@@ -159,7 +163,7 @@ class Materia(models.Model):
 
 class NotaParcial(models.Model):
     nota = models.CharField(max_length=10, null=True, editable=True)
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, default='1A')
     materia = ChainedForeignKey(
         Materia,
         chained_field='curso',
@@ -171,6 +175,7 @@ class NotaParcial(models.Model):
         Estudiante,
         chained_field='curso',
         chained_model_field='curso',
+        auto_choose=True,
         show_all=False,
         sort=True,)
 
