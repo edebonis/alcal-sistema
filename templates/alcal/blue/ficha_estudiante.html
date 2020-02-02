@@ -41,14 +41,8 @@
                             <div class="bg-picture text-center" style="background-image:url('images/big/bg.jpg')">
                                 <div class="bg-picture-overlay"></div>
                                 <div class="profile-info-name">
-                                    <img src="/static/images/{{ var.foto_dni_estudiante_archivo }}" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
-                                    <h3 class="text-white">{{ var.nombre}} {{ var.apellido }} {{ var.curso }}</h3>
-                                    {% if var.legajo %}
-                                    <a class="btn" href="{% url 'modificar_estudiante' pk=var.legajo %}">
-                                            <span class="md-edit"></span>
-                                        </a>
-                                    {% endif %}
-
+                                    <img src="/static/images/{% if not docente.foto_perfil %}perfil.png"{% else %}{{ docente.foto_perfil }}{% endif %}" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
+                                    <h3 class="text-white">{{ var.nombre}} {{ var.apellido }} {{ var.curso.anio }}°{{ var.curso.division }}</h3>
                                 </div>
                             </div>
                             <!--/ meta -->
@@ -78,7 +72,7 @@
                             <li class="tab" >
                                 <a href="#settings-2" data-toggle="tab" aria-expanded="false">
                                     <span class="visible-xs"><i class="fa fa-cog"></i></span>
-                                    <span class="hidden-xs">Editar {{ var.estudiante.pk }}</span>
+                                    <span class="hidden-xs">Editar</span>
                                 </a>
                             </li>
                         <div class="indicator"></div></ul>
