@@ -6,7 +6,7 @@ from alcal.CONSTANTS import *
 
 
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('/home/esteban/PycharmProjects/untitled/alcal/alcal-f5d427704a2d.json', scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name('alcal/alcal-f5d427704a2d.json', scope)
 client = gspread.authorize(creds)
 sheet = client.open_by_url('https://docs.google.com/spreadsheets/d/1qmgWI_tww0qtllUeQwRBbXAued_86rf3V25ePq_bQmY/edit').sheet1
 Sexos = sheet.range(2, MF, 600, MF)
