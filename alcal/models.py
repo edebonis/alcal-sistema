@@ -11,6 +11,9 @@ from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 from .CONSTANTS import codigos, cod_letra
 
 
+
+
+
 class Persona(models.Model):
     usuario = models.OneToOneField(User, blank=True, on_delete=models.DO_NOTHING, null=True)
     GENEROS = (
@@ -236,7 +239,11 @@ class Inasistencia(models.Model):
         ('4', 'Sin Clase'),
         ('0', 'Presente')
     )
-
+    TURNOS = (
+        (0, 'Mañana'),
+        (1, 'Tarde'),
+        (2, 'Ed. Física')
+    )
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
     estudiante = ChainedForeignKey(
         Estudiante,
@@ -245,19 +252,35 @@ class Inasistencia(models.Model):
         show_all=False,
         sort=True, )
     fecha = models.DateField()
+    turno = models.IntegerField(choices=TURNOS, null=True)
+    tipo = models.CharField(choices=TIPOS, max_length=5, null=True)
 
-    maniana = models.CharField(choices=TIPOS, max_length=20, null=True)
-    tarde = models.CharField(choices=TIPOS, max_length=20, null=True)
-    ed_fisica = models.CharField(choices=TIPOS, max_length=20, null=True)
 
     def __str__(self):
         return '{} - {}'.format(self.fecha, self.estudiante)
+
+
+def faltas(sender, instance, **kwargs):
+    print(kwargs)
+    if kwargs['created']:
+        e = Inasistencia.objects.last().estudiante
+        i = Inasistencia.objects.last()
+        f = i.fecha
+        t = i.turno
+        ultima = Inasistencia.objects.filter(turno=not(t),estudiante=not(e),fecha=not(f))[:1]
+        Inasistencia.objects.exclude(pk__in=ultima, estudiante=e, fecha=f, turno=t).delete()
+        # Faltas.objects.create(estudiante=e, cantidad=10, fecha=f)
+        print("Falta guardada")
+
+
+post_save.connect(faltas, sender=Inasistencia)
 
 
 class Faltas(models.Model):
     estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING)
     cantidad = models.DecimalField(decimal_places=2, max_digits=4)
     fecha = models.DateField()
+
 
 class Notificacion(models.Model):
     estudiante = models.ForeignKey(Estudiante, on_delete=models.DO_NOTHING)

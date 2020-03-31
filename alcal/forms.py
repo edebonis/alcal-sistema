@@ -68,10 +68,9 @@ class Cursos(forms.ModelForm):
 class InasistenciaForm(forms.ModelForm):
     class Meta:
         model = Inasistencia
-        fields = ['maniana', 'tarde', 'ed_fisica']
-        labels = {'maniana': 'Mañana',
-                  'tarde': 'Tarde',
-                  'ed_fisica': 'Ed Física'}
+        fields = ['tipo']
+        labels = {'tipo': 'Tipo',
+                  }
 
 
 class FechaInasistencias(forms.Form):

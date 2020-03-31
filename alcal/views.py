@@ -10,27 +10,8 @@ from alcal.CONSTANTS import *
 from datetime import date
 from .utils import *
 from datetime import datetime, timedelta
+from alcal.pyspreadhseet import masculino, femenino
 
-
-def actualizar_falta(f, e, m, t, ed):
-    print('Fecha: {} - Estudainte: {}'.format(f, e))
-    if not m:
-        m = 0
-    if not t:
-        t = 0
-    if not ed:
-        ed = 0
-    c = '{}{}{}'.format(cod_letra[int(m)], cod_letra[int(t)], cod_letra[int(ed)])
-    estud = Estudiante.objects.get(legajo=e)
-    cant = codigos[c.upper()]
-
-    if Faltas.objects.filter(fecha=f, estudiante=e):
-        Faltas.objects.filter(fecha=f, estudiante=estud).update(cantidad=cant)
-        print('actualizada')
-    else:
-        Faltas.objects.create(estudiante=estud, cantidad=cant, fecha=f)
-        print('creada')
-    print("Falta guardada")
 
 
 @login_required(login_url='/admin/login')
@@ -39,30 +20,32 @@ def index(request):
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
 
-
 @login_required(login_url='/admin/login')
 def portada(request):
     carreras = Carrera.objects.order_by('anios')
     usuario = request.user
     cant_estudiantes = Estudiante.objects.count()
-    cant_femenino = len(Estudiante.objects.filter(genero='Femenino'))
-    cant_masculino = len(Estudiante.objects.filter(genero='Masculino'))
-    i_anio = ina_graf(None)
-    m_anio = ina_graf('maniana')
-    t_anio = ina_graf('tarde')
-    ef_anio = ina_graf('ed_fisica')
-    maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
+    # cant_femenino = len(Estudiante.objects.filter(genero='Femenino'))
+    # cant_masculino = len(Estudiante.objects.filter(genero='Masculino'))
+    cant_femenino = femenino
+    cant_masculino = masculino
+    cant_estudiantes = femenino + masculino
+    # i_anio = ina_graf(None)
+    # m_anio = ina_graf('maniana')
+    # t_anio = ina_graf('tarde')
+    # ef_anio = ina_graf('ed_fisica')
+    # maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
     # print('Usuario: {}'.format(usuario.groups.all()))
     materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
     docente = Docente.objects.get(usuario=usuario)
     print(docente)
     return render(request, 'alcal/blue/index.html', {
                     'materias': materias,
-                    'maximo': maximo,
-                    'i_anio': i_anio,
-                    'm_anio': m_anio,
-                    't_anio': t_anio,
-                    'ef_anio': ef_anio,
+                    # 'maximo': maximo,
+                    # 'i_anio': i_anio,
+                    # 'm_anio': m_anio,
+                    # 't_anio': t_anio,
+                    # 'ef_anio': ef_anio,
                     'carreras': carreras,
                     'usuario': usuario,
                     'cant_estudiantes': cant_estudiantes,
@@ -182,6 +165,7 @@ def inasistencias_por_estudiante(request):
 
 @login_required(login_url='/admin/login')
 def inasistencias_por_curso(request):
+    print(request.POST)
     anio_elegido = '1'
     division_elegida = "A"
     lista = []
@@ -201,70 +185,21 @@ def inasistencias_por_curso(request):
             id_alu = int(pk_list[0])
             f_nueva = pk_list[1]
             fecha = datetime.strptime(f_nueva, "%d-%m-%Y")
-            turno = request.POST['name']
-            indice_turno = turnos_ina.index(turno)
-            valor[indice_turno] = request.POST['value']
+            turno = turnos_ina.index(request.POST['name'])
+            tipo = request.POST['value']
             curso = Estudiante.objects.get(legajo=id_alu).curso
-            if Inasistencia.objects.filter(estudiante_id=id_alu, fecha=fecha):
-                if turno=='maniana':
-                    Inasistencia.objects.filter(estudiante_id=id_alu, fecha=fecha).update(maniana=valor[indice_turno])
-                if turno == 'tarde':
-                    Inasistencia.objects.filter(estudiante_id=id_alu, fecha=fecha).update(tarde=valor[indice_turno])
-                if turno == 'ed_fisica':
-                    Inasistencia.objects.filter(estudiante_id=id_alu, fecha=fecha).update(ed_fisica=valor[indice_turno])
-
-                maniana = Inasistencia.objects.get(estudiante_id=id_alu, fecha=fecha).maniana
-                tarde = Inasistencia.objects.get(estudiante_id=id_alu, fecha=fecha).tarde
-                ed_fisica = Inasistencia.objects.get(estudiante_id=id_alu, fecha=fecha).ed_fisica
-                actualizar_falta(fecha, id_alu, maniana, tarde, ed_fisica)
-            else:
-                if not valor[0]:
-                    valor[0] = 0
-                if not valor[1]:
-                    valor[1] = 0
-                if not valor[2]:
-                    valor[2] = 0
-                nueva_ina = Inasistencia(
-                    fecha=fecha,
-                    estudiante=Estudiante.objects.get(legajo=id_alu),
-                    maniana=valor[0],
-                    tarde=valor[1],
-                    ed_fisica=valor[2],
-                    curso=curso
-                )
-                nueva_ina.save()
-                actualizar_falta(fecha, id_alu, valor[0], valor[1], valor[2])
+            i = Inasistencia()
+            i.curso = curso
+            i.turno = turno
+            i.estudiante = Estudiante.objects.get(legajo=id_alu)
+            i.fecha = fecha
+            i.tipo = tipo
+            i.save()
         else:
-            if form.is_valid() and form2.is_valid():
+            if form.is_valid():
                 anio_elegido = request.POST['cursonombre'][0]
                 division_elegida = request.POST['cursonombre'][1]
-                f = request.POST['fecha']
-                if not f:
-                    f = datetime.strftime(datetime.today(), "%d/%m/%Y")
-                fecha = datetime.strptime(f, "%d/%m/%Y")
-                form2 = FechaInasistencias(request.POST, initial={'fecha': fecha})
-
-                if fecha > datetime.today() - timedelta(days=2):
-                    creado = False
-                else:
-                    creado = True
-            if form3.is_valid():
-                c = Curso.objects.filter(cursonombre='{}{}'.format(anio_elegido, division_elegida))
-                id_curso = c.values('id')[0]['id']
-                maniana = request.POST.getlist('maniana')
-                tarde = request.POST.getlist('tarde')
-                ed_fisica = request.POST.getlist('ed_fisica')
-                for alu, m, t, ed in zip(estudiantes,maniana,tarde,ed_fisica):
-                    print('Estudiante: {} - Mañana: {} - Tarde: {} - Ed.Física: {} - Fecha: {} - Curso: {}'.format(alu,m,t,ed,fecha,Curso.objects.get(id=id_curso)))
-                    nueva_ina = Inasistencia(
-                        fecha=fecha,
-                        ed_fisica=ed,
-                        estudiante=alu,
-                        tarde=t,
-                        maniana=m,
-                        curso=Curso.objects.get(id=id_curso)
-                    )
-                    nueva_ina.save()
+                fecha = datetime.strptime(request.POST['fecha'], "%d/%m/%Y")
     c = Curso.objects.filter(cursonombre='{}{}'.format(anio_elegido, division_elegida))
     id_curso = c.values('id')[0]['id']
     inasistencias = Inasistencia.objects.filter(curso=id_curso, fecha=fecha)
@@ -276,14 +211,20 @@ def inasistencias_por_curso(request):
         faltas['apellido'] = e.apellido
         faltas['nombre'] = e.nombre
         faltas['curso'] = c
+        try:
+            faltas['maniana'] = inasistencias.filter(estudiante_id=e.legajo, turno=0).last().tipo
+        except:
+            faltas['maniana'] = 0
+        try:
+            faltas['tarde'] = inasistencias.filter(estudiante_id=e.legajo, turno=1).last().tipo
+        except:
+            faltas['tarde'] = 0
+        try:
+            faltas['ed_fisica'] = inasistencias.filter(estudiante_id=e.legajo, turno=2).last().tipo
+        except:
+            faltas['ed_fisica'] = 0
         lista.append(faltas.copy())
-    inas = inasistencias.values('maniana', 'tarde', 'ed_fisica', 'estudiante_id', 'curso_id', 'fecha')
-    for ina in inas:
-        for li in lista:
-            if ina['fecha'] == li['fecha'] and ina['estudiante_id'] == li['legajo']:
-                li['maniana'] = ina['maniana']
-                li['tarde'] = ina['tarde']
-                li['ed_fisica'] = ina['ed_fisica']
+
     return render(request, 'alcal/blue/inasistencias_por_curso.html',
                   {
                       'estudiantes': estudiantes,

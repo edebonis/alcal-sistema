@@ -97,7 +97,6 @@
                                 <td class="col-sm-1">{{ falta.orden }}</td>
                                 <td>{{ falta.apellido }}</td>
                                 <td>{{ falta.nombre }}</td>
-                                {% if creado %}
                                     <td class="col-lg-1">
                                         <a href="#" id="inline-inasistencia" data-type="select" data-pk="{{ falta.legajo }},{{ falta.fecha }}" data-value={% if not falta.maniana %} 0 {% else %} {{ falta.maniana }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="maniana"></a>
                                     </td>
@@ -107,17 +106,7 @@
                                     <td class="col-lg-1">
                                         <a href="#" id="inline-inasistencia3" data-type="select" data-pk="{{ falta.legajo}},{{ falta.fecha }}"  data-value={% if not falta.ed_fisica %} 0 {% else %} {{ falta.ed_fisica }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="ed_fisica"></a>
                                     </td>
-                                {% else %}
-                                        <td class="col-sm-1">
-                                            {{ form3.maniana }}
-                                        </td>
-                                        <td class="col-sm-1">
-                                            {{ form3.tarde }}
-                                        </td>
-                                        <td class="col-sm-1">
-                                            {{ form3.ed_fisica }}
-                                        </td>
-                                {% endif %}
+
                             {% endfor %}
                                 </tr>
 
