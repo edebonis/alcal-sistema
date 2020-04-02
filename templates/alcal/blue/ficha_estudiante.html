@@ -41,6 +41,7 @@
                             <div class="bg-picture text-center" style="background-image:url('images/big/bg.jpg')">
                                 <div class="bg-picture-overlay"></div>
                                 <div class="profile-info-name">
+                                    <img src="{{ foto }}" width="300" height="214" >
                                     <img src="/static/images/{% if not docente.foto_perfil %}perfil.png"{% else %}{{ docente.foto_perfil }}{% endif %}" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
                                     <h3 class="text-white">{{ var.nombre}} {{ var.apellido }} {{ var.curso.anio }}°{{ var.curso.division }}</h3>
                                 </div>

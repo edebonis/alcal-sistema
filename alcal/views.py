@@ -7,10 +7,13 @@ from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seg
 from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
     NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm, NuevaMateria
 from alcal.CONSTANTS import *
+from alcal.nuevpr import LegajoEstudiantes
 from datetime import date
 from .utils import *
 from datetime import datetime, timedelta
-from alcal.pyspreadhseet import masculino, femenino
+
+
+legajo_google = LegajoEstudiantes()
 
 
 
@@ -25,11 +28,11 @@ def portada(request):
     carreras = Carrera.objects.order_by('anios')
     usuario = request.user
     cant_estudiantes = Estudiante.objects.count()
-    # cant_femenino = len(Estudiante.objects.filter(genero='Femenino'))
-    # cant_masculino = len(Estudiante.objects.filter(genero='Masculino'))
-    cant_femenino = femenino
-    cant_masculino = masculino
-    cant_estudiantes = femenino + masculino
+    cant_femenino = len(Estudiante.objects.filter(genero='F'))
+    cant_masculino = len(Estudiante.objects.filter(genero='M'))
+    # cant_femenino = femenino
+    # cant_masculino = masculino
+    # cant_estudiantes = femenino + masculino
     # i_anio = ina_graf(None)
     # m_anio = ina_graf('maniana')
     # t_anio = ina_graf('tarde')
@@ -473,6 +476,7 @@ def reportes_inasistencias(request):
 
 @login_required(login_url='/admin/login')
 def ficha_estudiante(request, pk):
+    foto = legajo_google.foto_por_id(104)
     if not pk:
         pk = 1
     valor = None
@@ -532,6 +536,7 @@ def ficha_estudiante(request, pk):
                        'boletin': boletin,
                        'pk': pk,
                        'form2': form2,
+                       'foto': foto
                        }
 
             return render(request, 'alcal/blue/ficha_estudiante.html', context)
@@ -545,7 +550,7 @@ def ficha_estudiante(request, pk):
             e.save()
     else:
         form = SelectorDeAlumno()
-    return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form, 'pk': pk, 'form2': form2})
+    return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form, 'pk': pk, 'form2': form2, 'foto': foto})
 
 
 @login_required(login_url='/admin/login')
@@ -651,3 +656,6 @@ def modificar_estudiante(request, pk):
 def estudiante_detalle(request, pk):
     est = get_object_or_404(Estudiante, pk=pk)
     return render(request, 'alcal/blue/estudiante_detalle.html', {'est': est})
+
+
+
