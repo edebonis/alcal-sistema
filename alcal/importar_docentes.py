@@ -1,15 +1,21 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from alcal.CONSTANTS import *
-from alcal.models import Estudiante, Curso
+from alcal.models import Docente, Curso
 import time
 
-class LegajoEstudiantes:
+class LegajoDocentes:
+    '''herramientas para trabajar con el legajo docente hecho en spreadsheets de google'''
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name('alcal/alcal-f5d427704a2d.json', scope)
     client = gspread.authorize(creds)
-    sheet = client.open_by_url(
-            'https://docs.google.com/spreadsheets/d/1qmgWI_tww0qtllUeQwRBbXAued_86rf3V25ePq_bQmY/edit').sheet1
+    archivo = client.open_by_url(
+            'https://docs.google.com/spreadsheets/d/1JqUj0KfmXHvI9Iht9MaWebCqUbi7JAAu42PEwYg0qrw/edit')
+    sheet_legajo = archivo.worksheet('Legajo')
+    sheet_docente_materia = archivo.worksheet('DocenteMateria')
+
+    print(sheet_docente_materia.col_values(4))
+    print(sheet_legajo.col_values(5))
 
 
     def estudiantes_por_curso(self, curso, *largs):
