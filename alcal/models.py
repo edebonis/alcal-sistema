@@ -8,7 +8,7 @@ from django.utils.html import format_html
 from datetime import datetime, timedelta
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 
-from .CONSTANTS import codigos, cod_letra
+from .utilidades import codigos, cod_letra
 
 
 

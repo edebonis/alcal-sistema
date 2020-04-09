@@ -1,7 +1,7 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from alcal.CONSTANTS import *
-from alcal.models import Docente, Curso
+from alcal.utilidades import *
+from alcal.models import Docente, Curso, Materia, Carrera
 import time
 
 class LegajoDocentes:
@@ -14,36 +14,18 @@ class LegajoDocentes:
     sheet_legajo = archivo.worksheet('Legajo')
     sheet_docente_materia = archivo.worksheet('DocenteMateria')
 
-    print(sheet_docente_materia.col_values(4))
-    print(sheet_legajo.col_values(5))
-
-
-    def estudiantes_por_curso(self, curso, *largs):
-        datos = []
-        t_datos = []
-        for i in largs:
-            t_datos.append(self.sheet.col_values(i))
-            datos.append([])
-        activos = self.sheet.col_values(ACTIVX)
-        cursos = self.sheet.col_values(CURSO)
-        for j in range(0, len(activos)):
-            if activos[j].upper() == 'SI' and curso == cursos[j]:
-                for k in range(0, len(largs)):
-                    datos[k].append(t_datos[k][j])
-        return datos
-
     def ids_activos(self):
         datos = []
-        leg = self.sheet.col_values(LEG)
-        activos = self.sheet.col_values(ACTIVX)
-        for j in range(0,len(leg)):
+        leg = self.sheet_legajo.col_values(ColDoc.NReg)
+        activos = self.sheet_legajo.col_values(ColDoc.ACTIVX)
+        for j in range(0, len(leg)):
             if activos[j].upper() == 'SI':
                 datos.append(leg[j])
         return datos
 
-    def estudiante_por_id(self, legajo):
-        indice = self.sheet.col_values(LEG).index(str(legajo))
-        alumno = self.sheet.row_values(indice+1)
+    def docente_por_id(self, legajo):
+        indice = self.sheet_legajo.col_values(ColDoc.NReg).index(str(legajo))
+        alumno = self.sheet_legajo.row_values(indice+1)
         return alumno
 
     def foto_estudiante(self, url):
@@ -52,37 +34,46 @@ class LegajoDocentes:
         return url_pub
 
     def foto_por_id(self, legajo):
-        estudiante = self.estudiante_por_id(legajo)
+        estudiante = self.docente_por_id(legajo)
         url_foto = self.foto_estudiante(estudiante[FOTO-1])
         return url_foto
 
-    def migrar_spreadshet(self):
+    def migrar_docentes(self):
         leg = self.ids_activos()
-        for l in leg:
-            time.sleep(2)
-            datos = self.estudiante_por_id(l)
-            i = Estudiante()
-            i.legajo = datos[LEG-1]
-            i.tipo = datos[TIPO-1]
-            cur = Curso.objects.get(cursonombre=datos[CURSO-1])
-            i.curso = cur
-            i.nombre = datos[NOMBRES-1]
-            i.apellido = datos[APELLIDOS-1]
-            i.archivo_de_seguimiento = datos[ARCHIVODESEGUIMIENTO-1]
-            i.url_foto = datos[FOTO-1]
-            i.telefono_1 = datos[TELEFONOS-1]
-            i.orden = datos[ORDEN-1]
-            i.genero = datos[MF-1]
-            i.email = datos[EMAIL-1]
-            if datos[DOMICILIO-1] != "":
-                print(datos[DOMICILIO-1])
-                i.domicilio_calle = " ".join(datos[DOMICILIO-1].split()[:-1])
-                if type(datos[DOMICILIO-1].split()[-1] ) == type(1):
-                    i.domicilio_numero = datos[DOMICILIO-1].split()[-1]
-                else:
-                    i.domicilio_calle = datos[DOMICILIO-1]
-            if datos[ACTIVX-1] == 'SI':
+        for legajo in leg:
+            time.sleep(1)
+            datos = self.docente_por_id(legajo)
+            i = Docente()
+            i.legajo = datos[ColDoc.NReg-1]
+            i.nombre = datos[ColDoc.NOMBRES-1]
+            i.apellido = datos[ColDoc.APELLIDOS-1]
+            i.telefono_1 = datos[ColDoc.TELEFONOS-1]
+            i.orden = datos[ColDoc.NORD-1]
+            i.genero = datos[ColDoc.MF-1]
+            i.email = datos[ColDoc.EMAIL-1]
+            if datos[ColDoc.ACTIVX-1] == 'SI':
                 i.activx = True
+            i.save()
+            print(i)
+        return True
+
+    def migrar_materias(self):
+        for materia in range(1,161):
+            time.sleep(1)
+            datos = self.sheet_docente_materia.row_values(materia)
+            i = Materia()
+            i.nombre = datos[ColMat.NOMBRE-1]
+            i.taller = datos[ColMat.TEC-1]=='VERDADERO'
+            i.carga_horaria = datos[ColMat.CARGA-1]
+            if datos[ColMat.DIV-1].upper() == "A":
+                i.carrera = Carrera.objects.get(id=2)
+            else:
+                i.carrera = Carrera.objects.get(id=1)
+            cur = Curso.objects.get(anio=datos[ColMat.ANO-1], division=datos[ColMat.DIV-1])
+            i.curso = cur
+            print(datos[ColMat.MAILDOC-1])
+            prof = Docente.objects.get(email=datos[ColMat.MAILDOC-1].split(',')[0])
+            i.docente_titular = prof
             i.save()
             print(i)
         return True

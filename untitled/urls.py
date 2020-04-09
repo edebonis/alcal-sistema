@@ -40,6 +40,7 @@ urlpatterns = [
     path('reportes_notas', views.reportes_notas, name='repnotas'),
     path('reportes_inasistencias', views.reportes_inasistencias, name='repina'),
     path('ficha_estudiante/<int:pk>', views.ficha_estudiante, name='fichaest'),
+    path('ficha_estudiante/', views.ficha_estudiante, name='fichaestu'),
     path('ficha_docente', views.ficha_docente, name='fichadoc'),
     path('carreras', views.carreras, name='carreras'),
     path('cursos', views.cursos, name='cursos'),

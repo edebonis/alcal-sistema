@@ -6,7 +6,7 @@ __pycache__/
 # C extensions
 *.so
 .idea
-alcal-f5d*.json
+alcal/alcal-f5d427704a2d.json
 # Distribution / packaging
 .Python
 build/

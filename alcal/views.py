@@ -6,14 +6,10 @@ from django.db.models import Sum, Count
 from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia, Faltas
 from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
     NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm, NuevaMateria
-from alcal.CONSTANTS import *
+from alcal.utilidades import *
 from datetime import date
 from .utils import *
 from datetime import datetime, timedelta
-
-
-
-
 
 
 @login_required(login_url='/admin/login')
@@ -22,6 +18,7 @@ def index(request):
     html = "<html><body>It is now %s.</body></html>" % now
     return HttpResponse(html)
 
+
 @login_required(login_url='/admin/login')
 def portada(request):
     carreras = Carrera.objects.order_by('anios')
@@ -29,30 +26,40 @@ def portada(request):
     cant_estudiantes = Estudiante.objects.count()
     cant_femenino = len(Estudiante.objects.filter(genero='F'))
     cant_masculino = len(Estudiante.objects.filter(genero='M'))
-    # cant_femenino = femenino
-    # cant_masculino = masculino
-    # cant_estudiantes = femenino + masculino
-    # i_anio = ina_graf(None)
-    # m_anio = ina_graf('maniana')
-    # t_anio = ina_graf('tarde')
-    # ef_anio = ina_graf('ed_fisica')
-    # maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
-    # print('Usuario: {}'.format(usuario.groups.all()))
-    materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
+    doc_femenino = len(Docente.objects.filter(genero__in=['F', 'Femenino']))
+    doc_masculino = len(Docente.objects.filter(genero__in=['M', 'Masculino']))
+    cant_doc = doc_femenino + doc_masculino
+    curso_eco = Curso.objects.filter(division='A')
+    curso_tec = Curso.objects.filter(division='B')
+    cant_m_eco = len(Estudiante.objects.filter(genero='M', curso__in=curso_eco))
+    cant_f_eco = len(Estudiante.objects.filter(genero='F', curso__in=curso_eco))
+    cant_m_tec = len(Estudiante.objects.filter(genero='M', curso__in=curso_tec))
+    cant_f_tec = len(Estudiante.objects.filter(genero='F', curso__in=curso_tec))
+    cant_eco = cant_f_eco + cant_m_eco
+    cant_tec = cant_f_tec + cant_m_tec
+
+    try:
+        materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
+    except:
+        return redirect('/login')
     docente = Docente.objects.get(usuario=usuario)
     print(docente)
     return render(request, 'alcal/blue/index.html', {
                     'materias': materias,
-                    # 'maximo': maximo,
-                    # 'i_anio': i_anio,
-                    # 'm_anio': m_anio,
-                    # 't_anio': t_anio,
-                    # 'ef_anio': ef_anio,
                     'carreras': carreras,
                     'usuario': usuario,
                     'cant_estudiantes': cant_estudiantes,
                     'cant_femenino': cant_femenino,
                     'cant_masculino': cant_masculino,
+                    'cant_doc': cant_doc,
+                    'doc_femenino': doc_femenino,
+                    'doc_masculino': doc_masculino,
+                    'cant_m_eco': cant_m_eco,
+                    'cant_f_eco': cant_f_eco,
+                    'cant_m_tec': cant_m_tec,
+                    'cant_f_tec': cant_f_tec,
+                    'cant_tec': cant_tec,
+                    'cant_eco': cant_eco,
                     'docente': docente,
                   }
                   )
@@ -474,11 +481,10 @@ def reportes_inasistencias(request):
 
 
 @login_required(login_url='/admin/login')
-def ficha_estudiante(request, pk):
-    if not pk:
-        pk = 1
+def ficha_estudiante(request, *pk):
     valor = None
-    estu = Estudiante.objects.get(id=1)
+    estu = Estudiante.objects.first()
+
     form2 = NuevoEstudiante(request.POST)
     lista = ['PT',
              'ST',
@@ -547,7 +553,7 @@ def ficha_estudiante(request, pk):
             e.save()
     else:
         form = SelectorDeAlumno()
-    return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form, 'pk': pk, 'form2': form2,})
+    return render(request, 'alcal/blue/ficha_estudiante.html', {'form': form, 'pk': pk, 'form2': form2})
 
 
 @login_required(login_url='/admin/login')
