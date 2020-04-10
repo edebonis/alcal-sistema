@@ -255,7 +255,6 @@ class Inasistencia(models.Model):
     turno = models.IntegerField(choices=TURNOS, null=True)
     tipo = models.CharField(choices=TIPOS, max_length=5, null=True)
 
-
     def __str__(self):
         return '{} - {}'.format(self.fecha, self.estudiante)
 
@@ -267,7 +266,7 @@ def faltas(sender, instance, **kwargs):
         i = Inasistencia.objects.last()
         f = i.fecha
         t = i.turno
-        ultima = Inasistencia.objects.filter(turno=not(t),estudiante=not(e),fecha=not(f))[:1]
+        ultima = Inasistencia.objects.filter(turno=not(t), estudiante=not(e), fecha=not(f))[:1]
         Inasistencia.objects.exclude(pk__in=ultima, estudiante=e, fecha=f, turno=t).delete()
         # Faltas.objects.create(estudiante=e, cantidad=10, fecha=f)
         print("Falta guardada")
