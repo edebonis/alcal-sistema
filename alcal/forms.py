@@ -350,6 +350,7 @@ class SelectorDeAlumno(forms.ModelForm):
         self.fields['curso'].queryset = self.fields['curso'].queryset.order_by('cursonombre')
         # self.fields['estudiante'].widget.attrs['data-value'] = Estudiante.objects.get().fi
 
+
 class NuevaMateria(forms.ModelForm):
     class Meta:
         model = Materia

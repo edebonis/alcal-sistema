@@ -41,8 +41,12 @@
                             <div class="bg-picture text-center" style="background-image:url('images/big/bg.jpg')">
                                 <div class="bg-picture-overlay"></div>
                                 <div class="profile-info-name">
-                                    <img src="{{ foto }}" width="300" height="214" >
-                                    <img src="/static/images/{% if not docente.foto_perfil %}perfil.png"{% else %}{{ docente.foto_perfil }}{% endif %}" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
+                                    <!--<img src="{{ foto }}" width="300" height="214" >-->
+                                    {% if not foto %}
+                                        <img src="/static/images/perfil.png" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
+                                    {% else %}
+                                        <img src="{{ foto }}" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
+                                    {% endif %}
                                     <h3 class="text-white">{{ var.nombre}} {{ var.apellido }} {{ var.curso.anio }}°{{ var.curso.division }}</h3>
                                 </div>
                             </div>
@@ -86,7 +90,8 @@
                                     <div>
                                             {{ form.curso }}
                                             {{ form.estudiante }}
-                                            <button class="btn btn-primary waves-effect waves-light w-md" type="submit">Buscar</button>                                    </div>
+                                            <button class="btn btn-primary waves-effect waves-light w-md" type="submit">Buscar</button>
+                                    </div>
                                 </form>
 
                             </div>
@@ -229,7 +234,6 @@
                             {% endblock %}
                                 <!-- Personal-Information -->
 
-
                             {% block calificaciones_ficha %}
                                 {% include 'alcal/blue/calificaciones_ficha.html' %}
                             {% endblock %}
@@ -237,6 +241,7 @@
                             {% block modificar_estudiante %}
                                 {% include 'alcal/blue/modificar_estudiante.html' %}
                             {% endblock %}
+
                         </div>
                     </div>
                     </div>

@@ -80,6 +80,7 @@ faltas = {'fecha': None,
           }
 
 turnos_ina = ['maniana', 'tarde', 'ed_fisica']
+turnos_nombres = ['Mañana', 'Tarde', 'Educación Física']
 
 
 class ColEst:

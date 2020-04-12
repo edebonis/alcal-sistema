@@ -24,38 +24,81 @@
     {% endblock %}
 
 
-    <footer class="footer text-right">
-        2015 © Moltran.
-    </footer>
+
 </div> <!-- content -->
 
 <!-- ============================================================== -->
 <!-- End Right content here -->
 <!-- ============================================================== -->
 <div class="content-page">
-                <!-- Start content -->
-                <div class="content">
-                <div class="wraper container-fluid">
-                    <div class="row">
-                        <div class="col-lg-5 col-md-5 col-sm-5 hidden-xs">
-                            <div class="pull-right">
-                                <form action="#" method="post" class="form-inline">
-                                {% csrf_token %}
-                                <div>
-                                            {{ form.curso }}
-                                            {{ form.estudiante }}
-                                            <button class="btn btn-primary waves-effect waves-light w-md" type="submit">Buscar</button>                                    </div>
-                                </form>
-
-                            </div>
+    <!-- Start content -->
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4 class="pull-left page-title">Inasistencias por Estudiante</h4>
+                    <ol class="breadcrumb pull-right">
+                        <li><a href="#">Alcal</a></li>
+                        <li><a href="#">Cursos</a></li>
+                        <li class="active">Inasistencias por estudiante</li>
+                    </ol>
+                </div>
+            </div>
+            {% block selector_de_alumno %}
+                {% include 'alcal/blue/selector_de_alumno.html' %}
+            {% endblock %}
+            <div class="row offset1">
+                <div class="col-xs-10 col-xs-offset-1" >
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"> Ingrese inasistencias </h3>
                         </div>
+                        <div class="panel-body">
+                            <table class="table table-bordered table-striped" id="datatable-editable">
+                                <thead>
+                                <tr>
+                                    <th style="width: 1px; white-space: nowrap">Fecha</th>
+                                    <th style="width: 1px; white-space: nowrap">M </th>
+                                    <th style="width: 1px; white-space: nowrap">T</th>
+                                    <th style="width: 1px; white-space: nowrap">EF</th>
+                                    <th style="width: 1px; white-space: nowrap">Cantidad</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for tipo in tipos %}
+                                    <tr class="gradeX">
+                                    <td class="col-sm-1">{{ tipo.3 }}</td>
+                                        <td class="col-lg-1">
+                                            <a href="/inasistencias_por_estudiante" id="inline-inasistencia" data-type="select" data-pk="{{ tipo.5 }},{{ tipo.3 }}" data-value={{ tipo.0 }} data-title="Seleccione" data-url="/inasistencias_por_estudiante" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="maniana"></a>
+                                        </td>
+                                        <td class=col-lg-1>
+                                            <a href="/inasistencias_por_estudiante" id="inline-inasistencia2" data-type="select" data-pk="{{ tipo.5 }},{{ tipo.3 }}"  data-value={{ tipo.1 }} data-title="Seleccione" data-url="/inasistencias_por_estudiante" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="tarde"></a>
+                                        </td>
+                                        <td class="col-lg-1">
+                                            <a href="/inasistencias_por_estudiante" id="inline-inasistencia3" data-type="select" data-pk="{{ tipo.5 }},{{ tipo.3 }}"  data-value={{ tipo.2 }} data-title="Seleccione" data-url="/inasistencias_por_estudiante" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="ed_fisica"></a>
+                                        </td>
+                                    <td class="col-sm-1">{{ tipo.4 }}</td>
+                                {% endfor %}
+                                </tr>
 
+                                </tbody>
+                            </table>
+                            </form>
+                        </div>
                     </div>
-                </div>
-                </div>
+
+                    <!-- end: page -->
+                </div> <!-- col -->
+            </div> <!-- end Panel -->
+        </div>
+    </div>
+    <footer class="footer text-right">
+        2015 © Moltran.
+    </footer>
 </div>
-</div>
+
 <!-- END wrapper -->
+
 
 {% block scripts_template %}
     {% include 'alcal/blue/scripts_template.html' %}

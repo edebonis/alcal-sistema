@@ -7,8 +7,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from datetime import datetime, timedelta
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
-
-from .utilidades import codigos, cod_letra
+from .utilidades import codigos, cod_letra, turnos_ina, turnos_nombres
 
 
 
@@ -260,16 +259,28 @@ class Inasistencia(models.Model):
 
 
 def faltas(sender, instance, **kwargs):
-    print(kwargs)
-    if kwargs['created']:
-        e = Inasistencia.objects.last().estudiante
-        i = Inasistencia.objects.last()
-        f = i.fecha
-        t = i.turno
-        ultima = Inasistencia.objects.filter(turno=not(t), estudiante=not(e), fecha=not(f))[:1]
-        Inasistencia.objects.exclude(pk__in=ultima, estudiante=e, fecha=f, turno=t).delete()
-        # Faltas.objects.create(estudiante=e, cantidad=10, fecha=f)
-        print("Falta guardada")
+    estudiante = Inasistencia.objects.last().estudiante
+    i_ultima = Inasistencia.objects.last()
+    i_anterior = Inasistencia.objects.filter(estudiante=estudiante, fecha=i_ultima.fecha)
+    fecha = i_ultima.fecha
+    man = i_anterior.filter(turno=0)
+    tar = i_anterior.filter(turno=1)
+    edu = i_anterior.filter(turno=2)
+    if man:
+        m = cod_letra[int(i_anterior.get(turno=0).tipo)]
+    else:
+        m = "P"
+    if tar:
+        t = cod_letra[int(i_anterior.get(turno=1).tipo)]
+    else:
+        t = "P"
+    if edu:
+        e = cod_letra[int(i_anterior.get(turno=2).tipo)]
+    else:
+        e = "P"
+    codigo_ina = "{}{}{}".format(m, t, e)
+    cantidad = codigos[codigo_ina]
+    Faltas.objects.update_or_create(estudiante=estudiante, fecha=fecha, defaults={'cantidad': cantidad})
 
 
 post_save.connect(faltas, sender=Inasistencia)
