@@ -1,20 +1,23 @@
 {%  block seguimientos_ficha %}
-{% load static %}
-     <div class="tab-pane" id="profile-2">
+    {% load static %}
+    <div class="tab-pane" id="profile-2">
         <div class="panel panel-default panel-fill">
+            <div class="panel-heading">
+                <h3 class="panel-title">Informes de Seguimiento</h3>
+            </div>
             <div class="panel-body">
                 <div class="timeline-2">
                     {% for i in seguimiento %}
-                    <div class="time-item">
-                        <div class="item-info">
-                            <div class="text-muted">{{i.fecha}}</div>
-                            <p><strong><a href="#" class="text-info">{{ i.tipo }}</a></strong> {{i.notificacion}} <strong>{{segu}}</strong></p>
+                        <div class="time-item">
+                            <div class="item-info">
+                                <div class="text-muted">{{i.fecha}}</div>
+                                <p><strong><a href="#" class="text-info">{{ i.tipo }}</a></strong> {{i.notificacion}} <strong>{{segu}}</strong></p>
+                            </div>
                         </div>
-                    </div>
                     {% endfor %}
 
                 </div>
             </div>
         </div>
-     </div>
+    </div>
 {% endblock %}

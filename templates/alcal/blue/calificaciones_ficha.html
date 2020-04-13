@@ -1,5 +1,5 @@
 {%  block calificaciones_ficha %}
-{% load static %}
+    {% load static %}
     <div class="tab-pane" id="messages-2">
         <div class="panel panel-default panel-fill">
             <div class="panel-heading">
@@ -9,25 +9,25 @@
                 <div class="table-responsive">
                     <table class="table">
                         <thead class="panel-heading">
-                            <tr>
-                                <th>Materia</th>
-                                <th>Primer Trimestre</th>
-                                <th>Segundo Trimestre</th>
-                                <th>Tercer Trimestre</th>
-                                <th>Calificación Final</th>
-                                <th>Diciembre</th>
-                                <th>Febrero</th>
-                                <th>Calificación Definitiva</th>
-                            </tr>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Primer Trimestre</th>
+                            <th>Segundo Trimestre</th>
+                            <th>Tercer Trimestre</th>
+                            <th>Calificación Final</th>
+                            <th>Diciembre</th>
+                            <th>Febrero</th>
+                            <th>Calificación Definitiva</th>
+                        </tr>
                         </thead>
                         <tbody class="text-center">
-                            {% for i in boletin %}
-                                <tr>
-                                    {% for j in i %}
-                                        <td>{{ j }}</td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
+                        {% for i in boletin %}
+                            <tr>
+                                {% for j in i %}
+                                    <td>{{ j }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>

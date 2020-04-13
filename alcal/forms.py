@@ -347,8 +347,9 @@ class SelectorDeAlumno(forms.ModelForm):
         super(SelectorDeAlumno, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control '
+        self.visible_fields()[1].field.widget.attrs['style'] = 'width:280px; text-overflow: ellipsis'
         self.fields['curso'].queryset = self.fields['curso'].queryset.order_by('cursonombre')
-        # self.fields['estudiante'].widget.attrs['data-value'] = Estudiante.objects.get().fi
+        self.fields['estudiante'].queryset = self.fields['estudiante'].queryset.order_by('apellido')
 
 
 class NuevaMateria(forms.ModelForm):

@@ -1,25 +1,25 @@
 {%  block modificar_estudiante %}
-{% load static %}
-<div class="tab-pane" id="messages-2">
+    {% load static %}
+ <div class="tab-pane" id="profile-2">
         <div class="panel panel-default panel-fill">
             <div class="panel-heading">
-                <h3 class="panel-title">Calificaciones</h3>
+                <h3 class="panel-title">Modificar Estudiante</h3>
             </div>
-                    <div class="panel-body">
-                            <form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
+            <div class="panel-body">
+                <form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
 
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    {{ form2.curso }}
-                                    {{ form2.nombre }}
-                                    {{ form2.apellido }}
-                                </div>
-                               <button type="submit" class="btn btn-primary">Guardar</button>
-                            </form>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form2.curso }}
+                        {{ form2.nombre }}
+                        {{ form2.apellido }}
                     </div>
-       </div>
-       </div>
-       </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
 
 {% endblock %}
 

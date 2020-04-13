@@ -24,232 +24,233 @@
     {% endblock %}
 
 
-    <footer class="footer text-right">
-        2015 © Moltran.
-    </footer>
+
 </div> <!-- content -->
-</div>
+
 <!-- ============================================================== -->
 <!-- End Right content here -->
 <!-- ============================================================== -->
 <div class="content-page">
-                <!-- Start content -->
-                <div class="content">
-                <div class="wraper container-fluid">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="bg-picture text-center" style="background-image:url('images/big/bg.jpg')">
-                                <div class="bg-picture-overlay"></div>
-                                <div class="profile-info-name">
-                                    <!--<img src="{{ foto }}" width="300" height="214" >-->
-                                    {% if not foto %}
-                                        <img src="/static/images/perfil.png" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
-                                    {% else %}
-                                        <img src="{{ foto }}" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
-                                    {% endif %}
-                                    <h3 class="text-white">{{ var.nombre}} {{ var.apellido }} {{ var.curso.anio }}°{{ var.curso.division }}</h3>
-                                </div>
-                            </div>
-                            <!--/ meta -->
+    <!-- Start content -->
+    <div class="content">
+        <div class="wraper container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="bg-picture text-center" style="background-image:url('images/big/bg.jpg')">
+                        <div class="bg-picture-overlay"></div>
+                        <div class="profile-info-name">
+                            <!--<img src="{{ foto }}" width="300" height="214" >-->
+                            {% if not foto %}
+                                <img src="/static/images/perfil.png" class="thumb-lg img-circle img-thumbnail" alt="profile-image">
+                            {% else %}
+                                <img src="{{ foto }}" class="thumb-lg img-rounded" style="width:200px" alt="profile-image">
+                            {% endif %}
+                            <h3 class="text-white">{{ var.nombre}} {{ var.apellido }} {{ var.curso.anio }}°{{ var.curso.division }}</h3>
                         </div>
                     </div>
-                    <div class="row user-tabs">
-                        <div class="col-lg-7 col-md-7 col-sm-7">
-                            <ul class="nav nav-tabs tabs text-center">
-                            <li class="tab">
-                                <a href="#home-2" data-toggle="tab" aria-expanded="false" class="active">
-                                    <span class="visible-xs"><i class="fa fa-home"></i></span>
-                                    <span class="hidden-xs">Personales</span>
-                                </a>
-                            </li>
-                            <li class="tab">
-                                <a href="#profile-2" data-toggle="tab" aria-expanded="false">
-                                    <span class="visible-xs"><i class="fa fa-user"></i></span>
-                                    <span class="hidden-xs">Seguimiento</span>
-                                </a>
-                            </li>
-                            <li class="tab">
-                                <a href="#messages-2" data-toggle="tab" aria-expanded="true">
-                                    <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
-                                    <span class="hidden-xs">Calificaciones</span>
-                                </a>
-                            </li>
-                            <li class="tab" >
-                                <a href="#settings-2" data-toggle="tab" aria-expanded="false">
-                                    <span class="visible-xs"><i class="fa fa-cog"></i></span>
-                                    <span class="hidden-xs">Editar</span>
-                                </a>
-                            </li>
+                    <!--/ meta -->
+                </div>
+            </div>
+            <div class="row user-tabs">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <ul class="nav nav-tabs tabs text-center">
+                        <li class="tab">
+                            <a href="#home-2" data-toggle="tab" aria-expanded="false" class="active">
+                                <span class="visible-xs"><i class="fa fa-home"></i></span>
+                                <span class="hidden-xs">Personales</span>
+                            </a>
+                        </li>
+                        <li class="tab">
+                            <a href="#profile-2" data-toggle="tab" aria-expanded="false">
+                                <span class="visible-xs"><i class="fa fa-user"></i></span>
+                                <span class="hidden-xs">Seguimiento</span>
+                            </a>
+                        </li>
+                        <li class="tab">
+                            <a href="#messages-2" data-toggle="tab" aria-expanded="true">
+                                <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
+                                <span class="hidden-xs">Calificaciones</span>
+                            </a>
+                        </li>
+                        <li class="tab" >
+                            <a href="#settings-2" data-toggle="tab" aria-expanded="false">
+                                <span class="visible-xs"><i class="fa fa-cog"></i></span>
+                                <span class="hidden-xs">Editar</span>
+                            </a>
+                        </li>
                         <div class="indicator"></div></ul>
-                        </div>
-
-                        <div class="col-lg-5 col-md-5 col-sm-5 hidden-xs">
-                            <div class="pull-right">
-                                <form action="{% if var.estudiante.pk %}{% url 'fichaest' pk=var.estudiante.pk %}{% else %}#{% endif %}" method="post" class="form-inline">
-                                {% csrf_token %}
-                                    <div>
-                                            {{ form.curso }}
-                                            {{ form.estudiante }}
-                                            <button class="btn btn-primary waves-effect waves-light w-md" type="submit">Buscar</button>
-                                    </div>
-                                </form>
-
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 ">
+                    <div class="pull-left" style="line-height:50px; width:115%">
+                        <form action="{% if var.estudiante.pk %}{% url 'fichaest' pk=var.estudiante.pk %}{% else %}#{% endif %}" method="post" class="form-inline">
+                            {% csrf_token %}
+                            <div class="col-sm-2">
+                                {{ form.curso }}
                             </div>
-                        </div>
-                        </div>
+                            <div class="col-sm-6">
+                                {{ form.estudiante }}
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-primary waves-effect waves-light w-md" style="margin-top:0px" type="submit">Buscar</button>
+                            </div>
+                        </form>
+
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-
-                        <div class="tab-content profile-tab-content">
-                            <div class="tab-pane active" id="home-2">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <!-- Personal-Information -->
-                                        <div class="panel panel-default panel-fill">
-                                            <div class="panel-heading">
-                                                <h3 class="panel-title">Información Personal</h3>
-                                            </div>
-                                            <div class="panel-body">
-                                                <div class="about-info-p">
-                                                    <strong>Nombre Completo:</strong>
-                                                    <br/>
-                                                    <p class="text-muted">{{ var.nombre }} {{ var.apellido }}</p>
-                                                </div>
-                                                <div class="about-info-p">
-                                                    <strong>Teléfono</strong>
-                                                    <br/>
-                                                    <p class="text-muted">{{var.telefono_1}}</p>
-                                                </div>
-                                                <div class="about-info-p">
-                                                    <strong>Email</strong>
-                                                    <br/>
-                                                    <p class="text-muted">{{var.email}}</p>
-                                                </div>
-                                                <div class="about-info-p m-b-0">
-                                                    <strong>Nacionalidad</strong>
-                                                    <br/>
-                                                    <p class="text-muted">{{var.pais_de_nacimiento.attname}}</p>
-                                                </div>
-                                                <div class="about-info-p m-b-0">
-                                                    <strong>DNI</strong>
-                                                    <br/>
-                                                    <p class="text-muted">{{var.num_dni}}</p>
-                                                </div>
-                                                <div class="about-info-p m-b-0">
-                                                    <strong>Dirección</strong>
-                                                    <br/>
-                                                    <p class="text-muted">{{var.domicilio_calle}} {{ var.domicilio_numero }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Personal-Information -->
-
-                                        <!-- Languages -->
-                                        <div class="panel panel-default panel-fill">
-                                            <div class="panel-heading">
-                                                <h3 class="panel-title">Languages</h3>
-                                            </div>
-                                            <div class="panel-body">
-                                                <ul>
-                                                    <li>English</li>
-                                                    <li>Franch</li>
-                                                    <li>Greek</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <!-- Languages -->
-
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="tab-content profile-tab-content">
+                    <div class="tab-pane active" id="home-2">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <!-- Personal-Information -->
+                                <div class="panel panel-default panel-fill">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Información Personal</h3>
                                     </div>
-
-
-                                    <div class="col-md-8">
-                                        <!-- Personal-Information -->
-                                        <div class="panel panel-default panel-fill">
-                                            <div class="panel-heading">
-                                                <h3 class="panel-title">Biography</h3>
-                                            </div>
-                                            <div class="panel-body">
-                                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-
-                                                <p><strong>But also the leap into electronic typesetting, remaining essentially unchanged.</strong></p>
-
-                                                <p>It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                                            </div>
+                                    <div class="panel-body">
+                                        <div class="about-info-p">
+                                            <strong>Nombre Completo:</strong>
+                                            <br/>
+                                            <p class="text-muted">{{ var.nombre }} {{ var.apellido }}</p>
                                         </div>
-                                        <!-- Personal-Information -->
-
-                                        <div class="panel panel-default panel-fill">
-                                            <div class="panel-heading">
-                                                <h3 class="panel-title">Inasistencias</h3>
-                                            </div>
-                                            <div class="panel-body">
-                                                <div class="m-b-15">
-                                                    <h5>Inasistencias <span class="pull-right">{{ inasistencias }}</span></h5>
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-primary wow animated progress-animated" role="progressbar" aria-valuenow="{{inasistencias}}" aria-valuemin="0" aria-valuemax="28" style="width: {{inasistencias}}%;">
-                                                            <span class="sr-only"> </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="m-b-15">
-                                                    <h5>Tardes por la Mañana <span class="pull-right">{{maniana_tarde}} veces</span></h5>
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-pink wow animated progress-animated" role="progressbar" aria-valuenow="{{maniana_tarde}}" aria-valuemin="0" aria-valuemax="28" style="width: {{maniana_tarde}}%;">
-                                                            <span class="sr-only"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="m-b-15">
-                                                    <h5>Tardes por la Tarde <span class="pull-right">{{ tarde_tarde }} veces</span></h5>
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-purple wow animated progress-animated" role="progressbar" aria-valuenow="{{tarde_tarde}}" aria-valuemin="0" aria-valuemax="28" style="width: {{ tarde_tarde }}%;">
-                                                            <span class="sr-only"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="m-b-0">
-                                                    <h5>Ausencias a Educación Física <span class="pull-right">{{ aus_ed }} veces</span></h5>
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-info wow animated progress-animated" role="progressbar" aria-valuenow="{{ aus_ed }}" aria-valuemin="0" aria-valuemax="28" style="width: {{aus_ed}}%;">
-                                                            <span class="sr-only"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
+                                        <div class="about-info-p">
+                                            <strong>Teléfono</strong>
+                                            <br/>
+                                            <p class="text-muted">{{var.telefono_1}}</p>
                                         </div>
-
+                                        <div class="about-info-p">
+                                            <strong>Email</strong>
+                                            <br/>
+                                            <p class="text-muted">{{var.email}}</p>
+                                        </div>
+                                        <div class="about-info-p m-b-0">
+                                            <strong>Nacionalidad</strong>
+                                            <br/>
+                                            <p class="text-muted">{{var.pais_de_nacimiento.attname}}</p>
+                                        </div>
+                                        <div class="about-info-p m-b-0">
+                                            <strong>DNI</strong>
+                                            <br/>
+                                            <p class="text-muted">{{var.num_dni}}</p>
+                                        </div>
+                                        <div class="about-info-p m-b-0">
+                                            <strong>Dirección</strong>
+                                            <br/>
+                                            <p class="text-muted">{{var.domicilio_calle}} {{ var.domicilio_numero }}</p>
+                                        </div>
                                     </div>
-
                                 </div>
-                            </div>
-
-
-                            {% block seguimientos_ficha %}
-                                {% include 'alcal/blue/seguimientos_ficha.html' %}
-                            {% endblock %}
                                 <!-- Personal-Information -->
 
-                            {% block calificaciones_ficha %}
-                                {% include 'alcal/blue/calificaciones_ficha.html' %}
-                            {% endblock %}
+                                <!-- Languages -->
+                                <div class="panel panel-default panel-fill">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Languages</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <ul>
+                                            <li>English</li>
+                                            <li>Franch</li>
+                                            <li>Greek</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- Languages -->
 
-                            {% block modificar_estudiante %}
-                                {% include 'alcal/blue/modificar_estudiante.html' %}
-                            {% endblock %}
+                            </div>
+
+
+                            <div class="col-md-8">
+                                <!-- Personal-Information -->
+                                <div class="panel panel-default panel-fill">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Biography</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+
+                                        <p><strong>But also the leap into electronic typesetting, remaining essentially unchanged.</strong></p>
+
+                                        <p>It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                                    </div>
+                                </div>
+                                <!-- Personal-Information -->
+
+                                <div class="panel panel-default panel-fill">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Inasistencias</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="m-b-15">
+                                            <h5>Inasistencias <span class="pull-right">{{ inasistencias }}</span></h5>
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-primary wow animated progress-animated" role="progressbar" aria-valuenow="{{inasistencias}}" aria-valuemin="0" aria-valuemax="28" style="width: {{inasistencias}}%;">
+                                                    <span class="sr-only"> </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="m-b-15">
+                                            <h5>Tardes por la Mañana <span class="pull-right">{{maniana_tarde}} veces</span></h5>
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-pink wow animated progress-animated" role="progressbar" aria-valuenow="{{maniana_tarde}}" aria-valuemin="0" aria-valuemax="28" style="width: {{maniana_tarde}}%;">
+                                                    <span class="sr-only"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="m-b-15">
+                                            <h5>Tardes por la Tarde <span class="pull-right">{{ tarde_tarde }} veces</span></h5>
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-purple wow animated progress-animated" role="progressbar" aria-valuenow="{{tarde_tarde}}" aria-valuemin="0" aria-valuemax="28" style="width: {{ tarde_tarde }}%;">
+                                                    <span class="sr-only"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="m-b-0">
+                                            <h5>Ausencias a Educación Física <span class="pull-right">{{ aus_ed }} veces</span></h5>
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-info wow animated progress-animated" role="progressbar" aria-valuenow="{{ aus_ed }}" aria-valuemin="0" aria-valuemax="28" style="width: {{aus_ed}}%;">
+                                                    <span class="sr-only"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
 
                         </div>
                     </div>
-                    </div>
-                </div> <!-- container -->
 
-                </div> <!-- content -->
-</div>
-</div>
+
+                    {% block seguimientos_ficha %}
+                        {% include 'alcal/blue/seguimientos_ficha.html' %}
+                    {% endblock %}
+
+
+                    {% block calificaciones_ficha %}
+                        {% include 'alcal/blue/calificaciones_ficha.html' %}
+                    {% endblock %}
+
+                    {% block modificar_estudiante %}
+                        {% include 'alcal/blue/modificar_estudiante.html' %}
+                    {% endblock %}
+
+                </div>
+            </div>
+        </div>
+        <footer class="footer text-right">
+            2015 © Moltran.
+        </footer>
+    </div> <!-- container -->
+
+</div> <!-- content -->
 
 
 
