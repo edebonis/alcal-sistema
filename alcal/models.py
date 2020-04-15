@@ -10,9 +10,6 @@ from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
 from .utilidades import codigos, cod_letra, turnos_ina, turnos_nombres
 
 
-
-
-
 class Persona(models.Model):
     usuario = models.OneToOneField(User, blank=True, on_delete=models.DO_NOTHING, null=True)
     GENEROS = (
@@ -259,8 +256,8 @@ class Inasistencia(models.Model):
 
 
 def faltas(sender, instance, **kwargs):
-    estudiante = Inasistencia.objects.last().estudiante
-    i_ultima = Inasistencia.objects.last()
+    estudiante = instance.estudiante
+    i_ultima = instance
     i_anterior = Inasistencia.objects.filter(estudiante=estudiante, fecha=i_ultima.fecha)
     fecha = i_ultima.fecha
     man = i_anterior.filter(turno=0)
@@ -280,7 +277,8 @@ def faltas(sender, instance, **kwargs):
         e = "P"
     codigo_ina = "{}{}{}".format(m, t, e)
     cantidad = codigos[codigo_ina]
-    Faltas.objects.update_or_create(estudiante=estudiante, fecha=fecha, defaults={'cantidad': cantidad})
+    if cantidad > 0:
+        Faltas.objects.update_or_create(estudiante=estudiante, fecha=fecha, defaults={'cantidad': cantidad})
 
 
 post_save.connect(faltas, sender=Inasistencia)

@@ -5,37 +5,21 @@ from django.db.models import Sum, Count
 def ina_graf(tipo):
     lista = ['1', '2', '3', '4', '5']
     if tipo:
-        turno = {'maniana':dict(maniana__in=lista),
-                 'tarde': dict(tarde__in=lista),
-                 'ed_fisica': dict(ed_fisica__in=lista)
-                 }
-
-        i_enero = Inasistencia.objects.filter(fecha__range=["2020-01-01", "2020-01-31"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_febrero = Inasistencia.objects.filter(fecha__range=["2020-02-01", "2020-02-29"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_marzo = Inasistencia.objects.filter(fecha__range=["2020-03-01", "2020-03-31"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_abril = Inasistencia.objects.filter(fecha__range=["2020-04-01", "2020-04-30"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_mayo = Inasistencia.objects.filter(fecha__range=["2020-05-01", "2020-05-31"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_junio = Inasistencia.objects.filter(fecha__range=["2020-06-01", "2020-06-30"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_julio = Inasistencia.objects.filter(fecha__range=["2020-07-01", "2020-07-31"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_agosto = Inasistencia.objects.filter(fecha__range=["2020-08-01", "2020-08-31"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_septiembre = Inasistencia.objects.filter(fecha__range=["2020-09-01", "2020-09-30"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_octubre = Inasistencia.objects.filter(fecha__range=["2020-10-01", "2020-10-31"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_noviembre = Inasistencia.objects.filter(fecha__range=["2020-11-01", "2020-11-30"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
-        i_diciembre = Inasistencia.objects.filter(fecha__range=["2020-12-01", "2020-12-31"], **turno[tipo]).aggregate(Count(tipo))[
-            '{}__count'.format(tipo)]
+        i_enero = Inasistencia.objects.filter(fecha__range=["2020-01-01", "2020-01-31"], turno=tipo).count()
+        i_febrero = Inasistencia.objects.filter(fecha__range=["2020-02-01", "2020-02-29"], turno=tipo).count()
+        i_marzo = Inasistencia.objects.filter(fecha__range=["2020-03-01", "2020-03-31"],  turno=tipo).count()
+        i_abril = Inasistencia.objects.filter(fecha__range=["2020-04-01", "2020-04-30"],  turno=tipo).count()
+        i_mayo = Inasistencia.objects.filter(fecha__range=["2020-05-01", "2020-05-31"],  turno=tipo).count()
+        i_junio = Inasistencia.objects.filter(fecha__range=["2020-06-01", "2020-06-30"],  turno=tipo).count()
+        i_julio = Inasistencia.objects.filter(fecha__range=["2020-07-01", "2020-07-31"],  turno=tipo).count()
+        i_agosto = Inasistencia.objects.filter(fecha__range=["2020-08-01", "2020-08-31"],  turno=tipo).count()
+        i_septiembre = Inasistencia.objects.filter(fecha__range=["2020-09-01", "2020-09-30"],  turno=tipo).count()
+        i_octubre = Inasistencia.objects.filter(fecha__range=["2020-10-01", "2020-10-31"],  turno=tipo).count()
+        i_noviembre = Inasistencia.objects.filter(fecha__range=["2020-11-01", "2020-11-30"],  turno=tipo).count()
+        i_diciembre = Inasistencia.objects.filter(fecha__range=["2020-12-01", "2020-12-31"],  turno=tipo).count()
         i_anio = [i_enero, i_febrero, i_marzo, i_abril, i_mayo, i_junio, i_julio, i_agosto, i_septiembre, i_octubre,
                   i_noviembre, i_diciembre]
+        print(i_anio)
         return i_anio
     else:
         f_enero = Faltas.objects.filter(fecha__range=["2020-01-01", "2020-01-31"]).aggregate(Sum('cantidad'))['cantidad__sum']

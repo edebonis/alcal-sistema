@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_
 from django.db.models import Sum, Count
 from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia, Faltas
 from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
-    NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm, NuevaMateria
+    NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm, NuevaMateria, CheckBox
 from alcal.utilidades import *
 from datetime import date
 from .utils import *
@@ -37,6 +37,12 @@ def portada(request):
     cant_f_tec = len(Estudiante.objects.filter(genero='F', curso__in=curso_tec))
     cant_eco = cant_f_eco + cant_m_eco
     cant_tec = cant_f_tec + cant_m_tec
+    i_anio = ina_graf(None)
+    m_anio = ina_graf(0)
+    t_anio = ina_graf(1)
+    ef_anio = ina_graf(2)
+    maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
+    print(i_anio)
 
     try:
         materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
@@ -45,23 +51,28 @@ def portada(request):
     docente = Docente.objects.get(usuario=usuario)
     print(docente)
     return render(request, 'alcal/blue/index.html', {
-                    'materias': materias,
-                    'carreras': carreras,
-                    'usuario': usuario,
-                    'cant_estudiantes': cant_estudiantes,
-                    'cant_femenino': cant_femenino,
-                    'cant_masculino': cant_masculino,
-                    'cant_doc': cant_doc,
-                    'doc_femenino': doc_femenino,
-                    'doc_masculino': doc_masculino,
-                    'cant_m_eco': cant_m_eco,
-                    'cant_f_eco': cant_f_eco,
-                    'cant_m_tec': cant_m_tec,
-                    'cant_f_tec': cant_f_tec,
-                    'cant_tec': cant_tec,
-                    'cant_eco': cant_eco,
-                    'docente': docente,
-                  }
+        'i_anio': i_anio,
+        'm_anio': m_anio,
+        't_anio': t_anio,
+        'ef_anio': ef_anio,
+        'maximo': maximo,
+        'materias': materias,
+        'carreras': carreras,
+        'usuario': usuario,
+        'cant_estudiantes': cant_estudiantes,
+        'cant_femenino': cant_femenino,
+        'cant_masculino': cant_masculino,
+        'cant_doc': cant_doc,
+        'doc_femenino': doc_femenino,
+        'doc_masculino': doc_masculino,
+        'cant_m_eco': cant_m_eco,
+        'cant_f_eco': cant_f_eco,
+        'cant_m_tec': cant_m_tec,
+        'cant_f_tec': cant_f_tec,
+        'cant_tec': cant_tec,
+        'cant_eco': cant_eco,
+        'docente': docente,
+    }
                   )
 
 
@@ -171,15 +182,21 @@ def inasistencias_por_curso(request):
     form = Cursos(request.POST)
     form2 = FechaInasistencias(request.POST)
     form3 = InasistenciaForm(request.POST)
+    form4 = CheckBox(request.POST)
     print(request.POST)
     if request.method == 'POST':
+        if 'm' in request.POST:
+            anular_turno('maniana', request.POST['cursonombre'], request.POST['fecha'])
+        if 't' in request.POST:
+            anular_turno('tarde', request.POST['cursonombre'], request.POST['fecha'])
+        if 'ef' in request.POST:
+            anular_turno('ed_fisica', request.POST['cursonombre'], request.POST['fecha'])
         if 'name' in request.POST:
             actualizar_falta(request)
-        else:
-            if form.is_valid():
-                anio_elegido = request.POST['cursonombre'][0]
-                division_elegida = request.POST['cursonombre'][1]
-                fecha = datetime.strptime(request.POST['fecha'], "%d/%m/%Y")
+        if 'cursonombre' in request.POST and form.is_valid():
+            anio_elegido = request.POST['cursonombre'][0]
+            division_elegida = request.POST['cursonombre'][1]
+            fecha = datetime.strptime(request.POST['fecha'], "%d/%m/%Y")
     c = Curso.objects.filter(cursonombre='{}{}'.format(anio_elegido, division_elegida))
     id_curso = c.values('id')[0]['id']
     inasistencias = Inasistencia.objects.filter(curso=id_curso, fecha=fecha)
@@ -212,6 +229,7 @@ def inasistencias_por_curso(request):
                       'form': form,
                       'form2': form2,
                       'form3': form3,
+                      'form4': form4,
                       'anio_elegido': int(anio_elegido),
                       'division_elegida': division_elegida,
                       'creado': True,
@@ -648,3 +666,14 @@ def actualizar_falta(request):
     Inasistencia.objects.update_or_create(curso=curso, turno=turno,
                                           estudiante=Estudiante.objects.get(legajo=id_alu), fecha=fecha,
                                           defaults={'tipo': tipo})
+
+
+def anular_turno(turno, curso, fecha):
+    f = datetime.strptime(fecha, '%d/%m/%Y')
+    fec = datetime.strftime(f, '%Y-%m-%d')
+    curso = Curso.objects.get(cursonombre=curso)
+    ids_estudiantes = Estudiante.objects.filter(curso=curso)
+    for i in ids_estudiantes:
+        Inasistencia.objects.update_or_create(curso=curso, turno=turnos_ina.index(turno),
+                                              estudiante=i, fecha=fec,
+                                              defaults={'tipo': 4})

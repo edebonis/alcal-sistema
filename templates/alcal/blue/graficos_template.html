@@ -1,203 +1,203 @@
 {% load static %}
 {% block scripts_template %}
-<script>
-    !function($) {
-        "use strict";
+    <script>
+        !function($) {
+            "use strict";
 
-        var Dashboard = function() {
-            this.$body = $("body")
-            this.$realData = []
-        };
-
-        //creates plot graph
-        Dashboard.prototype.createPlotGraph = function(selector, data1, data2, data3, data4, labels, colors, borderColor, bgColor) {
-          //shows tooltip
-          function showTooltip(x, y, contents) {
-            $('<div id="tooltip" class="tooltipflot">' + contents + '</div>').css( {
-              position: 'absolute',
-              top: y + 5,
-              left: x + 5
-            }).appendTo("body").fadeIn(200);
-          }
-
-          $.plot($(selector),
-              [ { data: data1,
-                label: labels[0],
-                color: colors[0]
-              },
-              { data: data2,
-                label: labels[1],
-                color: colors[1]
-              },
-                  { data: data3,
-                label: labels[2],
-                color: colors[2]
-              },
-              { data: data4,
-                label: labels[3],
-                color: colors[3]
-              }
-            ],
-            {
-                series: {
-                   lines: {
-                  show: true,
-                  fill: true,
-                  lineWidth: 1,
-                  fillColor: {
-                    colors: [ { opacity: 0.0 },
-                              { opacity: 0.7 }
-                            ]
-                  }
-                },
-                points: {
-                  show: true
-                },
-                shadowSize: 0
-                },
-                legend: {
-                position: 'ne'
-              },
-              grid: {
-                hoverable: true,
-                clickable: true,
-                borderColor: borderColor,
-                borderWidth: 0,
-                labelMargin: 10,
-                backgroundColor: bgColor
-              },
-              yaxis: {
-                min: 0,
-                max: {{ maximo }} + 3,
-                color: 'rgba(0,0,0,0)'
-              },
-              xaxis: {
-                color: 'rgba(0,0,0,0)'
-              },
-              tooltip: true,
-              tooltipOpts: {
-                  content: '%s: Value of %x is %y',
-                  shifts: {
-                      x: -60,
-                      y: 25
-                  },
-                  defaultTheme: false
-              }
-          });
-        },
-        //end plot graph
-
-        //creates Pie Chart
-        Dashboard.prototype.createPieGraph = function(selector, labels, datas, colors) {
-            var data = [{
-                label: labels[0],
-                data: datas[0]
-            }, {
-                label: labels[1],
-                data: datas[1]
-            }, {
-                label: labels[2],
-                data: datas[2]
-            }];
-            var options = {
-                series: {
-                    pie: {
-                        show: true
-                    }
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: true
-                },
-                colors: colors,
-                tooltip: true,
-                tooltipOpts: {
-                    defaultTheme: false
-                }
+            var Dashboard = function() {
+                this.$body = $("body")
+                this.$realData = []
             };
 
-            $.plot($(selector), data, options);
-        },
+            //creates plot graph
+            Dashboard.prototype.createPlotGraph = function(selector, data1, data2, data3, data4, labels, colors, borderColor, bgColor) {
+                //shows tooltip
+                function showTooltip(x, y, contents) {
+                    $('<div id="tooltip" class="tooltipflot">' + contents + '</div>').css( {
+                        position: 'absolute',
+                        top: y + 5,
+                        left: x + 5
+                    }).appendTo("body").fadeIn(200);
+                }
 
-
-
-            //initializing various charts and components
-            Dashboard.prototype.init = function() {
-              //plot graph data
-              var total = [[1, {{ i_anio.0 }}],
-                  [2, {{ i_anio.1 }}],
-                  [3, {{ i_anio.2 }}],
-                  [4, {{ i_anio.3 }}],
-                  [5, {{ i_anio.4 }}],
-                  [6, {{ i_anio.5 }}],
-                  [7, {{ i_anio.6 }}],
-                  [8, {{ i_anio.7 }}],
-                  [9, {{ i_anio.8 }}],
-                  [10, {{ i_anio.9 }}],
-                  [11, {{ i_anio.10 }}],
-                  [12, {{ i_anio.11 }}]];
-              var maniana = [[1, {{ m_anio.0 }}],
-                  [2, {{ m_anio.1 }}+2],
-                  [3, {{ m_anio.2 }}],
-                  [4, {{ m_anio.3 }}],
-                  [5, {{ m_anio.4 }}],
-                  [6, {{ m_anio.5 }}],
-                  [7, {{ m_anio.6 }}],
-                  [8, {{ m_anio.7 }}],
-                  [9, {{ m_anio.8 }}],
-                  [10, {{ m_anio.9 }}],
-                  [11, {{ m_anio.10 }}],
-                  [12, {{ m_anio.11 }}]];
-              var tarde = [[1, {{ t_anio.0 }}],
-                  [2, {{ t_anio.1 }}],
-                  [3, {{ t_anio.2 }}],
-                  [4, {{ t_anio.3 }}],
-                  [5, {{ t_anio.4 }}],
-                  [6, {{ t_anio.5 }}],
-                  [7, {{ t_anio.6 }}],
-                  [8, {{ t_anio.7 }}],
-                  [9, {{ t_anio.8 }}],
-                  [10, {{ t_anio.9 }}],
-                  [11, {{ t_anio.10 }}],
-                  [12, {{ t_anio.11 }}]];
-              var ed_fisica = [[1, {{ ef_anio.0 }}],
-                  [2, {{ ef_anio.1 }}],
-                  [3, {{ ef_anio.2 }}],
-                  [4, {{ ef_anio.3 }}],
-                  [5, {{ ef_anio.4 }}],
-                  [6, {{ ef_anio.5 }}],
-                  [7, {{ ef_anio.6 }}],
-                  [8, {{ ef_anio.7 }}],
-                  [9, {{ ef_anio.8 }}],
-                  [10, {{ ef_anio.9 }}],
-                  [11, {{ ef_anio.10 }}],
-                  [12, {{ ef_anio.11 }}]];
-              var plabels = ["Total", "Mañana", "Tarde", "Ed. Física"];
-              var pcolors = ['#33b86c', '#26a9b5', '#ff932e', "#0000FF"];
-              var borderColor = '#fff';
-              var bgColor = '#fff';
-              this.createPlotGraph("#website-stats", total, maniana, tarde, ed_fisica, plabels, pcolors, borderColor, bgColor);
-
-                //Pie graph data
-                var pielabels = ["Femenino","Masculinno"];
-                var datas = [{{cant_femenino}}, {{cant_masculino}}];
-                var colors = ["rgba(51, 184, 108, 0.7)", "rgba(41, 182, 246, 0.7)", "rgba(59, 189, 202, 0.7)"];
-                this.createPieGraph("#pie-chart #pie-chart-container", pielabels , datas, colors);
-
+                $.plot($(selector),
+                    [ { data: data1,
+                        label: labels[0],
+                        color: colors[0]
+                    },
+                        { data: data2,
+                            label: labels[1],
+                            color: colors[1]
+                        },
+                        { data: data3,
+                            label: labels[2],
+                            color: colors[2]
+                        },
+                        { data: data4,
+                            label: labels[3],
+                            color: colors[3]
+                        }
+                    ],
+                    {
+                        series: {
+                            lines: {
+                                show: true,
+                                fill: true,
+                                lineWidth: 1,
+                                fillColor: {
+                                    colors: [ { opacity: 0.0 },
+                                        { opacity: 0.7 }
+                                    ]
+                                }
+                            },
+                            points: {
+                                show: true
+                            },
+                            shadowSize: 0
+                        },
+                        legend: {
+                            position: 'ne'
+                        },
+                        grid: {
+                            hoverable: true,
+                            clickable: true,
+                            borderColor: borderColor,
+                            borderWidth: 0,
+                            labelMargin: 10,
+                            backgroundColor: bgColor
+                        },
+                        yaxis: {
+                            min: 0,
+                            max: {{ maximo }} + 3,
+                            color: 'rgba(0,0,0,0)'
+                        },
+                        xaxis: {
+                            color: 'rgba(0,0,0,0)'
+                        },
+                        tooltip: true,
+                        tooltipOpts: {
+                            content: '%s: Value of %x is %y',
+                            shifts: {
+                                x: -60,
+                                y: 25
+                            },
+                            defaultTheme: false
+                        }
+                    });
             },
+                //end plot graph
 
-        //init Dashboard
-        $.Dashboard = new Dashboard, $.Dashboard.Constructor = Dashboard
+                //creates Pie Chart
+                Dashboard.prototype.createPieGraph = function(selector, labels, datas, colors) {
+                    var data = [{
+                        label: labels[0],
+                        data: datas[0]
+                    }, {
+                        label: labels[1],
+                        data: datas[1]
+                    }, {
+                        label: labels[2],
+                        data: datas[2]
+                    }];
+                    var options = {
+                        series: {
+                            pie: {
+                                show: true
+                            }
+                        },
+                        legend: {
+                            show: false
+                        },
+                        grid: {
+                            hoverable: true,
+                            clickable: true
+                        },
+                        colors: colors,
+                        tooltip: true,
+                        tooltipOpts: {
+                            defaultTheme: false
+                        }
+                    };
 
-    }(window.jQuery),
+                    $.plot($(selector), data, options);
+                },
 
-    //initializing Dashboard
-    function($) {
-        "use strict";
-        $.Dashboard.init()
-    }(window.jQuery);
-</script>
-    {% endblock %}
+
+
+                //initializing various charts and components
+                Dashboard.prototype.init = function() {
+                    //plot graph data
+                    var total = [[1, {{ i_anio.0 }}],
+                        [2, {{ i_anio.1 }}],
+                        [3, {{ i_anio.2 }}],
+                        [4, {{ i_anio.3 }}],
+                        [5, {{ i_anio.4 }}],
+                        [6, {{ i_anio.5 }}],
+                        [7, {{ i_anio.6 }}],
+                        [8, {{ i_anio.7 }}],
+                        [9, {{ i_anio.8 }}],
+                        [10, {{ i_anio.9 }}],
+                        [11, {{ i_anio.10 }}],
+                        [12, {{ i_anio.11 }}]];
+                    var maniana = [[1, {{ m_anio.0 }}],
+                        [2, {{ m_anio.1 }}+2],
+                        [3, {{ m_anio.2 }}],
+                        [4, {{ m_anio.3 }}],
+                        [5, {{ m_anio.4 }}],
+                        [6, {{ m_anio.5 }}],
+                        [7, {{ m_anio.6 }}],
+                        [8, {{ m_anio.7 }}],
+                        [9, {{ m_anio.8 }}],
+                        [10, {{ m_anio.9 }}],
+                        [11, {{ m_anio.10 }}],
+                        [12, {{ m_anio.11 }}]];
+                    var tarde = [[1, {{ t_anio.0 }}],
+                        [2, {{ t_anio.1 }}],
+                        [3, {{ t_anio.2 }}],
+                        [4, {{ t_anio.3 }}],
+                        [5, {{ t_anio.4 }}],
+                        [6, {{ t_anio.5 }}],
+                        [7, {{ t_anio.6 }}],
+                        [8, {{ t_anio.7 }}],
+                        [9, {{ t_anio.8 }}],
+                        [10, {{ t_anio.9 }}],
+                        [11, {{ t_anio.10 }}],
+                        [12, {{ t_anio.11 }}]];
+                    var ed_fisica = [[1, {{ ef_anio.0 }}],
+                        [2, {{ ef_anio.1 }}],
+                        [3, {{ ef_anio.2 }}],
+                        [4, {{ ef_anio.3 }}],
+                        [5, {{ ef_anio.4 }}],
+                        [6, {{ ef_anio.5 }}],
+                        [7, {{ ef_anio.6 }}],
+                        [8, {{ ef_anio.7 }}],
+                        [9, {{ ef_anio.8 }}],
+                        [10, {{ ef_anio.9 }}],
+                        [11, {{ ef_anio.10 }}],
+                        [12, {{ ef_anio.11 }}]];
+                    var plabels = ["Total", "Mañana", "Tarde", "Ed. Física"];
+                    var pcolors = ['#33b86c', '#26a9b5', '#ff932e', "#0000FF"];
+                    var borderColor = '#fff';
+                    var bgColor = '#fff';
+                    this.createPlotGraph("#website-stats", total, maniana, tarde, ed_fisica, plabels, pcolors, borderColor, bgColor);
+
+                    //Pie graph data
+                    var pielabels = ["Femenino","Masculinno"];
+                    var datas = [{{cant_femenino}}, {{cant_masculino}}];
+                    var colors = ["rgba(51, 184, 108, 0.7)", "rgba(41, 182, 246, 0.7)", "rgba(59, 189, 202, 0.7)"];
+                    this.createPieGraph("#pie-chart #pie-chart-container", pielabels , datas, colors);
+
+                },
+
+                //init Dashboard
+                $.Dashboard = new Dashboard, $.Dashboard.Constructor = Dashboard
+
+        }(window.jQuery),
+
+            //initializing Dashboard
+            function($) {
+                "use strict";
+                $.Dashboard.init()
+            }(window.jQuery);
+    </script>
+{% endblock %}

@@ -1,6 +1,7 @@
 """mañana tarde educación física"""
 
 codigos = {
+    'PAT': 0.75,
     'PPA': 0.5,
     'PPP': 0,
     'PTA': 0.75,
@@ -62,6 +63,9 @@ codigos = {
     'R-A': 1,
     'R-P': 0.5,
     '---': 0,
+    '-PP': 0,
+    '--P': 0,
+    '-P-': 0,
     'RRR': 1,
     'PPT': 0.25,
 }

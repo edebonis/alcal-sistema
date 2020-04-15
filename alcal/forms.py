@@ -75,7 +75,7 @@ class InasistenciaForm(forms.ModelForm):
 
 class FechaInasistencias(forms.Form):
     fecha = forms.DateField(input_formats=["%d/%m/%Y"], required=False)
-    print(datetime.strftime(datetime.today(), "%d/%m/%Y"))
+
     def __init__(self, *args, **kwargs):
         super(FechaInasistencias, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
@@ -381,3 +381,17 @@ class NuevaMateria(forms.ModelForm):
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
         self.fields['curso'].queryset = self.fields['curso'].queryset.order_by('cursonombre')
+
+
+class CheckBox(forms.Form):
+    m = forms.BooleanField()
+    t = forms.BooleanField()
+    ef = forms.BooleanField()
+
+
+    def __init__(self, *args, **kwargs):
+        super(CheckBox, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['type'] = 'checkbox'
+            visible.field.widget.attrs['onchange'] = 'this.form.submit()'
+            visible.field.widget.attrs['required id'] = ''
