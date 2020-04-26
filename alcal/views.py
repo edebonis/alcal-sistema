@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.db.models import Sum, Count
-from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia, Faltas
+from alcal.models import Carrera, Estudiante, Docente, Curso, Nota, Materia, Seguimiento, Persona, Inasistencia, Faltas, Turno
 from .forms import NameForm, Cursos, NuevoEstudiante, NuevoPadre, NuevoDocente, NuevaNota, SelectorDeAlumno, \
-    NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm, NuevaMateria, CheckBox
+    NotaParcial, NuevoSeguimiento, FechaInasistencias, InasistenciaForm, NuevaMateria, InaPorCurso
 from alcal.utilidades import *
 from datetime import date
 from .utils import *
@@ -46,7 +46,7 @@ def portada(request):
 
     try:
         materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
-    except:
+    except request:
         return redirect('/login')
     docente = Docente.objects.get(usuario=usuario)
     print(docente)
@@ -174,40 +174,58 @@ def inasistencias_por_estudiante(request):
 
 @login_required(login_url='/admin/login')
 def inasistencias_por_curso(request):
+    print(request.POST)
     anio_elegido = '1'
     division_elegida = "A"
-    lista = []
+    cur = Curso.objects.get(cursonombre='{}{}'.format(anio_elegido, division_elegida))
     f = datetime.strftime(datetime.today(), "%d/%m/%Y")
     fecha = datetime.strptime(f, "%d/%m/%Y")
-    form = Cursos(request.POST)
-    form2 = FechaInasistencias(request.POST)
-    form3 = InasistenciaForm(request.POST)
-    form4 = CheckBox(request.POST)
-    print(request.POST)
+    if 'curso' in request.POST:
+        cur = Curso.objects.get(pk=int(request.POST['curso']))
+    if 'fecha' in request.POST:
+        fecha = datetime.strptime(request.POST['fecha'], "%d/%m/%Y")
+
+    lista = []
+    form = InaPorCurso(request.POST)
+    try:
+        ch_maniana = Turno.objects.get(fecha=fecha, curso=cur).maniana
+        ch_tarde = Turno.objects.get(fecha=fecha, curso=cur).tarde
+        ch_ed = Turno.objects.get(fecha=fecha, curso=cur).ed_fisica
+
+    except:
+        ch_maniana = '0'
+        ch_tarde = '0'
+        ch_ed = 0
+
     if request.method == 'POST':
-        if 'm' in request.POST:
-            anular_turno('maniana', request.POST['cursonombre'], request.POST['fecha'])
-        if 't' in request.POST:
-            anular_turno('tarde', request.POST['cursonombre'], request.POST['fecha'])
-        if 'ef' in request.POST:
-            anular_turno('ed_fisica', request.POST['cursonombre'], request.POST['fecha'])
+        if 'curso' in request.POST and form.is_valid():
+            if not Turno.objects.filter(fecha=fecha, curso=cur):
+                Turno.objects.create(fecha=fecha, curso=cur)
         if 'name' in request.POST:
-            actualizar_falta(request)
-        if 'cursonombre' in request.POST and form.is_valid():
-            anio_elegido = request.POST['cursonombre'][0]
-            division_elegida = request.POST['cursonombre'][1]
-            fecha = datetime.strptime(request.POST['fecha'], "%d/%m/%Y")
-    c = Curso.objects.filter(cursonombre='{}{}'.format(anio_elegido, division_elegida))
-    id_curso = c.values('id')[0]['id']
-    inasistencias = Inasistencia.objects.filter(curso=id_curso, fecha=fecha)
-    estudiantes = Estudiante.objects.filter(curso=id_curso).order_by('orden')
+            if 'header' not in request.POST['name']:
+                actualizar_falta(request)
+            else:
+                pk = request.POST['pk']
+                pk_list = pk.split(',')
+                id_cur = pk_list[1]
+                fecha = datetime.strptime(pk_list[0], "%d-%m-%Y")
+                cur = Curso.objects.get(cursonombre=id_cur)
+                id_curso = cur.pk
+                anular_turno(request.POST['name'], id_curso, fecha, request.POST['value'])
+    inasistencias = Inasistencia.objects.filter(curso=cur, fecha=fecha)
+    estudiantes = Estudiante.objects.filter(curso=cur).order_by('orden')
+    turnos_header = {'fecha': fecha.date(),
+                     'ch_maniana': ch_maniana,
+                     'ch_tarde': ch_tarde,
+                     'ch_ed': ch_ed,
+                     'curso': cur}
     for e in estudiantes:
         faltas['legajo'] = e.legajo
         faltas['fecha'] = fecha.date()
         faltas['orden'] = e.orden
         faltas['apellido'] = e.apellido
         faltas['nombre'] = e.nombre
-        faltas['curso'] = c
+        faltas['curso'] = cur
         try:
             faltas['maniana'] = inasistencias.filter(estudiante_id=e.legajo, turno=0).last().tipo
         except:
@@ -222,16 +240,12 @@ def inasistencias_por_curso(request):
             faltas['ed_fisica'] = 0
         lista.append(faltas.copy())
 
+
     return render(request, 'alcal/blue/inasistencias_por_curso.html',
                   {
+                      'turnos': turnos_header,
                       'estudiantes': estudiantes,
-                      'cursos': cursos,
                       'form': form,
-                      'form2': form2,
-                      'form3': form3,
-                      'form4': form4,
-                      'anio_elegido': int(anio_elegido),
-                      'division_elegida': division_elegida,
                       'creado': True,
                       'faltas': lista,
                   })
@@ -246,7 +260,7 @@ def notas_por_estudiante(request):
                 form.save()
                 return redirect('/notas_por_estudiante')
             except:
-                print("Error")
+
                 pass
     else:
         form = NuevaNota()
@@ -298,7 +312,6 @@ def comunicaciones_por_curso(request):
 @login_required(login_url='/admin/login')
 def com_por_estudiante(request):
     valor = None
-    print("INICIO")
     lista = ['PT',
              'ST',
              'TT',
@@ -307,11 +320,9 @@ def com_por_estudiante(request):
              'NF',
              'CD']
     if request.method == "POST":
-        print("post")
         form = SelectorDeAlumno(request.POST)
         if form.is_valid():
             boletin = []
-            print("is valid")
             valor = form.cleaned_data['estudiante'].id
             valor_curso = form.cleaned_data['curso'].id
             curso = NotaParcial.objects.filter(curso=Curso.objects.get(id=valor_curso))
@@ -651,7 +662,6 @@ def estudiante_detalle(request, pk):
     return render(request, 'alcal/blue/estudiante_detalle.html', {'est': est})
 
 
-
 def actualizar_falta(request):
     pk = request.POST['pk']
     pk_list = pk.split(',')
@@ -668,12 +678,24 @@ def actualizar_falta(request):
                                           defaults={'tipo': tipo})
 
 
-def anular_turno(turno, curso, fecha):
-    f = datetime.strptime(fecha, '%d/%m/%Y')
-    fec = datetime.strftime(f, '%Y-%m-%d')
-    curso = Curso.objects.get(cursonombre=curso)
+def anular_turno(turno, curso, fecha, tipo):
+    if not tipo:
+        tipo = 0
+    fec = datetime.strftime(fecha, '%Y-%m-%d')
+    curso = Curso.objects.get(pk=curso)
     ids_estudiantes = Estudiante.objects.filter(curso=curso)
+    t = turno.replace('_header', '')
+    print(tipo)
+    print(fec)
+    print(curso)
+    print(turno)
+    if 'maniana' in turno:
+        Turno.objects.update_or_create(curso=curso, fecha=fec, defaults={'maniana': tipo})
+    if 'tarde' in turno:
+        Turno.objects.update_or_create(curso=curso, fecha=fec, defaults={'tarde': tipo})
+    if 'ed' in turno:
+        Turno.objects.update_or_create(curso=curso, fecha=fec, defaults={'ed_fisica': tipo})
     for i in ids_estudiantes:
-        Inasistencia.objects.update_or_create(curso=curso, turno=turnos_ina.index(turno),
+        Inasistencia.objects.update_or_create(curso=curso, turno=turnos_ina.index(t),
                                               estudiante=i, fecha=fec,
-                                              defaults={'tipo': 4})
+                                              defaults={'tipo': int(tipo)})

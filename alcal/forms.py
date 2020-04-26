@@ -1,4 +1,4 @@
-from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia, Materia
+from .models import Estudiante, Curso, Padre, Docente, NotaParcial, Seguimiento, Inasistencia, Materia, Turno
 from django import forms
 from django.forms import boundfield
 from datetime import datetime, timedelta
@@ -193,7 +193,7 @@ class NuevoSeguimiento(forms.ModelForm):
 
             if type(visible.field) == forms.fields.DateField:
                 visible.field.widget.attrs['class'] = 'form-control'
-                visible.field.widget.attrs['placeholder'] = 'dd-mm-yyyy'
+                visible.field.widget.attrs['placeholder'] = 'dd/mm/yyyy'
                 visible.field.widget.attrs['id'] = 'datepicker'
                 visible.field.widget.attrs['autocomplete'] = 'off'
                 visible.field.widget.attrs['value'] = datetime.strftime(datetime.today(), "%d/%m/%Y")
@@ -376,6 +376,7 @@ class NuevaMateria(forms.ModelForm):
             'taller': 'Materia de Formación específica'
         }
 
+
     def __init__(self, *args, **kwargs):
         super(NuevaMateria, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
@@ -383,15 +384,37 @@ class NuevaMateria(forms.ModelForm):
         self.fields['curso'].queryset = self.fields['curso'].queryset.order_by('cursonombre')
 
 
-class CheckBox(forms.Form):
-    m = forms.BooleanField()
-    t = forms.BooleanField()
-    ef = forms.BooleanField()
-
+class InaPorCurso(forms.ModelForm):
+    class Meta:
+        model = Turno
+        fields = [
+            'maniana',
+            'tarde',
+            'ed_fisica',
+            'fecha',
+            'curso'
+        ]
+        valores = Curso.objects.all().order_by('cursonombre')
+        widgets = {
+            'curso': forms.Select(choices=valores.order_by('cursonombre'), attrs={
+                'class': 'btn waves-effect waves-light btn-primary dropdown-toggle',
+                'onchange': 'form.submit()',
+            },
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
-        super(CheckBox, self).__init__(*args, **kwargs)
-        for visible in self.visible_fields():
-            visible.field.widget.attrs['type'] = 'checkbox'
-            visible.field.widget.attrs['onchange'] = 'this.form.submit()'
-            visible.field.widget.attrs['required id'] = ''
+        super(InaPorCurso, self).__init__(*args, **kwargs)
+        for visible in range(0,3):
+            self.visible_fields()[visible].field.widget.attrs['type'] = 'select'
+            self.visible_fields()[visible].field.widget.attrs['onchange'] = 'this.form.submit()'
+        self.visible_fields()[3].field.widget.attrs['class'] = 'form-control'
+        self.visible_fields()[3].field.widget.attrs['type'] = 'text'
+        self.visible_fields()[3].field.widget.attrs['placeholder'] = 'dd/mm/yyyy'
+        self.visible_fields()[3].field.widget.attrs['value'] = datetime.strftime(datetime.today(), "%d/%m/%Y")
+        self.visible_fields()[3].field.widget.attrs['id'] = 'datepicker'
+        self.visible_fields()[3].field.widget.attrs['autocomplete'] = 'off'
+        self.visible_fields()[3].field.widget.attrs['onchange'] = 'form.submit()'
+        self.fields['curso'].empty_label = None
+        self.fields['curso'].queryset = self.fields['curso'].queryset.order_by('cursonombre')
+        

@@ -4412,9 +4412,9 @@ $(function(){
     
     $.fn.combodate.defaults = {
          //in this format value stored in original input
-        format: 'DD-MM-YYYY HH:mm',      
+        format: 'DD/MM/YYYY',
         //in this format items in dropdowns are displayed
-        template: 'D / MMM / YYYY   H : mm',
+        template: 'DD/MM/YYYY',
         //initial value, can be `new Date()`    
         value: null,                       
         minYear: 1970,

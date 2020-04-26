@@ -155,7 +155,7 @@ TIME_INPUT_FORMATS = (
     '%H:%M',        # '17:59'
 )
 DATETIME_INPUT_FORMATS = (
-    '%d/%m/%Y %H:%M',     # '21/03/2014 17:59'
+    '%d/%m/%Y',     # '21/03/2014 17:59'
 
 )
 

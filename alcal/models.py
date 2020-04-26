@@ -412,3 +412,21 @@ class NotaPendiente(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.pendiente.estudiante, self.nota)
+
+
+class Turno(models.Model):
+    TIPOS = (
+        ('2', 'Llegada tarde'),
+        ('2', 'Llegada tarde fuera de hora'),
+        ('1', 'Ausente'),
+        ('3', 'Retirado dentro de la última hora'),
+        ('3', 'Retirado'),
+        ('4', 'Sin Clase'),
+        ('0', 'Presente')
+    )
+
+    maniana = models.CharField(choices=TIPOS, max_length=5, null=True, default=0)
+    tarde = models.CharField(choices=TIPOS, max_length=5, null=True, default=0)
+    ed_fisica = models.CharField(choices=TIPOS, max_length=5, null=True, default=0)
+    fecha = models.DateField(null=True, blank=True)
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)

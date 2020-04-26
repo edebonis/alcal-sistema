@@ -53,11 +53,11 @@
                         <div class="panel-body">
 
                                 <div class="col-sm-2">
-                                    {{ form.cursonombre }}
+                                    {{ form.curso }}
                                 </div>
                                 <div class="col-sm-4 right">
                                     <div class="input-group">
-                                        {{ form2.fecha }}
+                                        {{ form.fecha }}
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                     </div>
                                 </div>
@@ -77,31 +77,30 @@
                             <table class="table table-bordered table-striped" id="datatable-editable">
                                 <thead>
                                 <tr>
-
+                                    <form>
                                     <th style="width: 1px; white-space: nowrap">Legajo</th>
                                     <th style="width: 1px; white-space: nowrap">Orden</th>
                                     <th style="width: 1px; white-space: nowrap">Apellido</th>
                                     <th style="width: 1px; white-space: nowrap">Nombre</th>
-
                                         <th>
-                                            <div class="checkbox checkbox-primary">
-                                                {{ form4.m }}
-                                                <label for="checkbox1">M</label>
+                                            <div class="">
+                                                <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_maniana %} 0 {% else %} {{ turnos.ch_maniana }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="maniana_header" onchange="form.submit()"></a>
+                                                <a aria-label="Lable">(M)</a>
                                             </div>
                                         </th>
                                         <th>
-                                            <div class="checkbox checkbox-primary">
-                                                {{ form4.t }}
-                                                <label for="checkbox2">T</label>
+                                            <div class="">
+                                                <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_tarde %} 0 {% else %} {{ turnos.ch_tarde }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="tarde_header" onchange="form.submit()"></a>
+                                                <a aria-label="Lable">(T)</a>
                                             </div>
                                         </th>
                                         <th>
-                                            <div class="checkbox checkbox-primary">
-                                                {{ form4.ef }}
-                                                <label for="checkbox3">EF</label>
+                                            <div class="">
+                                                <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_ed %} 0 {% else %} {{ turnos.ch_ed }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="ed_fisica_header" onchange="form.submit()"></a>
+                                                <a aria-label="Lable">(EF)</a>
                                             </div>
                                         </th>
-
+                                </form>
                                 </tr>
                                 </thead>
                                 <tbody>
