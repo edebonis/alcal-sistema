@@ -33,24 +33,24 @@
     <!-- Start content -->
     <div class="content">
         <div class="container">
-         <form class="drop form-horizontal" action="/inasistencias_por_curso" method="POST">{% csrf_token %}
-            <div class="row">
-                <div class="col-sm-12">
-                    <h4 class="pull-left page-title">Inasistencias por curso</h4>
-                    <ol class="breadcrumb pull-right">
-                        <li><a href="#">Alcal</a></li>
-                        <li><a href="#">Cursos</a></li>
-                        <li class="active">Inasistencias por curso</li>
-                    </ol>
+            <form class="drop form-horizontal" action="/inasistencias_por_curso" method="POST">{% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="pull-left page-title">Inasistencias por curso</h4>
+                        <ol class="breadcrumb pull-right">
+                            <li><a href="#">Alcal</a></li>
+                            <li><a href="#">Cursos</a></li>
+                            <li class="active">Inasistencias por curso</li>
+                        </ol>
+                    </div>
                 </div>
-            </div>
-            <div class="row offset1">
-                <div class="col-xs-10 col-xs-offset-1" >
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"> Seleccione Curso y fecha </h3>
-                        </div>
-                        <div class="panel-body">
+                <div class="row offset1">
+                    <div class="col-xs-10 col-xs-offset-1" >
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"> Seleccione Curso y fecha </h3>
+                            </div>
+                            <div class="panel-body">
 
                                 <div class="col-sm-2">
                                     {{ form.curso }}
@@ -62,78 +62,86 @@
                                     </div>
                                 </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row offset1">
-                <div class="col-xs-10 col-xs-offset-1" >
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"> Ingrese inasistencias </h3>
+                <div class="row offset1">
+                    <div class="col-xs-10 col-xs-offset-1" >
+                        <div class="panel panel-default">
+                            <div class="panel-heading" style="height:54px">
+                                <h3 class="panel-title">
+                                    <div class="col-lg-6"> Ingrese inasistencias</div>
+                                    <div class="col-lg-6">
+                                        <button type="submit" class="btn btn-primary waves-effect waves-light w-md pull-right">Actualizar</button>
+                                    </div>
+
+
+
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+
+                                <table class="table table-bordered table-striped" id="datatable-editable">
+                                    <thead>
+                                    <tr>
+                                        <form>
+                                            <th style="width: 1px; white-space: nowrap">Legajo</th>
+                                            <th style="width: 1px; white-space: nowrap">Orden</th>
+                                            <th style="width: 1px; white-space: nowrap">Apellido</th>
+                                            <th style="width: 1px; white-space: nowrap">Nombre</th>
+                                            <th>
+                                                <div class="">
+                                                    <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_maniana %} 0 {% else %} {{ turnos.ch_maniana }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="maniana_header" onchange="form.submit()" ></a>
+                                                    <a aria-label="Lable">(M)</a>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="">
+                                                    <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_tarde %} 0 {% else %} {{ turnos.ch_tarde }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="tarde_header" onchange="form.submit(); this.update()"></a>
+                                                    <a aria-label="Lable">(T)</a>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="">
+                                                    <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_ed %} 0 {% else %} {{ turnos.ch_ed }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="ed_fisica_header" onchange="form.submit(); this.update()"></a>
+                                                    <a aria-label="Lable">(EF)</a>
+                                                </div>
+                                            </th>
+                                        </form>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+
+                                    {% for falta in faltas %}
+                                        <tr class="gradeX">
+                                        <td class="col-sm-1">{{ falta.legajo }}</td>
+                                        <td class="col-sm-1">{{ falta.orden }}</td>
+                                        <td>{{ falta.apellido }}</td>
+                                        <td>{{ falta.nombre }}</td>
+                                        <td class="col-lg-1">
+                                            <a href="#" id="inline-inasistencia" data-type="select" data-pk="{{ falta.legajo }},{{ falta.fecha }}" data-value={% if not falta.maniana %} 0 {% else %} {{ falta.maniana }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="maniana"></a>
+                                        </td>
+                                        <td class=col-lg-1>
+                                            <a href="#" id="inline-inasistencia2" data-type="select" data-pk="{{ falta.legajo }},{{ falta.fecha }}"  data-value={% if not falta.tarde %} 0 {% else %} {{ falta.tarde }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="tarde"></a>
+                                        </td>
+                                        <td class="col-lg-1">
+                                            <a href="#" id="inline-inasistencia3" data-type="select" data-pk="{{ falta.legajo}},{{ falta.fecha }}"  data-value={% if not falta.ed_fisica %} 0 {% else %} {{ falta.ed_fisica }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="ed_fisica"></a>
+                                        </td>
+
+                                    {% endfor %}
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="panel-body">
 
-                            <table class="table table-bordered table-striped" id="datatable-editable">
-                                <thead>
-                                <tr>
-                                    <form>
-                                    <th style="width: 1px; white-space: nowrap">Legajo</th>
-                                    <th style="width: 1px; white-space: nowrap">Orden</th>
-                                    <th style="width: 1px; white-space: nowrap">Apellido</th>
-                                    <th style="width: 1px; white-space: nowrap">Nombre</th>
-                                        <th>
-                                            <div class="">
-                                                <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_maniana %} 0 {% else %} {{ turnos.ch_maniana }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="maniana_header" onchange="form.submit()"></a>
-                                                <a aria-label="Lable">(M)</a>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            <div class="">
-                                                <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_tarde %} 0 {% else %} {{ turnos.ch_tarde }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="tarde_header" onchange="form.submit()"></a>
-                                                <a aria-label="Lable">(T)</a>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            <div class="">
-                                                <a href="/inasistencias_por_curso" id="inline-inasistencia" data-type="select" data-pk="{{ turnos.fecha }},{{ turnos.curso }}" data-value={% if not turnos.ch_ed %} 0 {% else %} {{ turnos.ch_ed }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="ed_fisica_header" onchange="form.submit()"></a>
-                                                <a aria-label="Lable">(EF)</a>
-                                            </div>
-                                        </th>
-                                </form>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-
-                                {% for falta in faltas %}
-                                    <tr class="gradeX">
-                                    <td class="col-sm-1">{{ falta.legajo }}</td>
-                                    <td class="col-sm-1">{{ falta.orden }}</td>
-                                    <td>{{ falta.apellido }}</td>
-                                    <td>{{ falta.nombre }}</td>
-                                    <td class="col-lg-1">
-                                        <a href="#" id="inline-inasistencia" data-type="select" data-pk="{{ falta.legajo }},{{ falta.fecha }}" data-value={% if not falta.maniana %} 0 {% else %} {{ falta.maniana }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="maniana"></a>
-                                    </td>
-                                    <td class=col-lg-1>
-                                        <a href="#" id="inline-inasistencia2" data-type="select" data-pk="{{ falta.legajo }},{{ falta.fecha }}"  data-value={% if not falta.tarde %} 0 {% else %} {{ falta.tarde }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="tarde"></a>
-                                    </td>
-                                    <td class="col-lg-1">
-                                        <a href="#" id="inline-inasistencia3" data-type="select" data-pk="{{ falta.legajo}},{{ falta.fecha }}"  data-value={% if not falta.ed_fisica %} 0 {% else %} {{ falta.ed_fisica }} {% endif %} data-title="Seleccione" data-url="/inasistencias_por_curso" data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}" data-name="ed_fisica"></a>
-                                    </td>
-
-                                {% endfor %}
-                                </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- end: page -->
-                </div> <!-- col -->
-            </div> <!-- end Panel -->
-         </form>
+                        <!-- end: page -->
+                    </div> <!-- col -->
+                </div> <!-- end Panel -->
+            </form>
         </div>
     </div> <!-- container -->
     <footer class="footer text-right">

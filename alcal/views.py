@@ -239,8 +239,7 @@ def inasistencias_por_curso(request):
         except:
             faltas['ed_fisica'] = 0
         lista.append(faltas.copy())
-
-
+    print(lista[0])
     return render(request, 'alcal/blue/inasistencias_por_curso.html',
                   {
                       'turnos': turnos_header,
@@ -685,10 +684,6 @@ def anular_turno(turno, curso, fecha, tipo):
     curso = Curso.objects.get(pk=curso)
     ids_estudiantes = Estudiante.objects.filter(curso=curso)
     t = turno.replace('_header', '')
-    print(tipo)
-    print(fec)
-    print(curso)
-    print(turno)
     if 'maniana' in turno:
         Turno.objects.update_or_create(curso=curso, fecha=fec, defaults={'maniana': tipo})
     if 'tarde' in turno:
