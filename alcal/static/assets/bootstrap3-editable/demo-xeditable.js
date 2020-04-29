@@ -132,10 +132,5 @@ $(function(){
         mode: 'inline'
     });
 
-function onchange(e) {
-        window.location.reload();
-}
-
-document.getElementById('inline-inasistencia').addEventListener('change', onchange);
 
 });
