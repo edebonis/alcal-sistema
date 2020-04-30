@@ -239,7 +239,7 @@ def inasistencias_por_curso(request):
         except:
             faltas['ed_fisica'] = 0
         lista.append(faltas.copy())
-    print(lista[0])
+    # print(lista[0])
     return render(request, 'alcal/blue/inasistencias_por_curso.html',
                   {
                       'turnos': turnos_header,
