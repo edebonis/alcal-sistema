@@ -41,13 +41,9 @@ def portada(request):
     # m_anio = ina_graf(0)
     # t_anio = ina_graf(1)
     # ef_anio = ina_graf(2)
-    i_anio = 1
-    m_anio = 9
-    t_anio = 2
-    ef_anio = 0
-    maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
-    print(i_anio)
-
+    # maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
+    # print(i_anio)
+    maximo = 12
     try:
         materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
     except request:
