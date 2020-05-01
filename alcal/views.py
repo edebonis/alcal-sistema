@@ -51,10 +51,10 @@ def portada(request):
     docente = Docente.objects.get(usuario=usuario)
     print(docente)
     return render(request, 'alcal/blue/index.html', {
-        'i_anio': i_anio,
-        'm_anio': m_anio,
-        't_anio': t_anio,
-        'ef_anio': ef_anio,
+        # 'i_anio': i_anio,
+        # 'm_anio': m_anio,
+        # 't_anio': t_anio,
+        # 'ef_anio': ef_anio,
         'maximo': maximo,
         'materias': materias,
         'carreras': carreras,
