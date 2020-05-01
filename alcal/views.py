@@ -37,12 +37,12 @@ def portada(request):
     cant_f_tec = len(Estudiante.objects.filter(genero='F', curso__in=curso_tec))
     cant_eco = cant_f_eco + cant_m_eco
     cant_tec = cant_f_tec + cant_m_tec
-    # i_anio = ina_graf(None)
-    # m_anio = ina_graf(0)
-    # t_anio = ina_graf(1)
-    # ef_anio = ina_graf(2)
-    # maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
-    # print(i_anio)
+    i_anio = ina_graf(None)
+    m_anio = ina_graf(0)
+    t_anio = ina_graf(1)
+    ef_anio = ina_graf(2)
+    maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
+    print(i_anio)
     maximo = 12
     try:
         materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
@@ -51,10 +51,10 @@ def portada(request):
     docente = Docente.objects.get(usuario=usuario)
     print(docente)
     return render(request, 'alcal/blue/index.html', {
-        # 'i_anio': i_anio,
-        # 'm_anio': m_anio,
-        # 't_anio': t_anio,
-        # 'ef_anio': ef_anio,
+        'i_anio': i_anio,
+        'm_anio': m_anio,
+        't_anio': t_anio,
+        'ef_anio': ef_anio,
         'maximo': maximo,
         'materias': materias,
         'carreras': carreras,
