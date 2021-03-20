@@ -45,7 +45,7 @@ incremental==17.5.0
 iniparse==0.5
 jdcal==1.4.1
 jeepney==0.4.3
-Jinja2==2.11.2
+Jinja2==2.11.3
 keyring==21.2.0
 keyrings.alt==3.4.0
 l20n==4.0.0a1
