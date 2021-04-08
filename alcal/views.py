@@ -42,14 +42,14 @@ def portada(request):
     t_anio = ina_graf(1)
     ef_anio = ina_graf(2)
     maximo = max([max(i_anio), max(t_anio), max(m_anio), max(ef_anio)])
-    print(i_anio)
+    #print(i_anio)
     maximo = 12
     try:
         materias = Materia.objects.filter(docente_titular=Docente.objects.get(usuario=usuario))
     except request:
         return redirect('/login')
     docente = Docente.objects.get(usuario=usuario)
-    print(docente)
+    # print(docente)
     return render(request, 'alcal/blue/index.html', {
         'i_anio': i_anio,
         'm_anio': m_anio,
@@ -100,7 +100,7 @@ def buscar_curso(request):
     else:
         form = NameForm(request.POST)
 
-    print("*******")
+    # print("*******")
     return render(request, 'alcal/blue/buscar_curso.html',
                   {
                       'form': form,
@@ -136,7 +136,7 @@ def inasistencias_por_estudiante(request):
     context = {'form': form}
     print(request.POST)
     if request.method == "POST":
-        print("Post")
+        # print("Post")
         if form.is_valid():
             valor = form.cleaned_data['estudiante'].id
             valor_curso = form.cleaned_data['curso'].id
@@ -167,7 +167,7 @@ def inasistencias_por_estudiante(request):
         if 'name' in request.POST:
             actualizar_falta(request)
     else:
-        print("Else")
+        # print("Else")
         form = SelectorDeAlumno()
     return render(request, 'alcal/blue/inasistencias_por_estudiante.html', {'form': form})
 
@@ -333,7 +333,7 @@ def com_por_estudiante(request):
                 seg = Seguimiento.objects.order_by('fecha').filter(estudiante__legajo=id_pers)
             except:
                 seg = "???"
-                print(seg)
+                # print(seg)
             for i in range(len(materias)):
                 id_materia = materias[i].id
                 boletin.append([])
@@ -354,7 +354,7 @@ def com_por_estudiante(request):
             return render(request, 'alcal/blue/com_por_estudiante.html', context)
     else:
         form = SelectorDeAlumno()
-        print("else")
+        # print("else")
     return render(request, 'alcal/blue/com_por_estudiante.html', {'form': form})
 
 
@@ -492,7 +492,7 @@ def ficha_estudiante(request, **pk):
              'NF',
              'CD']
     if request.method == "POST":
-        print('post')
+        # print('post')
         form = SelectorDeAlumno(request.POST)
         if form.is_valid():
             boletin = []
@@ -504,7 +504,7 @@ def ficha_estudiante(request, **pk):
             nota = Nota.objects.filter(estudiante=estudiante)
             materias = Materia.objects.filter(curso=valor_curso)
             inasistencias = Faltas.objects.filter(estudiante_id=estudiante).aggregate(Sum('cantidad'))
-            print(inasistencias['cantidad__sum'])
+            # print(inasistencias['cantidad__sum'])
             maniana_tarde = len(Inasistencia.objects.filter(estudiante=estudiante, turno=0, tipo=2))
             tarde_tarde = len(Inasistencia.objects.filter(estudiante=estudiante, turno=1, tipo=2))
             aus_ed = len(Inasistencia.objects.filter(estudiante=estudiante, turno=2, tipo=1))
@@ -544,7 +544,7 @@ def ficha_estudiante(request, **pk):
 
             return render(request, 'alcal/blue/ficha_estudiante.html', context)
         if form2.is_valid():
-            print('is_valid')
+            # print('is_valid')
             e = Estudiante.objects.get(id=estu.legajo)
             curso_id = request.POST['curso']
             e.curso = Curso.objects.get(id=curso_id)
@@ -643,14 +643,15 @@ def modificar_estudiante(request, pk):
         form = NuevoEstudiante(request.POST, instance=est)
         print('Errores: {}'.format(form.errors))
         if form.is_valid():
-            print('is_valid')
+            # print('is_valid')
             # est = form.save(commit=False)
             # est.curso = request.POST['curso']
             # est.save()
             form.save()
             return redirect('estudiante_detalle', pk=pk)
         else:
-            print(form.errors)
+            pass
+            # print(form.errors)
     else:
         form = NuevoEstudiante(instance=est)
     return render(request, 'alcal/blue/modificar_estudiante.html', {'form': form})

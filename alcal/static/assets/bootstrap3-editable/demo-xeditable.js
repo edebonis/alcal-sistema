@@ -117,6 +117,27 @@ $(function(){
             }
         }
     });
+    $('#inline-curso').editable({
+        prepend: "-",
+        mode: 'inline',
+        method: 'submit',
+        source: [
+            {value: 1, text: 'Apellido'},
+            {value: 2, text: 'Nombre'},
+            {value: 3, text: 'Legajo'},
+            {value: 4, text: 'Curso'}
+        ],
+        display: function(value, sourceData) {
+            var colors = {"P": "green", 1: "red", 2: "blue", 3: "orange", 4: "gray"},
+                elem = $.grep(sourceData, function(o){return o.value == value;});
+            $(this).text(elem[0].text).css("color", "green");
+            if(elem.length) {
+                $(this).text(elem[0].text).css("color", colors[value]);
+            } else {
+                $(this).empty().css("color","green");
+            }
+        }
+    });
 
     $('#inline-status').editable({mode: 'inline'});
 

@@ -62,7 +62,19 @@
                     <tr>
                         <th>Legajo</th>
                         <th>Orden</th>
-                        <th>Apellido</th>
+                        <th>
+                            <a href="/cursos"
+                               id="inline-curso"
+                               data-type="select"
+                               data-pk="{{ turnos.fecha }},{{ turnos.curso }}"
+                               data-value= te
+                               data-title="Seleccione"
+                               data-url="/cursos"
+                               data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}"
+                               data-name="maniana_header"
+                               onchange="form.submit()" >
+                            </a>
+                        </th>
                         <th>Nombre</th>
                         <th>Curso </th>
                         <th>Sexo</th>

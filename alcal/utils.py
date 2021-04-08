@@ -19,7 +19,7 @@ def ina_graf(tipo):
         i_diciembre = Inasistencia.objects.filter(fecha__range=["2020-12-01", "2020-12-31"],  turno=tipo).count()
         i_anio = [i_enero, i_febrero, i_marzo, i_abril, i_mayo, i_junio, i_julio, i_agosto, i_septiembre, i_octubre,
                   i_noviembre, i_diciembre]
-        print(i_anio)
+        #print(i_anio)
         return i_anio
     else:
         f_enero = Faltas.objects.filter(fecha__range=["2020-01-01", "2020-01-31"]).aggregate(Sum('cantidad'))['cantidad__sum']
