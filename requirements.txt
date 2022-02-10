@@ -19,7 +19,7 @@ defusedxml==0.6.0
 diff-match-patch==20181111
 distro==1.5.0
 dj-database-url==0.5.0
-Django==2.2.9
+Django==2.2.27
 django-appconf==1.0.4
 django-countries==6.1.2
 django-email-extras==0.3.4
