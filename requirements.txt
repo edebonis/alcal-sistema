@@ -66,7 +66,7 @@ odfpy==1.4.1
 olefile==0.46
 openpyxl==3.0.3
 padme==1.1.1
-paramiko==2.7.1
+paramiko==2.10.1
 pbr==5.4.5
 pexpect==4.8.0
 phply==1.2.5
